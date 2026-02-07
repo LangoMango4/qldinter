@@ -1,53 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Queensland Interactive - Roblox</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js" defer></script>
+    <title>Your Website Title</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script>
+        function onSubmit(e) {
+            e.preventDefault();
+            // Perform reCAPTCHA verification
+            grecaptcha.ready(function() {
+                grecaptcha.execute('6LehRWMsAAAAAGR6gJcImkYv-oSWD_zh4s0Rcnpx', {action: 'submit'}).then(function(token) {
+                    // Here you could also send the token to your server side to validate
+                    console.log(token);
+                    // Continue to load the website after validation
+                    window.location.href = 'your-main-website.html'; // Replace with your main site URL
+                });
+            });
+        }
+    </script>
 </head>
 <body>
-    <header>
-        <h1>Queensland Interactive</h1>
-        <nav>
-            <ul>
-                <li><a href="#game-showcase">Game Showcase</a></li>
-                <li><a href="#player-profiles">Player Profiles</a></li>
-                <li><a href="#store">Store</a></li>
-                <li><a href="#community-forums">Community Forums</a></li>
-                <li><a href="#documentation">Documentation</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section id="game-showcase">
-            <h2>Game Showcase</h2>
-            <div class="game-cards">
-                <!-- Game details will go here -->
-            </div>
-        </section>
-        <section id="player-profiles">
-            <h2>Player Profiles</h2>
-            <div class="profile-cards">
-                <!-- Player profiles will go here -->
-            </div>
-        </section>
-        <section id="store">
-            <h2>Store</h2>
-            <p>Check out the latest items available for purchase!</p>
-        </section>
-        <section id="community-forums">
-            <h2>Community Forums</h2>
-            <p>Join the discussion with other players.</p>
-        </section>
-        <section id="documentation">
-            <h2>Documentation</h2>
-            <p>Find resources and guides.</p>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2026 Queensland Interactive. All rights reserved.</p>
-    </footer>
+    <form onsubmit="onSubmit(event)">
+        <button type="submit">Load Website</button>
+    </form>
 </body>
 </html>
