@@ -26,9 +26,9 @@ body {
 }
 
 .navbar ul {
+  list-style: none;
   display: flex;
   gap: 30px;
-  list-style: none;
 }
 
 .navbar a {
@@ -37,7 +37,6 @@ body {
   position: relative;
 }
 
-/* STACC underline hover */
 .navbar a::after {
   content: "";
   position: absolute;
@@ -60,17 +59,26 @@ body {
   border-radius: 20px;
 }
 
-/* HERO */
+/* HERO SLIDER */
 .hero {
-  height: 100vh;
   position: relative;
+  height: 100vh;
   overflow: hidden;
 }
 
-.hero img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 1.2s ease, transform 6s ease;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .hero-overlay {
@@ -82,12 +90,13 @@ body {
 .hero-content {
   position: absolute;
   inset: 0;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  color: white;
   text-align: center;
+  color: white;
   padding: 20px;
 }
 
@@ -101,6 +110,7 @@ body {
   gap: 15px;
 }
 
+/* BUTTONS */
 .btn {
   padding: 14px 32px;
   border-radius: 30px;
@@ -128,10 +138,12 @@ body {
 }
 
 .tile {
-  height: 420px;
   position: relative;
-  overflow: hidden;
+  height: 420px;
   border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  color: white;
 }
 
 .tile img {
@@ -145,7 +157,6 @@ body {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.65);
-  color: white;
   padding: 35px;
   display: flex;
   flex-direction: column;
@@ -174,16 +185,4 @@ footer {
   color: white;
   padding: 40px;
   text-align: center;
-}
-
-/* SCROLL ANIMATIONS */
-.reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
 }

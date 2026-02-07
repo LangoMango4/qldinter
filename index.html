@@ -6,7 +6,7 @@
   <title>Queensland Interactive</title>
 
   <link rel="stylesheet" href="./styles.css">
-  <script defer src="./animations.js"></script>
+  <script defer src="./hero-slider.js"></script>
 </head>
 <body>
 
@@ -16,57 +16,64 @@
   <ul>
     <li><a href="#about">About</a></li>
     <li><a href="#sections">Community</a></li>
-    <li><a class="cta" href="#contact">Contact</a></li>
+    <li><a class="cta" href="https://discord.gg/YOURINVITE" target="_blank">Discord</a></li>
   </ul>
 </nav>
 
-<!-- HERO -->
+<!-- HERO SLIDER -->
 <header class="hero">
-  <img src="images_/hero.gif" alt="">
+  <div class="hero-slide active"></div>
+  <div class="hero-slide"></div>
+
   <div class="hero-overlay"></div>
 
-  <div class="hero-content reveal">
+  <div class="hero-content">
     <h1>Queensland Interactive</h1>
     <p>High-quality Roblox realism inspired by Queensland</p>
+
     <div class="hero-actions">
-      <a class="btn primary" href="#sections">Discover More</a>
-      <a class="btn ghost" href="#contact">Join Discord</a>
+      <a href="#sections" class="btn primary">Discover More</a>
+      <a href="https://discord.gg/YOURINVITE" target="_blank" class="btn ghost">
+        Join Discord
+      </a>
     </div>
   </div>
 </header>
 
-<!-- FEATURE TILES -->
+<!-- CLICKABLE TILES -->
 <section id="sections" class="tiles">
-  <div class="tile reveal">
-    <img src="images_/card1.jpg">
+
+  <a href="https://example.com/community" target="_blank" class="tile">
+    <img src="images_/card1.png" alt="">
     <div class="tile-overlay">
       <h3>Our Community</h3>
       <p>Structured roleplay & professional moderation</p>
       <span>Learn more →</span>
     </div>
-  </div>
+  </a>
 
-  <div class="tile reveal">
-    <img src="images_/card2.jpg">
+  <a href="https://example.com/games" target="_blank" class="tile">
+    <img src="images_/card2.png" alt="">
     <div class="tile-overlay">
       <h3>Our Games</h3>
       <p>Queensland-based realism environments</p>
       <span>Learn more →</span>
     </div>
-  </div>
+  </a>
 
-  <div class="tile reveal">
-    <img src="images_/card3.jpg">
+  <a href="https://example.com/team" target="_blank" class="tile">
+    <img src="images_/card3.png" alt="">
     <div class="tile-overlay">
       <h3>Our Team</h3>
       <p>Experienced developers & staff</p>
       <span>Learn more →</span>
     </div>
-  </div>
+  </a>
+
 </section>
 
 <!-- ABOUT -->
-<section id="about" class="about reveal">
+<section id="about" class="about">
   <h2>About Queensland Interactive</h2>
   <p>
     Queensland Interactive is a Roblox community focused on realism,
@@ -74,7 +81,7 @@
   </p>
 </section>
 
-<footer id="contact">
+<footer>
   © 2026 Queensland Interactive
 </footer>
 
