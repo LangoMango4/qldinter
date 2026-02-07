@@ -4,79 +4,78 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Queensland Interactive</title>
+
   <link rel="stylesheet" href="./styles.css">
+  <script defer src="./animations.js"></script>
 </head>
 <body>
 
-<!-- NAVBAR -->
+<!-- NAV -->
 <nav class="navbar">
-  <div class="nav-logo">Queensland Interactive</div>
-  <ul class="nav-links">
+  <div class="logo">Queensland Interactive</div>
+  <ul>
     <li><a href="#about">About</a></li>
     <li><a href="#sections">Community</a></li>
-    <li><a href="#contact" class="nav-cta">Contact</a></li>
+    <li><a class="cta" href="#contact">Contact</a></li>
   </ul>
 </nav>
 
-<!-- HERO (GIF) -->
+<!-- HERO -->
 <header class="hero">
-  <img src="images_/hero.gif" alt="Hero background">
+  <img src="images_/hero.gif" alt="">
+  <div class="hero-overlay"></div>
 
-  <div class="hero-content">
+  <div class="hero-content reveal">
     <h1>Queensland Interactive</h1>
     <p>High-quality Roblox realism inspired by Queensland</p>
-
-    <div class="hero-buttons">
-      <a href="#sections" class="btn primary">Discover More</a>
-      <a href="#contact" class="btn outline">Join Discord</a>
+    <div class="hero-actions">
+      <a class="btn primary" href="#sections">Discover More</a>
+      <a class="btn ghost" href="#contact">Join Discord</a>
     </div>
   </div>
 </header>
 
-<!-- HOVER SECTIONS -->
-<section id="sections" class="sections">
-
-  <div class="section-card">
-    <img src="images_/card1.jpg" alt="">
-    <div class="section-overlay">
+<!-- FEATURE TILES -->
+<section id="sections" class="tiles">
+  <div class="tile reveal">
+    <img src="images_/card1.jpg">
+    <div class="tile-overlay">
       <h3>Our Community</h3>
-      <p>Structured roleplay with professional moderation.</p>
+      <p>Structured roleplay & professional moderation</p>
       <span>Learn more →</span>
     </div>
   </div>
 
-  <div class="section-card">
-    <img src="images_/card2.jpg" alt="">
-    <div class="section-overlay">
+  <div class="tile reveal">
+    <img src="images_/card2.jpg">
+    <div class="tile-overlay">
       <h3>Our Games</h3>
-      <p>Queensland-based realism environments.</p>
+      <p>Queensland-based realism environments</p>
       <span>Learn more →</span>
     </div>
   </div>
 
-  <div class="section-card">
-    <img src="images_/card3.jpg" alt="">
-    <div class="section-overlay">
+  <div class="tile reveal">
+    <img src="images_/card3.jpg">
+    <div class="tile-overlay">
       <h3>Our Team</h3>
-      <p>Experienced developers & staff.</p>
+      <p>Experienced developers & staff</p>
       <span>Learn more →</span>
     </div>
   </div>
-
 </section>
 
 <!-- ABOUT -->
-<section id="about" class="about">
+<section id="about" class="about reveal">
   <h2>About Queensland Interactive</h2>
   <p>
-    Queensland Interactive is a Roblox community dedicated to realism,
-    professionalism, and immersive roleplay experiences across Queensland-inspired environments.
+    Queensland Interactive is a Roblox community focused on realism,
+    professionalism, and immersive Queensland-inspired experiences.
   </p>
 </section>
 
-<!-- FOOTER -->
 <footer id="contact">
-  <p>© 2026 Queensland Interactive</p>
+  © 2026 Queensland Interactive
 </footer>
 
 </body>
