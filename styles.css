@@ -26,9 +26,9 @@ body {
 }
 
 .navbar ul {
-  list-style: none;
   display: flex;
   gap: 30px;
+  list-style: none;
 }
 
 .navbar a {
@@ -37,6 +37,7 @@ body {
   position: relative;
 }
 
+/* underline hover */
 .navbar a::after {
   content: "";
   position: absolute;
@@ -59,58 +60,51 @@ body {
   border-radius: 20px;
 }
 
-/* HERO SLIDER */
+/* HERO */
 .hero {
-  position: relative;
   height: 100vh;
+  position: relative;
   overflow: hidden;
 }
 
 .hero-slide {
-  position: absolute;
-  inset: 0;
+  position: absolute; /* absolute so it sits under content */
+  top: -100;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-size: cover;
   background-position: center;
   opacity: 0;
-  transform: scale(1.05);
-  transition: opacity 1.2s ease, transform 6s ease;
+  transition: opacity 1s ease-in-out;
+  z-index: 0;
 }
 
 .hero-slide.active {
   opacity: 1;
-  transform: scale(1);
+  z-index: 1;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.55);
+  z-index: 2;
 }
 
 .hero-content {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
+  position: relative; /* relative or absolute, z-index matters */
+  z-index: 50;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  color: rgb(255, 255, 255);
   text-align: center;
-  color: white;
-  padding: 20px;
+  padding: 300px;
 }
 
-.hero-content h1 {
-  font-size: 3.6rem;
-  margin-bottom: 15px;
-}
 
-.hero-actions {
-  display: flex;
-  gap: 15px;
-}
-
-/* BUTTONS */
 .btn {
   padding: 14px 32px;
   border-radius: 30px;
@@ -138,12 +132,10 @@ body {
 }
 
 .tile {
-  position: relative;
   height: 420px;
-  border-radius: 14px;
+  position: relative;
   overflow: hidden;
-  text-decoration: none;
-  color: white;
+  border-radius: 14px;
 }
 
 .tile img {
@@ -157,6 +149,7 @@ body {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.65);
+  color: white;
   padding: 35px;
   display: flex;
   flex-direction: column;
@@ -185,4 +178,16 @@ footer {
   color: white;
   padding: 40px;
   text-align: center;
+}
+
+/* SCROLL ANIMATIONS */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
 }

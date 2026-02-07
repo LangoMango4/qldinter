@@ -4,11 +4,73 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Queensland Interactive</title>
+  <link rel="icon" href="./mainico.png">
 
   <link rel="stylesheet" href="./styles.css">
   <script defer src="./hero-slider.js"></script>
 </head>
 <body>
+
+<!-- V2 Release Notification -->
+<section id="v2-notification" class="v2-notification">
+  <div class="notification-content">
+    <strong>Queenland Interactive V2</strong>
+    <p>Read the details about the release by clicking the button below.</p>
+    <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank">More information</a>
+    <button id="dismiss-btn">&times;</button>
+  </div>
+</section>
+
+<style>
+.v2-notification {
+  position: fixed;
+  top: 60px;
+  right: 1600px;
+  background: #1e90ff;
+  color: white;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  max-width: 300px;
+  font-family: sans-serif;
+  animation: slideIn 0.5s ease-out;
+  z-index: 9999;
+}
+
+.v2-notification .notification-content {
+  position: relative;
+}
+
+.v2-notification button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.v2-notification a {
+  display: inline-block;
+  margin-top: 8px;
+  color: #fff;
+  text-decoration: underline;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+<script>
+document.getElementById('dismiss-btn').addEventListener('click', () => {
+  document.getElementById('v2-notification').style.display = 'none';
+});
+</script>
+
 
 <!-- NAV -->
 <nav class="navbar">
@@ -16,7 +78,8 @@
   <ul>
     <li><a href="#about">About</a></li>
     <li><a href="#sections">Community</a></li>
-    <li><a class="cta" href="https://discord.gg/YOURINVITE" target="_blank">Discord</a></li>
+        <li><a href="licence.html">Licence</a></li>
+    <li><a class="cta" href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a></li>
   </ul>
 </nav>
 
@@ -30,21 +93,28 @@
   <div class="hero-content">
     <h1>Queensland Interactive</h1>
     <p>High-quality Roblox realism inspired by Queensland</p>
+    <p class="disclaimer">Disclaimer: Not affiliated with any real-life Emergency Services or Companies</p>
 
+    <p>᲼<p>
+    <p>᲼<p>
+    
+    <p>↓ Discover more ↓</p>
 
+    <p>᲼<p>
+    <p>᲼<p>
+    </p>
     <div class="hero-actions">
       <a href="#sections" class="btn primary">Discover More</a>
       <a href="https://discord.gg/kUf97PV9H3" target="_blank" class="btn ghost">
         Join Discord
       </a>
-    </div>
   </div>
 </header>
 
 <!-- CLICKABLE TILES -->
 <section id="sections" class="tiles">
 
-  <a href="https://example.com/community" target="_blank" class="tile">
+  <a href="https://discord.gg/kUf97PV9H3" target="_blank" class="tile">
     <img src="images_/card1.png" alt="">
     <div class="tile-overlay">
       <h3>Our Community</h3>
@@ -53,16 +123,16 @@
     </div>
   </a>
 
-  <a href="https://example.com/games" target="_blank" class="tile">
+  <a href="https://www.roblox.com/games/74079904616243/Westlands-Queenlands" target="_blank" class="tile">
     <img src="images_/card2.png" alt="">
     <div class="tile-overlay">
       <h3>Our Games</h3>
       <p>Queensland-based realism environments</p>
-      <span>Learn more →</span>
+      <span>Play now! →</span>
     </div>
   </a>
 
-  <a href="https://example.com/team" target="_blank" class="tile">
+  <a href="ourteam.html" target="_blank" class="tile">
     <img src="images_/card3.png" alt="">
     <div class="tile-overlay">
       <h3>Our Team</h3>

@@ -3,22 +3,30 @@ const images = [
   "images_/hero2.png",
   "images_/hero3.png",
   "images_/hero4.png",
-  "images_/hero5.png"
+  "images_/hero5.png",
+  "images_/hero6.png",
+  "images_/hero7.png",
+  "images_/hero8.png"
 ];
 
 const slides = document.querySelectorAll(".hero-slide");
-let current = 0;
-let next = 1;
+let currentImage = 0;
 
+// Initialize slides
 slides[0].style.backgroundImage = `url(${images[0]})`;
 slides[1].style.backgroundImage = `url(${images[1]})`;
+slides[0].classList.add("active");
 
 setInterval(() => {
-  slides[next].style.backgroundImage = `url(${images[(current + 1) % images.length]})`;
+  // Determine which slide is visible
+  const visible = slides[0].classList.contains("active") ? slides[0] : slides[1];
+  const hidden = slides[0].classList.contains("active") ? slides[1] : slides[0];
 
-  slides[current].classList.remove("active");
-  slides[next].classList.add("active");
+  // Load next image on hidden slide first
+  currentImage = (currentImage + 1) % images.length;
+  hidden.style.backgroundImage = `url(${images[currentImage]})`;
 
-  current = (current + 1) % slides.length;
-  next = (next + 1) % slides.length;
+  // Fade in hidden slide
+  visible.classList.remove("active");
+  hidden.classList.add("active");
 }, 6000);
