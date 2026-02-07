@@ -1,72 +1,79 @@
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 15px;
-}
-
-header {
-  background: linear-gradient(90deg, rgba(255, 0, 150, 1) 0%, rgba(255, 204, 0, 1) 100%);
-  color: white;
-  padding: 20px 0;
-  text-align: center;
-}
-
-nav {
-  margin: 20px 0;
-  display: flex;
-  justify-content: center;
-}
-
-nav a {
-  margin: 0 15px;
-  text-decoration: none;
-  color: white;
-  transition: color 0.3s ease;
-}
-
-nav a:hover {
-  color: rgba(255, 255, 0, 1);
-}
-
-.section {
-  padding: 60px 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    gap: 20px;
 }
 
 .card {
-  background: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 15px;
-  transition: transform 0.3s ease;
+    background: linear-gradient(145deg, #ffffff, #e6e6e6);
+    border-radius: 15px;
+    box-shadow: 5px 5px 15px #d1d1d1,
+                -5px -5px 15px #ffffff;
+    overflow: hidden;
+    transition: transform 0.3s;  
+    flex: 1 1 300px;
+    max-width: 300px;
+    margin: 10px;
 }
 
 .card:hover {
-  transform: translateY(-5px);
+    transform: scale(1.05);
 }
 
-footer {
-  background: #333;
-  color: white;
-  text-align: center;
-  padding: 20px 0;
-  position: relative;
+.card img {
+    width: 100%;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 768px) {
-  nav {
-    flex-direction: column;
-  }
-  .card {
+.card h3 {
     margin: 10px;
-  }
+    color: #333;
+}
+
+.card p {
+    margin: 10px;
+    color: #666;
+}
+
+button {
+    background: linear-gradient(145deg, #ff3366, #ff6699);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: linear-gradient(145deg, #ff6699, #ff3366);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-.animate {
-  animation: fadeIn 1s ease-in-out;
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0;
+    animation: fadeIn 1s;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .card {
+        max-width: 100%;
+    }
 }
