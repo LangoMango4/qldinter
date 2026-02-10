@@ -37,7 +37,6 @@ body {
   position: relative;
 }
 
-/* underline hover */
 .navbar a::after {
   content: "";
   position: absolute;
@@ -60,23 +59,23 @@ body {
   border-radius: 20px;
 }
 
-/* HERO */
+/* ========================= */
+/* HERO SLIDER (FIXED) */
+/* ========================= */
+
 .hero {
   position: relative;
-  min-height: 100svh; /* mobile-safe viewport */
+  min-height: 100svh;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  background: black;
 }
 
-
 .hero-slide {
-  position: absolute; /* absolute so it sits under content */
-  top: -100;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   background-size: cover;
   background-position: center;
   opacity: 0;
@@ -86,45 +85,44 @@ body {
 
 .hero-slide.active {
   opacity: 1;
-  z-index: 1;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
   background: rgba(0,0,0,0.55);
-  z-index: 2;
+  z-index: 1;
 }
 
 .hero-content {
-  position: relative; /* relative or absolute, z-index matters */
-  z-index: 50;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: rgb(255, 255, 255);
-  text-align: center;
-  padding: 300px;
-}
-
-.hero img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hero-text {
   position: relative;
   z-index: 2;
-  max-width: 800px;
+  max-width: 900px;
   padding: 2rem;
   text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
+.hero-content h1 {
+  font-size: 3rem;
+}
 
+.hero-content p {
+  font-size: 1.1rem;
+}
+
+.hero-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* BUTTONS */
 .btn {
   padding: 14px 32px;
   border-radius: 30px;
@@ -142,7 +140,10 @@ body {
   color: white;
 }
 
+/* ========================= */
 /* TILES */
+/* ========================= */
+
 .tiles {
   padding: 140px 8%;
   background: white;
@@ -200,30 +201,26 @@ footer {
   text-align: center;
 }
 
-/* SCROLL ANIMATIONS */
-.reveal {
-  opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
+/* MOBILE */
 @media (max-width: 768px) {
-  .hero-text h1 {
+  .navbar {
+    padding: 14px 20px;
+  }
+
+  .hero-content h1 {
     font-size: 2.2rem;
   }
 
-  .hero-text p {
+  .hero-content p {
     font-size: 1rem;
   }
 
-  .hero {
-    min-height: auto;
-    padding: 6rem 1.5rem;
+  .hero-actions a {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .about {
+    padding: 80px 10%;
   }
 }
-
