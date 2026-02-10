@@ -1,0 +1,32 @@
+.maintenance-overlay {
+  position: fixed;
+  inset: 0;
+  background: #0a0f1c;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  text-align: center;
+}
+
+.maintenance-box {
+  max-width: 500px;
+  padding: 2rem;
+}
+
+.maintenance-box img {
+  width: 96px;
+  margin-bottom: 1.5rem;
+}
+
+.maintenance-box h1 {
+  font-size: 2.2rem;
+  margin-bottom: 1rem;
+}
+
+.timer {
+  margin-top: 1.2rem;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
