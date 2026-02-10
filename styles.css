@@ -62,10 +62,14 @@ body {
 
 /* HERO */
 .hero {
-  height: 100vh;
   position: relative;
+  min-height: 100svh; /* mobile-safe viewport */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
+
 
 .hero-slide {
   position: absolute; /* absolute so it sits under content */
@@ -102,6 +106,22 @@ body {
   color: rgb(255, 255, 255);
   text-align: center;
   padding: 300px;
+}
+
+.hero img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-text {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  padding: 2rem;
+  text-align: center;
 }
 
 
@@ -191,3 +211,19 @@ footer {
   opacity: 1;
   transform: translateY(0);
 }
+
+@media (max-width: 768px) {
+  .hero-text h1 {
+    font-size: 2.2rem;
+  }
+
+  .hero-text p {
+    font-size: 1rem;
+  }
+
+  .hero {
+    min-height: auto;
+    padding: 6rem 1.5rem;
+  }
+}
+
