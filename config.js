@@ -10,7 +10,9 @@ window.SITE_CONFIG = {
   maintenanceEnds: "2026-02-11T01:36:00Z",
   
   // Roblox API proxy base URL
-  robloxProxyBase: "http://localhost:3000",
+  // Set this to your deployed server URL (e.g., "https://your-server.railway.app")
+  // Leave as empty string "" to disable API features (stats will show "Unavailable")
+  robloxProxyBase: "https://qldinter-production.up.railway.app",
   
   // Team member bios (keyed by Roblox user ID)
   teamBios: {
