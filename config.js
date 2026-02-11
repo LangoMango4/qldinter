@@ -14,6 +14,11 @@ window.SITE_CONFIG = {
   // Leave as empty string "" to disable API features (stats will show "Unavailable")
   robloxProxyBase: "https://qldinter-production.up.railway.app",
   
+  // Cloudflare Turnstile
+  // Get your site key from: https://dash.cloudflare.com/?to=/:account/turnstile
+  // Set to empty string "" to disable Turnstile
+  turnstileSiteKey: "0x4AAAAAACag3Ptpt7rqJlR6", // Replace with your actual site key
+  
   // Team member bios (keyed by Roblox user ID)
   teamBios: {
     "1889995156": "Managing director and lead developer.",
