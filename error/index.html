@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Error - Queensland Interactive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background: linear-gradient(135deg, #0a0f1c 0%, #1a2a4a 100%);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      max-width: 700px;
+      animation: fadeIn 0.8s ease-out;
+    }
+    .content {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 60px 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    .error-code {
+      font-size: 120px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff9999 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 20px;
+      line-height: 1;
+    }
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      background: linear-gradient(135deg, #1e90ff 0%, #00d4ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      font-size: 1.1rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+    .divider {
+      width: 50px;
+      height: 3px;
+      background: linear-gradient(90deg, #1e90ff 0%, #00d4ff 100%);
+      margin: 30px auto;
+      border-radius: 2px;
+    }
+    .error-details {
+      background: rgba(255, 107, 107, 0.1);
+      border: 2px solid rgba(255, 107, 107, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 30px 0;
+      text-align: left;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+    .error-details p {
+      margin: 10px 0;
+    }
+    .error-details strong {
+      color: #ff9999;
+    }
+    .actions {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 35px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: 2px solid;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Poppins', sans-serif;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #1e90ff 0%, #00d4ff 100%);
+      color: white;
+      border-color: #1e90ff;
+    }
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(30, 144, 255, 0.4);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: rgba(255, 255, 255, 0.8);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+    .footer {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-top: 40px;
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    @media (max-width: 600px) {
+      .content {
+        padding: 40px 25px;
+      }
+      .error-code {
+        font-size: 80px;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .subtitle {
+        font-size: 1rem;
+      }
+      .actions {
+        flex-direction: column;
+      }
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="content">
+      <div class="error-code">⚠️</div>
+      <h1>Oops! Something Went Wrong</h1>
+      <div class="divider"></div>
+      <p class="subtitle">We encountered an error while loading the page. Don't worry, our team is aware of this.</p>
+      
+      <div class="error-details">
+        <p><strong>Error Type:</strong> <span id="error-type">Page Load Error</span></p>
+        <p><strong>Request URL:</strong> <span id="error-url" style="word-break: break-all;"></span></p>
+        <p><strong>Time:</strong> <span id="error-time"></span></p>
+      </div>
+
+      <p style="color: rgba(255, 255, 255, 0.7); margin: 20px 0;">Here's what you can try:</p>
+      <ul style="text-align: left; color: rgba(255, 255, 255, 0.7); margin: 20px 0; padding-left: 20px;">
+        <li>Refresh the page (F5 or Ctrl+R)</li>
+        <li>Clear your browser cache</li>
+        <li>Check your internet connection</li>
+        <li>Try again in a few moments</li>
+      </ul>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="window.location.href='/'">Go to Home</button>
+        <button class="btn btn-secondary" onclick="location.reload()">Reload Page</button>
+      </div>
+
+      <p class="footer">If the problem persists, contact us at support@queenslandinteractive-rblx.com</p>
+    </div>
+  </div>
+
+  <script>
+    // Display error details
+    document.getElementById('error-url').textContent = window.location.href;
+    document.getElementById('error-time').textContent = new Date().toLocaleString();
+    
+    // Get error from URL params if passed
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('type')) {
+      document.getElementById('error-type').textContent = decodeURIComponent(params.get('type'));
+    }
+  </script>
+</body>
+</html>

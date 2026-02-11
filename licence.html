@@ -4,9 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Licence - QLDINTER</title>
-    <link rel="icon" href="./mainico.png">
+  <link rel="icon" href="./mainico.png">
 
-    <style>
+  <!-- Error handling -->
+  <script>
+    window.addEventListener('error', function(event) {
+      console.error('Error caught:', event.error);
+      window.location.href = '/error/?type=' + encodeURIComponent('JavaScript Error: ' + event.error.message);
+    });
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('Unhandled rejection:', event.reason);
+      window.location.href = '/error/?type=' + encodeURIComponent('Promise Rejection: ' + event.reason);
+    });
+    let pageLoaded = false;
+    setTimeout(() => {
+      if (!pageLoaded) {
+        window.location.href = '/error/?type=' + encodeURIComponent('Page Load Timeout');
+      }
+    }, 15000);
+    window.addEventListener('load', function() {
+      pageLoaded = true;
+    });
+  </script>
+
+  <style>
     @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
     body {
@@ -99,7 +120,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.</p>
     <p>Please contact Management @ QI-Queensland-Interactive if you require support</p>
-    <a href="index.html">Go Back</a>
+    <a href="/">Go Back</a>
     <p>᲼<p>
     <p>᲼<p>
     <p> © 2026 Queensland Interactive / skibidi._fish <p>    

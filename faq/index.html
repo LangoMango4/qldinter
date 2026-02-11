@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ - Queensland Interactive</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="manifest" href="../manifest.json">
+  
+  <!-- Error handling -->
+  <script>
+    window.addEventListener('error', function(event) {
+      console.error('Error caught:', event.error);
+      window.location.href = '/error/?type=' + encodeURIComponent('JavaScript Error: ' + event.error.message);
+    });
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('Unhandled rejection:', event.reason);
+      window.location.href = '/error/?type=' + encodeURIComponent('Promise Rejection: ' + event.reason);
+    });
+    let pageLoaded = false;
+    setTimeout(() => {
+      if (!pageLoaded) {
+        window.location.href = '/error/?type=' + encodeURIComponent('Page Load Timeout');
+      }
+    }, 15000);
+    window.addEventListener('load', function() {
+      pageLoaded = true;
+    });
+  </script>
+
+  <script src="../config.js"></script>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="/" class="logo">
+    <img src="../mainico.png" alt="QI Logo" class="logo-img">
+    <span>Queensland Interactive</span>
+  </a>
+  <ul>
+    <li><a href="/#about">About</a></li>
+    <li><a href="/#sections">Community</a></li>
+    <li><a href="/ourteam/">Team</a></li>
+    <li><a href="/faq/">FAQ</a></li>
+    <li><a href="/licence">Licence</a></li>
+    <li><a class="cta" href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a></li>
+  </ul>
+</nav>
+
+<!-- FAQ SECTION -->
+<section class="faq-section reveal">
+  <div class="faq-container">
+    <h1>Frequently Asked Questions</h1>
+    
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>I cannot see any other channels.</h3>
+      </div>
+      <div class="faq-answer">
+        <p>Verify your access at: <a href="https://discord.com/channels/1325971748377595934/1325971886773112975" target="_blank">read-me-verification</a>. If you don't do this, you will be unable to see other channels.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>Can I join the Police, Ambulance, or Fire services?</h3>
+      </div>
+      <div class="faq-answer">
+        <p>Yes, you are welcome to join any of the emergency services here. However, you must join the department's Discord and complete the necessary training.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>I'm unable to join the game!</h3>
+      </div>
+      <div class="faq-answer">
+        <p>You might be in a blacklisted group, have no active SSU, or there could be ongoing training sessions.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>When are group requests and roles checked?</h3>
+      </div>
+      <div class="faq-answer">
+        <p>Group requests and roles are checked randomly throughout the day. Keep in mind, they may not be reviewed before an SSU if we are busy.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>Can I get a firearm?</h3>
+      </div>
+      <div class="faq-answer">
+        <p>You will not receive a firearm by begging a Server Moderator; that approach will not work. You may obtain one if you are involved in a legitimate roleplay situation, but this does not include random deathmatching (RDM) against other players.</p>
+      </div>
+    </div>
+
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>More coming soon</h3>
+      </div>
+      <div class="faq-answer">
+        <p>Check back later for more frequently asked questions. - Last Updated: February 11th, 2026</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <strong>Queensland Interactive</strong>
+      <p>Roblox community focused on realism, professionalism, and immersive Queensland-inspired experiences.</p>
+    </div>
+    <div class="footer-links">
+      <h4>More Info</h4>
+      <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank">Roblox Community</a>
+      <a href="/licence">Licence</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <a href="mailto:support@queenslandinteractive-rblx.com">support@queenslandinteractive-rblx.com</a>
+      <a href="mailto:copyright@queenslandinteractive-rblx.com">copyright@queenslandinteractive-rblx.com</a>
+    </div>
+    <div class="footer-social">
+      <h4>Social</h4>
+      <div class="social-icons">
+        <a class="social-icon" href="https://discord.gg/kUf97PV9H3" target="_blank" aria-label="Discord">
+          <img src="../images_/discord-logo.png" alt="Discord">
+        </a>
+        <a class="social-icon" href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" aria-label="Roblox">
+          <img src="../images_/roblox-icon.png" alt="Roblox">
+        </a>
+      </div>
+    </div>
+    <div class="footer-ack">
+      <h4>Acknowledgement</h4>
+      <p>We acknowledge the First Nations peoples of Australia, the traditional custodians of the land, seas, skies and waterways on which we reside, work, travel and meet.</p>
+      <p>We pay our respect to First Nations elders past, present, and emerging, and support the Uluru Statement From The Heart. We acknowledge that the land, seas, skies and waterways of Australia were, are and always will be, that of the First Nations peoples.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Queensland Interactive</div>
+</footer>
+
+<script src="../config.js"></script>
+<script src="../animations.js"></script>
+
+</body>
+</html>

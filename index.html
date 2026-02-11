@@ -1,126 +1,341 @@
 <!DOCTYPE html>
 <html lang="en">
+  
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Queensland Interactive</title>
   <link rel="icon" href="./mainico.png">
 
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
+  
+  <!-- Error handling -->
+  <script>
+    // Catch JavaScript errors
+    window.addEventListener('error', function(event) {
+      console.error('Error caught:', event.error);
+      window.location.href = '/error/?type=' + encodeURIComponent('JavaScript Error: ' + event.error.message);
+    });
+
+    // Catch unhandled promise rejections
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('Unhandled rejection:', event.reason);
+      window.location.href = '/error/?type=' + encodeURIComponent('Promise Rejection: ' + event.reason);
+    });
+
+    // Check if page loads within timeout
+    let pageLoaded = false;
+    setTimeout(() => {
+      if (!pageLoaded) {
+        window.location.href = '/error/?type=' + encodeURIComponent('Page Load Timeout');
+      }
+    }, 15000); // 15 second timeout
+
+    window.addEventListener('load', function() {
+      pageLoaded = true;
+    });
+  </script>
+
+  <script src="./config.js"></script>
+  <script defer src="./animations.js"></script>
   <script defer src="./hero-slider.js"></script>
+  <script defer src="./roblox-data.js"></script>
 
 </head>
 <body>
-  
-<script src="config.js"></script>
-<script src="maintenance.js"></script>
 
-  
-<!-- V2 Release Notification -->
-<section id="v2-notification" class="v2-notification">
-  <div class="notification-content">
-    <strong>Queenland Interactive V2</strong>
-    <p>Read the details about the release by clicking the button below.</p>
-    <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank">More information</a>
-    <button id="dismiss-btn">&times;</button>
+<!-- NOTIFICATION DISABLED - DISPLAY ISSUES -->
+<!-- Uncomment to enable: -->
+<!--
+<div id="v2-notification" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 9999; padding: 20px;">
+  <div style="position: relative; background: white; padding: 40px 50px; border-radius: 16px; max-width: 750px; width: 100%; box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3); max-height: 90vh; overflow-y: auto;">
+    <button id="dismiss-btn" onclick="document.getElementById('v2-notification').style.display='none'" style="position: absolute; top: 15px; right: 18px; background: transparent; border: none; color: #888; font-size: 32px; cursor: pointer; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; transition: color 0.2s ease; line-height: 1;">&times;</button>
+    <strong style="display: block; font-size: 2rem; color: #1e90ff; margin-bottom: 12px; font-weight: 700;">Queensland Interactive V2 Release</strong>
+    <h3 style="font-size: 1.5rem; color: #333; margin-bottom: 20px; font-weight: 600;">Experience the Next Generation</h3>
+    <p style="color: #666; font-size: 1rem; margin-bottom: 30px; line-height: 1.6;">We're excited to announce the official release of Queensland Interactive V2. This major update brings significant improvements to our Roblox roleplay experience.</p>
+    
+    <div class="notification-features" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+      <div class="feature" style="text-align: center;">
+        <h4 style="font-size: 1rem; color: #1e90ff; margin-bottom: 10px; font-weight: 600;">🎮 Enhanced Gameplay</h4>
+        <p style="font-size: 0.9rem; color: #666; margin: 0; line-height: 1.5;">Streamlined mechanics and improved performance across all game modes.</p>
+      </div>
+      <div class="feature" style="text-align: center;">
+        <h4 style="font-size: 1rem; color: #1e90ff; margin-bottom: 10px; font-weight: 600;">👥 Community Integration</h4>
+        <p style="font-size: 0.9rem; color: #666; margin: 0; line-height: 1.5;">Better connection between game and Discord with live stats and team features.</p>
+      </div>
+      <div class="feature" style="text-align: center;">
+        <h4 style="font-size: 1rem; color: #1e90ff; margin-bottom: 10px; font-weight: 600;">✨ New Features</h4>
+        <p style="font-size: 0.9rem; color: #666; margin: 0; line-height: 1.5;">Discover new departments, roles, and gameplay opportunities.</p>
+      </div>
+    </div>
+
+    <div class="release-note" style="background: #e3f2fd; padding: 20px; border-left: 4px solid #1e90ff; border-radius: 6px; margin-bottom: 25px;">
+      <strong style="color: #1e90ff; font-size: 1.1rem; display: block;">Release Date:</strong>
+      <p style="color: #555; margin: 8px 0 0 0; font-size: 1rem;">February 11, 2026</p>
+    </div>
+    
+    <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" style="display: inline-block; padding: 14px 40px; background: #1e90ff; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 1rem; transition: all 0.2s ease; border: 2px solid #1e90ff;">Learn More</a>
   </div>
-</section>
+</div>
+-->
+
+<script src="maintenance.js"></script>
+<script src="config.js"></script>
 
 <style>
 .v2-notification {
   position: fixed;
-  top: 60px;
-  right: 1600px;
-  background: #1e90ff;
-  color: white;
-  padding: 15px 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-  max-width: 300px;
-  font-family: sans-serif;
-  animation: slideIn 0.5s ease-out;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
   z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+  padding: 20px;
 }
 
 .v2-notification .notification-content {
   position: relative;
+  background: white;
+  padding: 40px 50px;
+  border-radius: 16px;
+  max-width: 750px;
+  width: 100%;
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.4s ease-out;
+}
+
+.v2-notification .notification-content strong {
+  display: block;
+  font-size: 2rem;
+  color: #1e90ff;
+  margin-bottom: 12px;
+  font-weight: 700;
+}
+
+.v2-notification .notification-content h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.v2-notification .notification-content > p {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.notification-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.feature {
+  text-align: center;
+}
+
+.feature h4 {
+  font-size: 1rem;
+  color: #1e90ff;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.feature p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.release-note {
+  background: #e3f2fd;
+  padding: 20px;
+  border-left: 4px solid #1e90ff;
+  border-radius: 6px;
+  margin-bottom: 25px;
+}
+
+.release-note strong {
+  color: #1e90ff;
+  font-size: 1.1rem;
+  display: block;
+}
+
+.release-note p {
+  color: #555;
+  margin: 8px 0 0 0;
+  font-size: 1rem;
 }
 
 .v2-notification button {
   position: absolute;
-  top: 5px;
-  right: 5px;
+  top: 15px;
+  right: 18px;
   background: transparent;
   border: none;
-  color: white;
-  font-size: 18px;
+  color: #888;
+  font-size: 32px;
   cursor: pointer;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  line-height: 1;
 }
 
-.v2-notification a {
+.v2-notification button:hover {
+  color: #333;
+}
+
+.cta-button {
   display: inline-block;
-  margin-top: 8px;
-  color: #fff;
-  text-decoration: underline;
+  padding: 14px 40px;
+  background: #1e90ff;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  border: 2px solid #1e90ff;
 }
 
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(-20px); }
-  to { opacity: 1; transform: translateY(0); }
+.cta-button:hover {
+  background: #1873cc;
+  border-color: #1873cc;
+  transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .v2-notification .notification-content {
+    padding: 30px 25px;
+  }
+
+  .v2-notification .notification-content strong {
+    font-size: 1.6rem;
+  }
+
+  .v2-notification .notification-content h3 {
+    font-size: 1.2rem;
+  }
+
+  .notification-features {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .feature h4 {
+    font-size: 0.95rem;
+  }
+
+  .feature p {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .v2-notification {
+    padding: 10px;
+  }
+
+  .v2-notification .notification-content {
+    padding: 25px 20px;
+  }
+
+  .v2-notification .notification-content strong {
+    font-size: 1.3rem;
+  }
+
+  .v2-notification .notification-content h3 {
+    font-size: 1rem;
+  }
+
+  .v2-notification .notification-content > p {
+    font-size: 0.9rem;
+  }
+
+  .cta-button {
+    padding: 12px 30px;
+    font-size: 0.95rem;
+  }
 }
 </style>
-
-<script>
-document.getElementById('dismiss-btn').addEventListener('click', () => {
-  document.getElementById('v2-notification').style.display = 'none';
-});
-</script>
 
 
 <!-- NAV -->
 <nav class="navbar">
-  <div class="logo">Queensland Interactive</div>
+  <a href="/" class="logo">
+    <img src="./mainico.png" alt="QI Logo" class="logo-img">
+    <span>Queensland Interactive</span>
+  </a>
   <ul>
     <li><a href="#about">About</a></li>
     <li><a href="#sections">Community</a></li>
-        <li><a href="licence.html">Licence</a></li>
+    <li><a href="/ourteam/">Team</a></li>
+    <li><a href="/faq/">FAQ</a></li>
+    <li><a href="/licence">Licence</a></li>
     <li><a class="cta" href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a></li>
   </ul>
 </nav>
 
 <!-- HERO SLIDER -->
-<header class="hero">
-  <div class="hero-slide active" style="background-image:url('images_/hero1.png')"></div>
-  <div class="hero-slide" style="background-image:url('images_/hero2.png')"></div>
+<section class="hero">
+  <div class="hero-slider">
+    <div class="hero-slide active"></div>
+    <div class="hero-slide"></div>
+    <div class="hero-slide"></div>
+  </div>
 
   <div class="hero-overlay"></div>
 
-<div class="hero-content">
-  <h1>Queensland Interactive</h1>
-
-  <p>High-quality Roblox realism inspired by Queensland</p>
-
-  <p class="disclaimer">
-    Disclaimer: Not affiliated with any real-life Emergency Services or Companies
-  </p>
-
-  <p>↓ Discover more ↓</p>
-
-  <div class="hero-actions">
-    <a href="#sections" class="btn primary">Discover More</a>
-    <a href="https://discord.gg/kUf97PV9H3" target="_blank" class="btn ghost">
-      Join Discord
-    </a>
+  <div class="discover-vertical">
+    <span>Discover More</span>
+    <div class="arrow"></div>
   </div>
-</div>
 
-</header>
+  <div class="hero-content">
+    <h1>Step Into & Discover YOUR<br>World of Roleplay</h1>
+    <p>At Queensland Interactive</p>
+    <a href="/enrol/" class="hero-btn">Enrol Now</a>
+  </div>
+</section>
+
+
 
 
 <!-- CLICKABLE TILES -->
-<section id="sections" class="tiles">
-
-  <a href="https://discord.gg/kUf97PV9H3" target="_blank" class="tile">
+<section id="sections" class="tiles reveal">
+  <a href="https://discord.gg/kUf97PV9H3" target="_blank" class="tile reveal">
     <img src="images_/card1.png" alt="">
     <div class="tile-overlay">
       <h3>Our Community</h3>
@@ -129,16 +344,16 @@ document.getElementById('dismiss-btn').addEventListener('click', () => {
     </div>
   </a>
 
-  <a href="https://www.roblox.com/games/74079904616243/Westlands-Queenlands" target="_blank" class="tile">
+  <a href="https://www.roblox.com/games/74079904616243/Westlands-Queenlands" target="_blank" class="tile reveal">
     <img src="images_/card2.png" alt="">
     <div class="tile-overlay">
-      <h3>Our Games</h3>
+      <h3>Our Game</h3>
       <p>Queensland-based realism environments</p>
       <span>Play now! →</span>
     </div>
   </a>
 
-  <a href="ourteam.html" target="_blank" class="tile">
+  <a href="/ourteam/" target="_blank" class="tile reveal">
     <img src="images_/card3.png" alt="">
     <div class="tile-overlay">
       <h3>Our Team</h3>
@@ -147,7 +362,7 @@ document.getElementById('dismiss-btn').addEventListener('click', () => {
     </div>
   </a>
 
-    <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" class="tile">
+    <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" class="tile reveal">
     <img src="images_/card4.png" alt="">
     <div class="tile-overlay">
       <h3>Join us!</h3>
@@ -156,10 +371,67 @@ document.getElementById('dismiss-btn').addEventListener('click', () => {
     </div>
   </a>
 
+  <a href="/faq/" class="tile reveal">
+    <img src="images_/card5.png" alt="">
+    <div class="tile-overlay">
+      <h3>FAQ</h3>
+      <p>Common questions answered</p>
+      <span>Learn more →</span>
+    </div>
+  </a>
+
+</section>
+
+<section class="group-status reveal" id="group-status">
+  <div class="group-status-inner">
+    <div class="group-status-copy">
+      <h2>Roblox Group Status</h2>
+      <p>Live stats from the Queensland Interactive Roblox group.</p>
+      <a class="status-link" id="group-status-link" href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank">View group</a>
+    </div>
+    <div class="group-status-cards">
+      <div class="status-card">
+        <span class="status-label">Group Members</span>
+        <strong id="group-member-count">Loading...</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Active People</span>
+        <strong id="group-active-count">Loading...</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Games</span>
+        <strong id="group-games-count">Loading...</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tiktok-status reveal" id="tiktok-status">
+  <div class="tiktok-status-inner">
+    <div class="tiktok-status-copy">
+      <h2>TikTok Stats</h2>
+      <p>Latest stats from @qldinteractive on TikTok.</p>
+      <a class="status-link" id="tiktok-status-link" href="https://www.tiktok.com/@qldinteractive" target="_blank">View TikTok</a>
+    </div>
+    <div class="tiktok-status-cards">
+      <div class="status-card">
+        <span class="status-label">Followers</span>
+        <strong id="tiktok-followers">Loading...</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Total Likes</span>
+        <strong id="tiktok-likes">Loading...</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Videos</span>
+        <strong id="tiktok-videos">Loading...</strong>
+      </div>
+    </div>
+  </div>
 </section>
 
 <!-- ABOUT -->
-<section id="about" class="about">
+<section id="about" class="about reveal">
   <h2>About Queensland Interactive</h2>
   <p>
     Queensland Interactive is a Roblox community focused on realism,
@@ -167,8 +439,41 @@ document.getElementById('dismiss-btn').addEventListener('click', () => {
   </p>
 </section>
 
-<footer>
-  © 2026 Queensland Interactive
+<footer class="site-footer reveal">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <strong>Queensland Interactive</strong>
+      <p>Roblox community focused on realism, professionalism, and immersive Queensland-inspired experiences.</p>
+    </div>
+    <div class="footer-links">
+      <h4>More info</h4>
+      <a href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a>
+      <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank">Roblox Community</a>
+      <a href="/licence">Licence</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <a href="mailto:support@queenslandinteractive-rblx.com">support@queenslandinteractive-rblx.com</a>
+      <a href="mailto:copyright@queenslandinteractive-rblx.com">copyright@queenslandinteractive-rblx.com</a>
+    </div>
+    <div class="footer-social">
+      <h4>Social</h4>
+      <div class="social-icons">
+        <a class="social-icon" href="https://discord.gg/kUf97PV9H3" target="_blank" aria-label="Discord">
+          <img src="images_/discord-logo.png" alt="Discord">
+        </a>
+        <a class="social-icon" href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" aria-label="Roblox">
+          <img src="images_/roblox-icon.png" alt="Roblox">
+        </a>
+      </div>
+    </div>
+    <div class="footer-ack">
+      <h4>Acknowledgement</h4>
+      <p>We acknowledge the First Nations peoples of Australia, the traditional custodians of the land, seas, skies and waterways on which we reside, work, travel and meet.</p>
+      <p>We pay our respect to First Nations elders past, present, and emerging, and support the Uluru Statement From The Heart. We acknowledge that the land, seas, skies and waterways of Australia were, are and always will be, that of the First Nations peoples.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 Queensland Interactive</div>
 </footer>
 
 </body>
