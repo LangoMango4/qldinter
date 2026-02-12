@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qldinter-v2';
+const CACHE_NAME = 'qldinter-v3';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -17,7 +17,8 @@ const urlsToCache = [
   '/faq/',
   '/ourteam/',
   '/licence.html',
-  '/tos.html'
+  '/tos.html',
+  '/banned-users.html'
 ];
 
 // Install event - cache resources

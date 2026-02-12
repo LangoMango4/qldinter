@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1e90ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Banned Users - Queensland Interactive</title>
+  <link rel="icon" href="./mainico.png">
+  <link rel="apple-touch-icon" href="./mainico.png">
+  <link rel="manifest" href="./manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  
+  <!-- Error handling -->
+  <script>
+    window.addEventListener('error', function(event) {
+      console.error('Error caught:', event.error);
+      window.location.href = '/error/?type=' + encodeURIComponent('JavaScript Error: ' + event.error.message);
+    });
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('Unhandled rejection:', event.reason);
+      window.location.href = '/error/?type=' + encodeURIComponent('Promise Rejection: ' + event.reason);
+    });
+    let pageLoaded = false;
+    setTimeout(() => {
+      if (!pageLoaded) {
+        window.location.href = '/error/?type=' + encodeURIComponent('Page Load Timeout');
+      }
+    }, 15000);
+    window.addEventListener('load', function() {
+      pageLoaded = true;
+    });
+  </script>
+  
+  <script defer src="./navigation.js"></script>
+  <script defer src="./notifications.js"></script>
+
+  <style>
+    .banned-users-page {
+      padding-top: 80px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    }
+
+    .banned-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .banned-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .banned-header h1 {
+      font-size: 2.5rem;
+      color: #dc3545;
+      margin-bottom: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    .banned-header .ban-icon {
+      font-size: 3rem;
+    }
+
+    .banned-header p {
+      color: #666;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      margin-bottom: 50px;
+    }
+
+    .info-card {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .info-card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+
+    .info-card h3 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .info-card p {
+      color: #666;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .trello-section {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 40px;
+    }
+
+    .trello-section h2 {
+      color: #1e90ff;
+      margin-bottom: 20px;
+      font-size: 1.8rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .trello-embed {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 8px;
+      background: #f8f9fa;
+    }
+
+    .trello-link-box {
+      background: linear-gradient(135deg, #1e90ff 0%, #0066cc 100%);
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      color: white;
+      margin-top: 30px;
+    }
+
+    .trello-link-box h3 {
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+    }
+
+    .trello-link-box p {
+      margin-bottom: 20px;
+      opacity: 0.95;
+    }
+
+    .trello-button {
+      display: inline-block;
+      background: white;
+      color: #1e90ff;
+      padding: 14px 32px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .trello-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+      background: #f8f9fa;
+    }
+
+    .appeal-section {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 25px;
+      border-radius: 8px;
+      margin-top: 30px;
+    }
+
+    .appeal-section h3 {
+      color: #856404;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .appeal-section p {
+      color: #856404;
+      line-height: 1.7;
+      margin-bottom: 15px;
+    }
+
+    .appeal-section a {
+      color: #856404;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .appeal-section a:hover {
+      color: #533f03;
+    }
+
+    .setup-instructions {
+      background: #e3f2fd;
+      padding: 30px;
+      border-radius: 12px;
+      margin-top: 30px;
+      border-left: 4px solid #1e90ff;
+    }
+
+    .setup-instructions h3 {
+      color: #1e90ff;
+      margin-bottom: 20px;
+      font-size: 1.4rem;
+    }
+
+    .setup-instructions ol {
+      margin-left: 20px;
+      color: #555;
+      line-height: 2;
+    }
+
+    .setup-instructions li {
+      margin-bottom: 10px;
+    }
+
+    .setup-instructions code {
+      background: rgba(30, 144, 255, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      color: #0066cc;
+    }
+
+    @media (max-width: 768px) {
+      .banned-header h1 {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .banned-header .ban-icon {
+        font-size: 2.5rem;
+      }
+
+      .trello-section {
+        padding: 20px;
+      }
+
+      .trello-embed {
+        height: 500px;
+      }
+
+      .info-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .setup-instructions {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <a href="/" class="logo">
+    <img src="./mainico.png" alt="QI Logo" class="logo-img">
+    <span>Queensland Interactive</span>
+  </a>
+  
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  
+  <ul id="nav-menu">
+    <li><a href="/#about">About</a></li>
+    <li><a href="/#sections">Community</a></li>
+    <li><a href="/ourteam/">Team</a></li>
+    <li><a href="/faq/">FAQ</a></li>
+    <li><a href="/banned-users.html">Banned Users</a></li>
+    <li><a href="/tos.html">TOS</a></li>
+    <li><a href="/licence">Licence</a></li>
+    <li><a class="cta" href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a></li>
+  </ul>
+</nav>
+
+<div class="banned-users-page">
+  <div class="banned-container">
+    <div class="banned-header">
+      <h1>
+        <span class="ban-icon">🚫</span>
+        Banned Users
+      </h1>
+      <p>
+        Transparency is important to us. Below you'll find a list of all currently banned users 
+        from Queensland Interactive, along with their ban reasons and durations.
+      </p>
+    </div>
+
+    <!-- Info Cards -->
+    <div class="info-cards">
+      <div class="info-card">
+        <div class="icon">⚖️</div>
+        <h3>Fair & Transparent</h3>
+        <p>All bans are issued fairly and documented publicly for community transparency.</p>
+      </div>
+      <div class="info-card">
+        <div class="icon">📋</div>
+        <h3>Clear Reasons</h3>
+        <p>Each ban includes a detailed reason explaining the violation and rule broken.</p>
+      </div>
+      <div class="info-card">
+        <div class="icon">🔄</div>
+        <h3>Appeal Process</h3>
+        <p>Believe your ban was unfair? You have the right to appeal through our Discord.</p>
+      </div>
+    </div>
+
+    <!-- Trello Board Section -->
+    <div class="trello-section">
+      <h2>📊 Current Banned Users List</h2>
+      
+      <!-- Instructions for setting up -->
+      <div class="setup-instructions">
+        <h3>🔧 Setup Instructions for Admins</h3>
+        <p>To display your Trello board here, follow these steps:</p>
+        <ol>
+          <li>Open your Trello board with banned users</li>
+          <li>Click "Share" in the top right</li>
+          <li>Make the board public or get the share link</li>
+          <li>Click the three dots menu (•••) and select "Print and Export"</li>
+          <li>Choose "Publish to web..." or copy the board ID from the URL</li>
+          <li>Replace <code>YOUR_BOARD_ID_HERE</code> below with your actual board ID</li>
+          <li>The board ID is in your Trello URL: <code>trello.com/b/<strong>YOUR_BOARD_ID</strong>/board-name</code></li>
+        </ol>
+        <p style="margin-top: 15px;">
+          <strong>Alternative:</strong> If you want to link directly to your Trello board instead of embedding it, 
+          update the Trello button URL below.
+        </p>
+      </div>
+
+      <!-- Embedded Trello Board (replace YOUR_BOARD_ID_HERE) -->
+      <div style="margin-top: 30px;">
+        <iframe 
+          class="trello-embed" 
+          id="trello-board"
+          src="about:blank"
+          loading="lazy">
+        </iframe>
+      </div>
+
+      <script>
+        // To display your Trello board, replace 'YOUR_BOARD_ID_HERE' with your actual Trello board ID
+        const TRELLO_BOARD_ID = 'YOUR_BOARD_ID_HERE';
+        
+        // If you have a board ID, load it
+        if (TRELLO_BOARD_ID && TRELLO_BOARD_ID !== 'YOUR_BOARD_ID_HERE') {
+          document.getElementById('trello-board').src = 
+            `https://trello.com/b/${TRELLO_BOARD_ID}.html`;
+        } else {
+          // Show placeholder message
+          const iframe = document.getElementById('trello-board');
+          iframe.style.display = 'none';
+          iframe.insertAdjacentHTML('afterend', `
+            <div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #ddd;">
+              <div style="font-size: 3rem; margin-bottom: 20px;">📋</div>
+              <h3 style="color: #666; margin-bottom: 10px;">Trello Board Not Configured</h3>
+              <p style="color: #999;">Please follow the setup instructions above to display your banned users list.</p>
+            </div>
+          `);
+        }
+      </script>
+
+      <!-- Link to Trello Board -->
+      <div class="trello-link-box">
+        <h3>View Full Trello Board</h3>
+        <p>Click below to view the complete banned users list on Trello with all details and history.</p>
+        <a href="#" class="trello-button" id="trello-link" target="_blank" rel="noopener noreferrer">
+          Open Trello Board
+        </a>
+      </div>
+
+      <script>
+        // Update the button link
+        const trelloLink = document.getElementById('trello-link');
+        if (TRELLO_BOARD_ID && TRELLO_BOARD_ID !== 'YOUR_BOARD_ID_HERE') {
+          trelloLink.href = `https://trello.com/b/${TRELLO_BOARD_ID}`;
+        } else {
+          // Default link for demo - replace with your actual Trello board URL
+          trelloLink.href = 'https://trello.com';
+          trelloLink.textContent = 'Configure Trello Board First';
+          trelloLink.style.opacity = '0.6';
+          trelloLink.style.cursor = 'not-allowed';
+          trelloLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('Please configure your Trello board ID in the banned-users.html file first.');
+          });
+        }
+      </script>
+    </div>
+
+    <!-- Appeal Section -->
+    <div class="appeal-section">
+      <h3>
+        <span>⚠️</span>
+        Think Your Ban Was Unfair?
+      </h3>
+      <p>
+        If you believe you were banned unfairly or wish to appeal your ban, please follow our official 
+        appeal process. All appeals are reviewed by senior staff members.
+      </p>
+      <p>
+        <strong>To submit an appeal:</strong> Join our 
+        <a href="https://discord.gg/kUf97PV9H3" target="_blank">Discord Server</a> 
+        and create a ticket in the support channel. Provide your username, ban reason, 
+        and explanation for why you believe the ban should be lifted.
+      </p>
+      <p style="margin-bottom: 0;">
+        Please note: Appeals for serious violations (hacking, harassment, etc.) are rarely approved. 
+        Be respectful and honest in your appeal.
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="./maintenance.js"></script>
+<script src="./config.js"></script>
+
+</body>
+</html>
