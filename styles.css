@@ -626,25 +626,27 @@ body {
   }
   
   .logo {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     gap: 8px;
+    z-index: 101;
   }
   
   .logo-img {
-    height: 36px !important;
-    width: 36px !important;
-    min-height: 36px !important;
-    min-width: 36px !important;
-    max-height: 36px !important;
-    max-width: 36px !important;
+    height: 40px !important;
+    width: 40px !important;
+    min-height: 40px !important;
+    min-width: 40px !important;
+    max-height: 40px !important;
+    max-width: 40px !important;
   }
   
   .logo span {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
   
   .hamburger {
-    display: flex;
+    display: flex !important;
   }
   
   .navbar ul {
@@ -659,8 +661,10 @@ body {
     text-align: center;
     transition: left 0.3s ease;
     padding: 40px 0;
-    gap: 0;
+    gap: 0 !important;
     z-index: 99;
+    margin: 0;
+    list-style: none;
   }
   
   .navbar ul.active {

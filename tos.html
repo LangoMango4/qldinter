@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1e90ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Terms of Service - Queensland Interactive</title>
+  <link rel="icon" href="./mainico.png">
+  <link rel="apple-touch-icon" href="./mainico.png">
+  <link rel="manifest" href="./manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  
+  <!-- Error handling -->
+  <script>
+    window.addEventListener('error', function(event) {
+      console.error('Error caught:', event.error);
+      window.location.href = '/error/?type=' + encodeURIComponent('JavaScript Error: ' + event.error.message);
+    });
+    window.addEventListener('unhandledrejection', function(event) {
+      console.error('Unhandled rejection:', event.reason);
+      window.location.href = '/error/?type=' + encodeURIComponent('Promise Rejection: ' + event.reason);
+    });
+    let pageLoaded = false;
+    setTimeout(() => {
+      if (!pageLoaded) {
+        window.location.href = '/error/?type=' + encodeURIComponent('Page Load Timeout');
+      }
+    }, 15000);
+    window.addEventListener('load', function() {
+      pageLoaded = true;
+    });
+  </script>
+  
+  <script defer src="./navigation.js"></script>
+
+  <style>
+    .tos-page {
+      padding-top: 80px;
+      min-height: 100vh;
+      background: #f8f9fa;
+    }
+
+    .tos-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .tos-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .tos-header h1 {
+      font-size: 2.5rem;
+      color: #1e90ff;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .tos-header p {
+      color: #666;
+      font-size: 1rem;
+    }
+
+    .tos-last-updated {
+      text-align: center;
+      color: #999;
+      font-size: 0.9rem;
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+
+    .tos-content {
+      background: white;
+      padding: 50px;
+      border-radius: 12px;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .tos-section {
+      margin-bottom: 40px;
+    }
+
+    .tos-section h2 {
+      font-size: 1.8rem;
+      color: #1e90ff;
+      margin-bottom: 20px;
+      font-weight: 600;
+      border-left: 4px solid #1e90ff;
+      padding-left: 20px;
+    }
+
+    .tos-section h3 {
+      font-size: 1.3rem;
+      color: #333;
+      margin: 25px 0 15px;
+      font-weight: 600;
+    }
+
+    .tos-section p {
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 15px;
+      font-size: 1rem;
+    }
+
+    .tos-section ul {
+      margin: 15px 0 15px 20px;
+      color: #555;
+      line-height: 1.8;
+    }
+
+    .tos-section li {
+      margin-bottom: 10px;
+    }
+
+    .tos-important {
+      background: #fff3cd;
+      border-left: 4px solid #f39c12;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 4px;
+    }
+
+    .tos-important strong {
+      color: #f39c12;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .tos-contact {
+      background: #e3f2fd;
+      padding: 25px;
+      border-radius: 8px;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .tos-contact h3 {
+      color: #1e90ff;
+      margin-bottom: 15px;
+    }
+
+    .tos-contact p {
+      margin-bottom: 20px;
+    }
+
+    .tos-contact a {
+      display: inline-block;
+      background: #1e90ff;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .tos-contact a:hover {
+      background: #0066cc;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30, 144, 255, 0.3);
+    }
+
+    @media (max-width: 768px) {
+      .tos-header h1 {
+        font-size: 2rem;
+      }
+
+      .tos-content {
+        padding: 30px 20px;
+      }
+
+      .tos-section h2 {
+        font-size: 1.5rem;
+      }
+
+      .tos-section h3 {
+        font-size: 1.2rem;
+      }
+
+      .tos-section p, .tos-section li {
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <a href="/" class="logo">
+    <img src="./mainico.png" alt="QI Logo" class="logo-img">
+    <span>Queensland Interactive</span>
+  </a>
+  
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  
+  <ul id="nav-menu">
+    <li><a href="/#about">About</a></li>
+    <li><a href="/#sections">Community</a></li>
+    <li><a href="/ourteam/">Team</a></li>
+    <li><a href="/faq/">FAQ</a></li>
+    <li><a href="/tos.html">TOS</a></li>
+    <li><a href="/licence">Licence</a></li>
+    <li><a class="cta" href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a></li>
+  </ul>
+</nav>
+
+<div class="tos-page">
+  <div class="tos-container">
+    <div class="tos-header">
+      <h1>Terms of Service</h1>
+      <p>Please read these terms carefully before using Queensland Interactive services</p>
+    </div>
+
+    <div class="tos-last-updated">
+      Last Updated: February 12, 2026
+    </div>
+
+    <div class="tos-content">
+      
+      <!-- Acceptance of Terms -->
+      <div class="tos-section">
+        <h2>1. Acceptance of Terms</h2>
+        <p>
+          By accessing and using Queensland Interactive's Roblox game, website, Discord server, or any other services 
+          (collectively, "Services"), you agree to be bound by these Terms of Service ("Terms"). If you do not agree 
+          to these Terms, please do not use our Services.
+        </p>
+        <p>
+          We reserve the right to modify these Terms at any time. Continued use of our Services after changes 
+          constitutes acceptance of the modified Terms.
+        </p>
+      </div>
+
+      <!-- Roblox Game Terms -->
+      <div class="tos-section">
+        <h2>2. Roblox Game Terms</h2>
+        
+        <h3>2.1 Game Access</h3>
+        <p>
+          Access to Queensland Interactive's Roblox game is subject to Roblox's Terms of Service and our community guidelines. 
+          We reserve the right to restrict or terminate access to any player at our discretion.
+        </p>
+
+        <h3>2.2 In-Game Conduct</h3>
+        <p>When participating in our Roblox game, you agree to:</p>
+        <ul>
+          <li>Follow all roleplay rules and server guidelines</li>
+          <li>Treat other players with respect and courtesy</li>
+          <li>Not exploit, hack, or use unauthorized modifications</li>
+          <li>Not harass, bully, or discriminate against other players</li>
+          <li>Not share inappropriate content or language</li>
+          <li>Follow instructions from game staff and moderators</li>
+          <li>Report bugs and exploits rather than abusing them</li>
+        </ul>
+
+        <h3>2.3 Game Content</h3>
+        <p>
+          All game content, including but not limited to scripts, models, designs, and intellectual property, 
+          is owned by Queensland Interactive. Unauthorized copying, distribution, or modification is prohibited.
+        </p>
+
+        <h3>2.4 Virtual Items and Currency</h3>
+        <p>
+          Any virtual items, currency, or rewards obtained in-game have no real-world value and cannot be 
+          exchanged for real money. We are not responsible for lost or stolen virtual items.
+        </p>
+
+        <div class="tos-important">
+          <strong>Important Notice:</strong>
+          <p>Violations of in-game rules may result in warnings, temporary bans, or permanent removal from the game 
+          without refund or compensation.</p>
+        </div>
+      </div>
+
+      <!-- Website Terms -->
+      <div class="tos-section">
+        <h2>3. Website Terms</h2>
+
+        <h3>3.1 Website Use</h3>
+        <p>
+          Our website (qldinter.com or associated domains) is provided for informational and community purposes. 
+          You agree not to:
+        </p>
+        <ul>
+          <li>Attempt to gain unauthorized access to any part of the website</li>
+          <li>Interfere with the website's operation or security</li>
+          <li>Use automated tools to scrape or download content without permission</li>
+          <li>Post malicious code, viruses, or harmful content</li>
+          <li>Impersonate staff members or other users</li>
+        </ul>
+
+        <h3>3.2 User Content</h3>
+        <p>
+          If you submit content to our website (comments, forms, etc.), you grant us a non-exclusive, 
+          royalty-free license to use, modify, and display that content. You retain ownership of your content.
+        </p>
+
+        <h3>3.3 Privacy</h3>
+        <p>
+          We collect minimal data necessary for website functionality. We do not sell personal information 
+          to third parties. By using our website, you consent to our data collection practices as outlined 
+          in our Privacy Policy.
+        </p>
+      </div>
+
+      <!-- Discord Server Terms -->
+      <div class="tos-section">
+        <h2>4. Discord Server Terms</h2>
+
+        <h3>4.1 Server Rules</h3>
+        <p>Our Discord server is subject to Discord's Terms of Service and Community Guidelines, as well as our own rules:</p>
+        <ul>
+          <li>Be respectful to all members and staff</li>
+          <li>No spam, excessive pings, or self-promotion without permission</li>
+          <li>Keep content appropriate for all ages (PG-13)</li>
+          <li>No doxxing, leaking personal information, or invasion of privacy</li>
+          <li>Follow channel-specific guidelines</li>
+          <li>No advertising other Discord servers or communities without approval</li>
+          <li>Listen to moderators and staff instructions</li>
+        </ul>
+
+        <h3>4.2 Moderation</h3>
+        <p>
+          Our staff reserves the right to moderate content, issue warnings, timeout, kick, or ban users 
+          who violate server rules. Decisions are made at staff discretion.
+        </p>
+
+        <h3>4.3 Roles and Permissions</h3>
+        <p>
+          Discord roles are granted based on game participation, activity, or staff positions. 
+          Roles can be modified or removed at any time.
+        </p>
+      </div>
+
+      <!-- Staff and Moderation -->
+      <div class="tos-section">
+        <h2>5. Staff and Moderation</h2>
+
+        <h3>5.1 Staff Authority</h3>
+        <p>
+          Queensland Interactive staff members have authority to enforce rules across all our platforms. 
+          Staff decisions should be respected, though you may appeal decisions through appropriate channels.
+        </p>
+
+        <h3>5.2 Staff Conduct</h3>
+        <p>
+          Staff members are held to high standards of conduct. If you believe a staff member has acted 
+          inappropriately, please report it to senior administration through our official channels.
+        </p>
+      </div>
+
+      <!-- Intellectual Property -->
+      <div class="tos-section">
+        <h2>6. Intellectual Property</h2>
+        <p>
+          All content created by Queensland Interactive, including logos, graphics, game assets, website 
+          design, and documentation, is protected by copyright and intellectual property laws.
+        </p>
+        <p>
+          You may not use our intellectual property without explicit written permission. Fair use for 
+          community content (screenshots, gameplay videos) is permitted with proper attribution.
+        </p>
+      </div>
+
+      <!-- Liability and Disclaimers -->
+      <div class="tos-section">
+        <h2>7. Liability and Disclaimers</h2>
+
+        <h3>7.1 Service Availability</h3>
+        <p>
+          We strive to provide consistent service but do not guarantee uninterrupted access. 
+          Services may be temporarily unavailable for maintenance, updates, or unforeseen issues.
+        </p>
+
+        <h3>7.2 Limitation of Liability</h3>
+        <p>
+          Queensland Interactive is not liable for any damages arising from use of our Services, 
+          including but not limited to loss of data, interruption of service, or unauthorized access.
+        </p>
+
+        <h3>7.3 Third-Party Services</h3>
+        <p>
+          Our Services may link to or integrate with third-party platforms (Roblox, Discord, etc.). 
+          We are not responsible for the content, policies, or practices of these third parties.
+        </p>
+      </div>
+
+      <!-- Age Requirements -->
+      <div class="tos-section">
+        <h2>8. Age Requirements</h2>
+        <p>
+          You must be at least 13 years old to use our Services, in compliance with Roblox and Discord 
+          age requirements. Users under 18 should have parental consent.
+        </p>
+        <div class="tos-important">
+          <strong>Parental Notice:</strong>
+          <p>
+            Parents and guardians are encouraged to monitor their children's online activities. 
+            Please contact us if you have concerns about your child's participation in our community.
+          </p>
+        </div>
+      </div>
+
+      <!-- Termination -->
+      <div class="tos-section">
+        <h2>9. Termination</h2>
+        <p>
+          We reserve the right to terminate or suspend access to our Services at any time, with or without 
+          notice, for violations of these Terms or other reasons at our discretion.
+        </p>
+        <p>
+          You may discontinue use of our Services at any time. Upon termination, your access rights 
+          immediately cease.
+        </p>
+      </div>
+
+      <!-- Changes to Services -->
+      <div class="tos-section">
+        <h2>10. Changes to Services</h2>
+        <p>
+          We reserve the right to modify, suspend, or discontinue any aspect of our Services at any time 
+          without prior notice. We are not liable for any modifications or discontinuation of Services.
+        </p>
+      </div>
+
+      <!-- Governing Law -->
+      <div class="tos-section">
+        <h2>11. Governing Law</h2>
+        <p>
+          These Terms are governed by and construed in accordance with the laws of Queensland, Australia. 
+          Any disputes shall be resolved in the appropriate courts of Queensland.
+        </p>
+      </div>
+
+      <!-- Contact Information -->
+      <div class="tos-contact">
+        <h3>Questions About These Terms?</h3>
+        <p>If you have questions or concerns about these Terms of Service, please contact us:</p>
+        <a href="https://discord.gg/kUf97PV9H3" target="_blank">Join Our Discord</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="./maintenance.js"></script>
+<script src="./config.js"></script>
+
+</body>
+</html>
