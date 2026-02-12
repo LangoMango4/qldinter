@@ -4,8 +4,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1e90ff">
+  <meta name="description" content="Queensland Interactive - Roblox Roleplay Community">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="QLDInter">
   <title>Queensland Interactive</title>
   <link rel="icon" href="./mainico.png">
+  <link rel="apple-touch-icon" href="./mainico.png">
+  <link rel="manifest" href="./manifest.json">
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
@@ -35,6 +42,19 @@
     window.addEventListener('load', function() {
       pageLoaded = true;
     });
+
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then((registration) => {
+            console.log('ServiceWorker registered:', registration.scope);
+          })
+          .catch((error) => {
+            console.log('ServiceWorker registration failed:', error);
+          });
+      });
+    }
   </script>
 
   <script src="./config.js"></script>
@@ -42,6 +62,7 @@
   <script defer src="./hero-slider.js"></script>
   <script defer src="./roblox-data.js"></script>
   <script defer src="./turnstile.js"></script>
+  <script defer src="./pwa-install.js"></script>
   
   <!-- Cloudflare Turnstile -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
