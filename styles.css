@@ -100,6 +100,40 @@ body {
   border-radius: 20px;
 }
 
+/* HAMBURGER MENU */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 30px;
+  height: 21px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 101;
+}
+
+.hamburger span {
+  width: 100%;
+  height: 3px;
+  background: white;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
 /* SCROLL REVEAL */
 .reveal {
   opacity: 0;
@@ -588,6 +622,86 @@ body {
 @media (max-width: 768px) {
   .navbar {
     padding: 14px 20px;
+    height: 60px;
+  }
+  
+  .logo {
+    font-size: 0.9rem;
+    gap: 8px;
+  }
+  
+  .logo-img {
+    height: 36px !important;
+    width: 36px !important;
+    min-height: 36px !important;
+    min-width: 36px !important;
+    max-height: 36px !important;
+    max-width: 36px !important;
+  }
+  
+  .logo span {
+    font-size: 0.95rem;
+  }
+  
+  .hamburger {
+    display: flex;
+  }
+  
+  .navbar ul {
+    position: fixed;
+    left: -100%;
+    top: 60px;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.98);
+    backdrop-filter: blur(20px);
+    width: 100%;
+    height: calc(100vh - 60px);
+    text-align: center;
+    transition: left 0.3s ease;
+    padding: 40px 0;
+    gap: 0;
+    z-index: 99;
+  }
+  
+  .navbar ul.active {
+    left: 0;
+  }
+  
+  .navbar ul li {
+    width: 100%;
+    padding: 0;
+  }
+  
+  .navbar ul a {
+    display: block;
+    padding: 18px 30px;
+    font-size: 1.1rem;
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar ul a::after {
+    display: none;
+  }
+  
+  .navbar ul a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transform: none;
+  }
+  
+  .navbar .cta {
+    background: #1e90ff;
+    color: white !important;
+    border-radius: 8px;
+    margin: 20px 30px;
+    padding: 14px 24px;
+    font-size: 1rem;
+    display: inline-block;
+    width: auto;
+  }
+  
+  .navbar .cta:hover {
+    background: #0066cc;
   }
 
   .topbar {
@@ -613,6 +727,16 @@ body {
     width: 100%;
     max-width: 260px;
   }
+  
+  .hero-btn {
+    padding: 12px 28px;
+    font-size: 1rem;
+  }
+  
+  .btn {
+    padding: 12px 24px;
+    font-size: 0.95rem;
+  }
 
   .about {
     padding: 80px 10%;
@@ -628,6 +752,23 @@ body {
 
   .team-page {
     padding-top: 90px;
+  }
+  
+  .discover-vertical {
+    left: 20px;
+    bottom: 80px;
+    font-size: 0.85rem;
+  }
+  
+  /* PWA Install Button Mobile */
+  #pwa-install-button {
+    bottom: 10px !important;
+    right: 10px !important;
+    left: 10px !important;
+    width: calc(100% - 20px) !important;
+    justify-content: center !important;
+    padding: 14px 20px !important;
+    font-size: 15px !important;
   }
 }
 /* ========================= */

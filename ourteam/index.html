@@ -36,6 +36,7 @@
   <script src="../config.js"></script>
   <script defer src="../roblox-data.js"></script>
   <script defer src="../turnstile.js"></script>
+  <script defer src="../navigation.js"></script>
   
   <!-- Cloudflare Turnstile -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -46,7 +47,14 @@
       <img src="../mainico.png" alt="QI Logo" class="logo-img">
       <span>Queensland Interactive</span>
     </a>
-    <ul>
+    
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    
+    <ul id="nav-menu">
       <li><a href="/#about">About</a></li>
       <li><a href="/#sections">Community</a></li>
       <li><a href="/ourteam/">Team</a></li>
