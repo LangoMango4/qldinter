@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qldinter-v3';
+const CACHE_NAME = 'qldinter-v4';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -6,7 +6,6 @@ const urlsToCache = [
   '/animations.js',
   '/hero-slider.js',
   '/roblox-data.js',
-  '/turnstile.js',
   '/config.js',
   '/maintenance.js',
   '/navigation.js',
@@ -18,7 +17,8 @@ const urlsToCache = [
   '/ourteam/',
   '/licence.html',
   '/tos.html',
-  '/banned-users.html'
+  '/banned-users.html',
+  '/feedback.html'
 ];
 
 // Install event - cache resources

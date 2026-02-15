@@ -6,6 +6,7 @@ const GROUP_ID = 35458162;
 const TIKTOK_HANDLE = "qldinteractive";
 const TIKTOK_URL = `https://www.tiktok.com/@${TIKTOK_HANDLE}`;
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || "";
+const CAPTCHA_SECRET = process.env.CAPTCHA_SECRET || "";
 app.use(express.json());
 
 const fetchJson = async (url) => {
@@ -187,11 +188,40 @@ app.get("/api/tiktok-stats", async (req, res) => {
 
 app.post("/api/feedback", async (req, res) => {
   try {
-    const { type, username, title, description, severity } = req.body;
+    const { type, username, title, description, severity, captchaToken } = req.body;
 
     // Validate required fields
     if (!type || !username || !title || !description) {
       return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Verify Turnstile captcha token if secret is configured and token provided
+    if (CAPTCHA_SECRET && captchaToken) {
+      try {
+        const verifyResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            secret: CAPTCHA_SECRET,
+            response: captchaToken
+          })
+        });
+
+        const verifyData = await verifyResponse.json();
+        
+        if (!verifyData.success) {
+          console.error('Captcha verification failed:', verifyData);
+          return res.status(400).json({ error: "Captcha verification failed" });
+        }
+        
+        console.log('Captcha verification successful');
+      } catch (error) {
+        console.error('Captcha verification error:', error);
+        // Continue anyway if verification service is unavailable
+        console.log('Continuing without captcha verification due to service error');
+      }
     }
 
     // Check if webhook URL is configured
@@ -211,22 +241,22 @@ app.post("/api/feedback", async (req, res) => {
     // Create Discord embed
     const embed = {
       embeds: [{
-        title: `${type === "bug" ? "🐛 Bug Report" : "💡 Feedback"}: ${title}`,
+        title: `${type === "bug" ? "Bug Report" : "Feedback"}: ${title}`,
         description: description,
         color: color,
         fields: [
           {
-            name: "👤 Username",
+            name: "Username",
             value: username,
             inline: true
           },
           {
-            name: "⚡ Priority",
+            name: "Priority",
             value: severity.charAt(0).toUpperCase() + severity.slice(1),
             inline: true
           },
           {
-            name: "📅 Submitted",
+            name: "Submitted",
             value: new Date().toLocaleString(),
             inline: false
           }

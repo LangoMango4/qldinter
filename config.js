@@ -20,8 +20,9 @@ window.SITE_CONFIG = {
   
   // Cloudflare Turnstile
   // Get your site key from: https://dash.cloudflare.com/?to=/:account/turnstile
-  // Set to empty string "" to disable Turnstile
-  turnstileSiteKey: "0x4AAAAAACag3Ptpt7rqJlR6", // Replace with your actual site key
+  // Set to empty string "" to disable Turnstile (will skip captcha verification)
+  // Note: If Turnstile is unavailable or fails to load, users can skip after 3 seconds
+  turnstileSiteKey: "", // Replace with your actual site key or leave empty to disable
   
   // Team member bios (keyed by Roblox user ID)
   teamBios: {

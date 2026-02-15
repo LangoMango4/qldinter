@@ -269,10 +269,6 @@
       color: #555;
     }
 
-    .ban-meta-item .emoji {
-      font-size: 1.2rem;
-    }
-
     .no-bans {
       text-align: center;
       padding: 60px 20px;
@@ -458,15 +454,18 @@
   </button>
   ><a href="/ourteam/">Team</a></li>
     <li><a href="/faq/">FAQ</a></li>
-    <li><a href="/banned-users.html">Banned Users</a></li>
-    <li><a href="/feedback.html">Feedback</a></li>
-    <li><a href="/tos.html">TOS</a></li>
+    <li><a href="/feedback">Feedback</a></li>
+    <li><a href="/banned-users">Banned Users</a></li>
+    <li><a href="/tos">TOS</a></li>
     <li><a href="/licence">Licence</a></li>
     <li><a class="cta" href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a></li>
   </ul>
 </nav>
-h1>
-        <span class="ban-icon">🚫</span>
+
+<div class="banned-users-page">
+  <div class="banned-container">
+    <div class="banned-header">
+      <h1>
         Banned Users
       </h1>
       <p>
@@ -478,17 +477,14 @@ h1>
     <!-- Info Cards -->
     <div class="info-cards">
       <div class="info-card">
-        <div class="icon">⚖️</div>
         <h3>Fair & Transparent</h3>
         <p>All bans are issued fairly and documented publicly for community transparency.</p>
       </div>
       <div class="info-card">
-        <div class="icon">📋</div>
         <h3>Clear Reasons</h3>
         <p>Each ban includes a detailed reason explaining the violation and rule broken.</p>
       </div>
       <div class="info-card">
-        <div class="icon">🔄</div>
         <h3>Appeal Process</h3>
         <p>Believe your ban was unfair? You have the right to appeal through our Discord.</p>
       </div>
@@ -496,14 +492,13 @@ h1>
 
     <!-- Current Banned Users Section -->
     <div class="banned-list-section">
-      <h2>📋 Current Banned Users</h2>
+      <h2>Current Banned Users</h2>
       
       <!-- Example ban entries - Update these with actual bans -->
       <!-- To add a ban, copy one of these div.ban-item blocks and update the information -->
       
       <!-- No Bans Placeholder - Remove this when you have active bans -->
       <div class="no-bans">
-        <div class="icon">✅</div>
         <h3 style="color: #28a745; margin-bottom: 10px;">No Active Bans</h3>
         <p style="color: #666;">There are currently no banned users. Our community is following all rules!</p>
       </div>
@@ -512,7 +507,7 @@ h1>
       
       <div class="ban-item permanent">
         <div class="ban-header">
-          <div class="ban-username">👤 ExampleUser123</div>
+          <div class="ban-username">ExampleUser123</div>
           <span class="ban-badge permanent">Permanent Ban</span>
         </div>
         <div class="ban-details">
@@ -520,15 +515,12 @@ h1>
         </div>
         <div class="ban-meta">
           <div class="ban-meta-item">
-            <span class="emoji">📅</span>
             <span>Banned: Jan 15, 2026</span>
           </div>
           <div class="ban-meta-item">
-            <span class="emoji">👮</span>
             <span>Banned By: Senior Moderator</span>
           </div>
           <div class="ban-meta-item">
-            <span class="emoji">📜</span>
             <span>Appeal Status: Denied</span>
           </div>
         </div>
@@ -536,7 +528,7 @@ h1>
 
       <div class="ban-item temporary">
         <div class="ban-header">
-          <div class="ban-username">👤 TempBanUser456</div>
+          <div class="ban-username">TempBanUser456</div>
           <span class="ban-badge temporary">Temporary Ban</span>
         </div>
         <div class="ban-details">
@@ -544,19 +536,15 @@ h1>
         </div>
         <div class="ban-meta">
           <div class="ban-meta-item">
-            <span class="emoji">📅</span>
             <span>Banned: Feb 10, 2026</span>
           </div>
           <div class="ban-meta-item">
-            <span class="emoji">⏰</span>
             <span>Duration: 30 days</span>
           </div>
           <div class="ban-meta-item">
-            <span class="emoji">🔓</span>
             <span>Unban Date: Mar 12, 2026</span>
           </div>
           <div class="ban-meta-item">
-            <span class="emoji">👮</span>
             <span>Banned By: Moderator Team</span>
           </div>
         </div>
@@ -564,7 +552,7 @@ h1>
 
       <div class="ban-item under-review">
         <div class="ban-header">
-          <div class="ban-username">👤 AppealUser789</div>
+          <div class="ban-username">AppealUser789</div>
           <span class="ban-badge under-review">Under Review</span>
         </div>
         <div class="ban-details">
@@ -572,19 +560,15 @@ h1>
         </div>
         <div class="ban-meta">
           <div class="ban-meta-item">
-            <span class="emoji">📅</span>
             <span>Banned: Feb 5, 2026</span>
           </div>
           <div class="ban-meta-item">
-            <span class="emoji">⏰</span>
             <span>Duration: 14 days</span>
           </div>
           <div class="ban-meta-item">
-            <span class="emoji">📜</span>
             <span>Appeal: Under Review</span>
           </div>
           <div class="ban-meta-item">
-            <span class="emoji">🔍</span>
             <span>Review Started: Feb 14, 2026</span>
           </div>
         </div>
@@ -595,7 +579,7 @@ h1>
 
     <!-- Ban Types Information -->
     <div class="ban-types-info">
-      <h3>📚 Understanding Ban Types</h3>
+      <h3>Understanding Ban Types</h3>
       <p style="color: #555; line-height: 1.7; margin-bottom: 15px;">
         We have different types of bans depending on the severity of the violation. 
         Here's what each ban type means:
@@ -604,7 +588,6 @@ h1>
       <div class="ban-types-grid">
         <div class="ban-type">
           <h4>
-            <span style="color: #ffc107;">⚠️</span>
             Warning
           </h4>
           <p>
@@ -615,7 +598,6 @@ h1>
 
         <div class="ban-type">
           <h4>
-            <span style="color: #ff9800;">⏱️</span>
             Temporary Ban
           </h4>
           <p>
@@ -626,7 +608,6 @@ h1>
 
         <div class="ban-type">
           <h4>
-            <span style="color: #dc3545;">🚫</span>
             Permanent Ban
           </h4>
           <p>
@@ -637,7 +618,6 @@ h1>
 
         <div class="ban-type">
           <h4>
-            <span style="color: #17a2b8;">🔍</span>
             Under Review
           </h4>
           <p>
@@ -650,7 +630,7 @@ h1>
 
     <!-- Appeal Timeline Section -->
     <div class="appeal-timeline">
-      <h2>⏰ Ban Appeal Process & Timeline</h2>
+      <h2>Ban Appeal Process & Timeline</h2>
       <p style="text-align: center; color: #666; max-width: 700px; margin: 0 auto 20px; line-height: 1.7;">
         Wondering how long your ban appeal will take? Here's our standard appeal process and expected timelines 
         for each step. Total time from submission to decision is typically <strong>3-7 days</strong>.
@@ -665,7 +645,7 @@ h1>
               Join our Discord server and create a ticket in the support channel. Include your username, 
               ban reason, and a clear explanation of why you believe the ban should be lifted.
             </p>
-            <span class="time-estimate">⚡ Instant</span>
+            <span class="time-estimate">Instant</span>
           </div>
         </div>
 
@@ -677,7 +657,7 @@ h1>
               A moderator reviews your appeal to ensure it's complete and contains all necessary information. 
               They may ask for additional details or clarification.
             </p>
-            <span class="time-estimate">⏱️ 12-24 hours</span>
+            <span class="time-estimate">12-24 hours</span>
           </div>
         </div>
 
@@ -689,7 +669,7 @@ h1>
               The moderation team reviews logs, evidence, and your account history. For complex cases, 
               multiple staff members may discuss the situation.
             </p>
-            <span class="time-estimate">⏱️ 1-3 days</span>
+            <span class="time-estimate">1-3 days</span>
           </div>
         </div>
 
@@ -701,7 +681,7 @@ h1>
               A senior moderator or administrator reviews the investigation findings and makes a final decision. 
               They consider all evidence and your appeal statement.
             </p>
-            <span class="time-estimate">⏱️ 1-2 days</span>
+            <span class="time-estimate">1-2 days</span>
           </div>
         </div>
 
@@ -713,13 +693,13 @@ h1>
               You'll receive a detailed response explaining the decision. If approved, your ban is lifted immediately. 
               If denied, the response will explain why and outline any options for future appeals.
             </p>
-            <span class="time-estimate">⏱️ Same day</span>
+            <span class="time-estimate">Same day</span>
           </div>
         </div>
       </div>
 
       <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-top: 30px; border-left: 4px solid #ffc107;">
-        <h4 style="color: #856404; margin-bottom: 10px; font-size: 1.1rem;">📌 Important Notes</h4>
+        <h4 style="color: #856404; margin-bottom: 10px; font-size: 1.1rem;">Important Notes</h4>
         <ul style="color: #856404; line-height: 1.8; margin: 0; padding-left: 20px;">
           <li><strong>Weekend/Holiday Delays:</strong> Appeals submitted on weekends or holidays may take longer to process.</li>
           <li><strong>Rush Appeals:</strong> For urgent matters (e.g., wrongful bans), mention it in your ticket. We prioritize these.</li>
@@ -732,9 +712,8 @@ h1>
 
     <!-- Ban Information Section -->
     <div class="trello-section">
-      <h2>📊 Ban Statistics & Transparency</h2>
+      <h2>Ban Statistics & Transparency</h2>
       <div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 8px;">
-        <div style="font-size: 3rem; margin-bottom: 20px;">⚖️</div>
         <h3 style="color: #666; margin-bottom: 15px; font-size: 1.5rem;">Our Commitment to Fair Moderation</h3>
         <p style="color: #777; line-height: 1.8; max-width: 600px; margin: 0 auto;">
           All bans are issued fairly and reviewed by our moderation team. We maintain this page 
@@ -747,7 +726,6 @@ h1>
     <!-- Appeal Section -->
     <div class="appeal-section">
       <h3>
-        <span>⚠️</span>
         Need to Submit an Appeal?
       </h3>
       <p>

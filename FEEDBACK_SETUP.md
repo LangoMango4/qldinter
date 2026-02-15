@@ -6,11 +6,11 @@ The Feedback & Bug Report system allows users to submit feedback and bug reports
 
 ## Features
 
-✅ **User-Friendly Form** - Clean, responsive feedback form
-🐛 **Bug Reports** - Dedicated bug reporting with severity levels
-💡 **Feature Requests** - Collect user suggestions and feedback
-📊 **Discord Integration** - All submissions sent directly to Discord
-🎨 **Categorization** - Automatic color-coding based on type and severity
+**User-Friendly Form** - Clean, responsive feedback form
+**Bug Reports** - Dedicated bug reporting with severity levels
+**Feature Requests** - Collect user suggestions and feedback
+**Discord Integration** - All submissions sent directly to Discord
+**Categorization** - Automatic color-coding based on type and severity
 
 ## Setup Instructions
 
@@ -40,7 +40,7 @@ The Feedback & Bug Report system allows users to submit feedback and bug reports
 
 ### Step 3: Test the System
 
-1. Visit your website at `/feedback.html`
+1. Visit your website at `/feedback`
 2. Select a feedback type (Bug Report or Feedback)
 3. Fill out the form:
    - Enter your Roblox username
@@ -67,12 +67,12 @@ The Feedback & Bug Report system allows users to submit feedback and bug reports
   - Full description and title
 - Sends to Discord webhook
 - Returns success/error response to frontend
+Bug Report title in red/orange/yellow (based on severity)
+- Full description
+- Username, Priority level, Submission timestamp
 
-## Discord Embed Format
-
-Submissions appear in Discord with this format:
-
-**Bug Reports:**
+**Feedback:**
+-g Reports:**
 - 🐛 Bug Report title in red/orange/yellow (based on severity)
 - Full description
 - Username, Priority level, Submission timestamp
@@ -150,16 +150,15 @@ Simply create a new webhook in a different channel and update the `DISCORD_WEBHO
 
 ## Security Considerations
 
-✅ **Rate Limiting:** Consider adding rate limiting to prevent spam
-✅ **Input Validation:** Server validates all incoming data
-✅ **Webhook Privacy:** Never commit webhook URLs to git - always use environment variables
-✅ **CORS:** Server has CORS enabled for your domain
+**Rate Limiting:** Consider adding rate limiting to prevent spam
+**Input Validation:** Server validates all incoming data
+**Webhook Privacy:** Never commit webhook URLs to git - always use environment variables
+**CORS:** Server has CORS enabled for your domain
 
 ## Testing Checklist
 
 - [ ] Discord webhook is created
 - [ ] Railway environment variable is set
-- [ ] Server is deployed and running
 - [ ] Feedback page loads correctly
 - [ ] Can select Bug Report or Feedback type
 - [ ] Form validation works (required fields)
