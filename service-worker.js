@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qldinter-v4';
+const CACHE_NAME = 'qldinter-v7';
 const urlsToCache = [
   '/',
   '/index.html',

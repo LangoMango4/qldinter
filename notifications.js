@@ -5,8 +5,28 @@ class NotificationSystem {
     this.notifications = [
       // Add notifications here - newest first
       {
+        id: 'feedback-system-2026-02-15',
+        title: 'Found a Bug? Have Feedback?',
+        message: 'We want to hear from you! Use our new Feedback & Bug Report system to help us improve Queensland Interactive. Your input matters!',
+        type: 'announcement',
+        date: '2026-02-15',
+        persistent: false,
+        link: '/feedback',
+        linkText: 'Submit Feedback'
+      },
+      {
+        id: 'join-us-2026-02',
+        title: 'Want to Join Us?',
+        message: 'Queensland Interactive is always looking for dedicated members! Check out our community and see how you can be part of our team.',
+        type: 'info',
+        date: '2026-02-15',
+        persistent: false,
+        link: 'https://discord.gg/kUf97PV9H3',
+        linkText: 'Join Discord'
+      },
+      {
         id: 'pwa-update-2026-02-12',
-        title: '📱 Website Now Installable!',
+        title: 'Website Now Installable!',
         message: 'Queensland Interactive is now a Progressive Web App! Install it on your phone or computer for a native app experience. Look for the install button!',
         type: 'update',
         date: '2026-02-12',
@@ -49,6 +69,11 @@ class NotificationSystem {
   showNotification(notification) {
     const notifEl = document.createElement('div');
     notifEl.className = `qld-notification qld-notification-${notification.type}`;
+    
+    const linkHtml = notification.link && notification.linkText 
+      ? `<a href="${notification.link}" class="qld-notification-link" ${notification.link.startsWith('http') ? 'target="_blank"' : ''}>${notification.linkText}</a>`
+      : '';
+    
     notifEl.innerHTML = `
       <div class="qld-notification-content">
         <div class="qld-notification-header">
@@ -57,6 +82,7 @@ class NotificationSystem {
           <button class="qld-notification-close" aria-label="Close">&times;</button>
         </div>
         <p class="qld-notification-message">${notification.message}</p>
+        ${linkHtml}
         <div class="qld-notification-date">${this.formatDate(notification.date)}</div>
       </div>
     `;
@@ -66,6 +92,9 @@ class NotificationSystem {
 
     // Add to page
     document.body.appendChild(notifEl);
+
+    // Update positions of all notifications
+    this.updateNotificationPositions();
 
     // Animate in
     setTimeout(() => notifEl.classList.add('qld-notification-show'), 10);
@@ -86,12 +115,25 @@ class NotificationSystem {
     }
   }
 
+  // Update positions of all visible notifications
+  updateNotificationPositions() {
+    const notifications = document.querySelectorAll('.qld-notification');
+    let offset = 20;
+    
+    notifications.forEach((notif, index) => {
+      notif.style.top = `${offset}px`;
+      offset += notif.offsetHeight + 15; // 15px gap between notifications
+    });
+  }
+
   // Close notification with animation
   closeNotification(element, notificationId) {
     element.classList.remove('qld-notification-show');
     setTimeout(() => {
       if (element.parentNode) {
         element.parentNode.removeChild(element);
+        // Update positions after removal
+        this.updateNotificationPositions();
       }
     }, 300);
     this.markAsSeen(notificationId);
@@ -136,7 +178,7 @@ class NotificationSystem {
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
         z-index: 10000;
         transform: translateX(450px);
-        transition: transform 0.3s ease, opacity 0.3s ease;
+        transition: transform 0.3s ease, opacity 0.3s ease, top 0.3s ease;
         opacity: 0;
         font-family: 'Poppins', sans-serif;
       }
@@ -199,6 +241,23 @@ class NotificationSystem {
         font-size: 0.95rem;
       }
 
+      .qld-notification-link {
+        display: inline-block;
+        padding: 8px 16px;
+        background: #1e90ff;
+        color: white;
+        text-decoration: none;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: background 0.2s ease;
+        margin-bottom: 12px;
+      }
+
+      .qld-notification-link:hover {
+        background: #1565c0;
+      }
+
       .qld-notification-date {
         font-size: 0.85rem;
         color: #999;
@@ -242,11 +301,6 @@ class NotificationSystem {
           font-size: 0.9rem;
         }
       }
-
-      /* Stack multiple notifications */
-      .qld-notification:nth-child(n+2) {
-        margin-top: 10px;
-      }
     `;
     document.head.appendChild(style);
   }
@@ -267,7 +321,7 @@ class NotificationSystem {
     unseen.forEach((notification, index) => {
       setTimeout(() => {
         this.showNotification(notification);
-      }, index * 500); // Stagger notifications
+      }, index * 1000); // Show each notification 1 second after the previous
     });
   }
 

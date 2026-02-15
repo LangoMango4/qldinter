@@ -190,7 +190,7 @@ app.post("/api/feedback", async (req, res) => {
   try {
     const { type, username, title, description, severity, captchaToken } = req.body;
 
-    // Validate required fields
+    // Validate required fields only - content is not filtered to allow honest feedback
     if (!type || !username || !title || !description) {
       return res.status(400).json({ error: "Missing required fields" });
     }
