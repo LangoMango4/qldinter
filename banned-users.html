@@ -132,51 +132,7 @@
       text-align: center;
     }
 
-    .trello-embed {
-      width: 100%;
-      height: 600px;
-      border: none;
-      border-radius: 8px;
-      background: #f8f9fa;
-    }
 
-    .trello-link-box {
-      background: linear-gradient(135deg, #1e90ff 0%, #0066cc 100%);
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      color: white;
-      margin-top: 30px;
-    }
-
-    .trello-link-box h3 {
-      margin-bottom: 15px;
-      font-size: 1.5rem;
-    }
-
-    .trello-link-box p {
-      margin-bottom: 20px;
-      opacity: 0.95;
-    }
-
-    .trello-button {
-      display: inline-block;
-      background: white;
-      color: #1e90ff;
-      padding: 14px 32px;
-      border-radius: 30px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.05rem;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .trello-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-      background: #f8f9fa;
-    }
 
     .appeal-section {
       background: #fff3cd;
@@ -210,36 +166,233 @@
       color: #533f03;
     }
 
-    .setup-instructions {
-      background: #e3f2fd;
-      padding: 30px;
+    .banned-list-section {
+      background: white;
+      padding: 40px;
       border-radius: 12px;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 40px;
+    }
+
+    .banned-list-section h2 {
+      color: #dc3545;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .ban-item {
+      background: #f8f9fa;
+      padding: 20px 25px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 4px solid #dc3545;
+      transition: all 0.3s ease;
+    }
+
+    .ban-item:hover {
+      transform: translateX(5px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .ban-item.temporary {
+      border-left-color: #ffc107;
+    }
+
+    .ban-item.under-review {
+      border-left-color: #17a2b8;
+    }
+
+    .ban-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .ban-username {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .ban-badge {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .ban-badge.permanent {
+      background: #dc3545;
+      color: white;
+    }
+
+    .ban-badge.temporary {
+      background: #ffc107;
+      color: #333;
+    }
+
+    .ban-badge.under-review {
+      background: #17a2b8;
+      color: white;
+    }
+
+    .ban-details {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .ban-details strong {
+      color: #333;
+    }
+
+    .ban-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #dee2e6;
+    }
+
+    .ban-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    .ban-meta-item .emoji {
+      font-size: 1.2rem;
+    }
+
+    .no-bans {
+      text-align: center;
+      padding: 60px 20px;
+      color: #28a745;
+    }
+
+    .no-bans .icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    .appeal-timeline {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 40px;
+    }
+
+    .appeal-timeline h2 {
+      color: #1e90ff;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .timeline-steps {
+      display: grid;
+      gap: 20px;
       margin-top: 30px;
+    }
+
+    .timeline-step {
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
       border-left: 4px solid #1e90ff;
     }
 
-    .setup-instructions h3 {
+    .step-number {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      background: #1e90ff;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .step-content h4 {
+      color: #333;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
+    }
+
+    .step-content p {
+      color: #666;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .step-content .time-estimate {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 4px 12px;
+      background: rgba(30, 144, 255, 0.1);
+      color: #1e90ff;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .ban-types-info {
+      background: #e3f2fd;
+      padding: 30px;
+      border-radius: 12px;
+      margin-bottom: 40px;
+      border-left: 4px solid #1e90ff;
+    }
+
+    .ban-types-info h3 {
       color: #1e90ff;
       margin-bottom: 20px;
       font-size: 1.4rem;
     }
 
-    .setup-instructions ol {
-      margin-left: 20px;
-      color: #555;
-      line-height: 2;
+    .ban-types-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
     }
 
-    .setup-instructions li {
+    .ban-type {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .ban-type h4 {
+      color: #333;
       margin-bottom: 10px;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .setup-instructions code {
-      background: rgba(30, 144, 255, 0.1);
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-family: 'Courier New', monospace;
-      color: #0066cc;
+    .ban-type p {
+      color: #666;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin: 0;
     }
 
     @media (max-width: 768px) {
@@ -265,8 +418,26 @@
         grid-template-columns: 1fr;
       }
 
-      .setup-instructions {
-        padding: 20px;
+      .ban-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .ban-meta {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-step {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .step-number {
+        margin: 0 auto;
+      }
+
+      .ban-types-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -285,23 +456,16 @@
     <span></span>
     <span></span>
   </button>
-  
-  <ul id="nav-menu">
-    <li><a href="/#about">About</a></li>
-    <li><a href="/#sections">Community</a></li>
-    <li><a href="/ourteam/">Team</a></li>
+  ><a href="/ourteam/">Team</a></li>
     <li><a href="/faq/">FAQ</a></li>
     <li><a href="/banned-users.html">Banned Users</a></li>
+    <li><a href="/feedback.html">Feedback</a></li>
     <li><a href="/tos.html">TOS</a></li>
     <li><a href="/licence">Licence</a></li>
     <li><a class="cta" href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a></li>
   </ul>
 </nav>
-
-<div class="banned-users-page">
-  <div class="banned-container">
-    <div class="banned-header">
-      <h1>
+h1>
         <span class="ban-icon">🚫</span>
         Banned Users
       </h1>
@@ -330,108 +494,285 @@
       </div>
     </div>
 
-    <!-- Trello Board Section -->
-    <div class="trello-section">
-      <h2>📊 Current Banned Users List</h2>
+    <!-- Current Banned Users Section -->
+    <div class="banned-list-section">
+      <h2>📋 Current Banned Users</h2>
       
-      <!-- Instructions for setting up -->
-      <div class="setup-instructions">
-        <h3>🔧 Setup Instructions for Admins</h3>
-        <p>To display your Trello board here, follow these steps:</p>
-        <ol>
-          <li>Open your Trello board with banned users</li>
-          <li>Click "Share" in the top right</li>
-          <li>Make the board public or get the share link</li>
-          <li>Click the three dots menu (•••) and select "Print and Export"</li>
-          <li>Choose "Publish to web..." or copy the board ID from the URL</li>
-          <li>Replace <code>YOUR_BOARD_ID_HERE</code> below with your actual board ID</li>
-          <li>The board ID is in your Trello URL: <code>trello.com/b/<strong>YOUR_BOARD_ID</strong>/board-name</code></li>
-        </ol>
-        <p style="margin-top: 15px;">
-          <strong>Alternative:</strong> If you want to link directly to your Trello board instead of embedding it, 
-          update the Trello button URL below.
+      <!-- Example ban entries - Update these with actual bans -->
+      <!-- To add a ban, copy one of these div.ban-item blocks and update the information -->
+      
+      <!-- No Bans Placeholder - Remove this when you have active bans -->
+      <div class="no-bans">
+        <div class="icon">✅</div>
+        <h3 style="color: #28a745; margin-bottom: 10px;">No Active Bans</h3>
+        <p style="color: #666;">There are currently no banned users. Our community is following all rules!</p>
+      </div>
+
+      <!-- EXAMPLE BAN ENTRIES (Uncomment and modify as needed)
+      
+      <div class="ban-item permanent">
+        <div class="ban-header">
+          <div class="ban-username">👤 ExampleUser123</div>
+          <span class="ban-badge permanent">Permanent Ban</span>
+        </div>
+        <div class="ban-details">
+          <strong>Reason:</strong> Repeated harassment of community members despite multiple warnings.
+        </div>
+        <div class="ban-meta">
+          <div class="ban-meta-item">
+            <span class="emoji">📅</span>
+            <span>Banned: Jan 15, 2026</span>
+          </div>
+          <div class="ban-meta-item">
+            <span class="emoji">👮</span>
+            <span>Banned By: Senior Moderator</span>
+          </div>
+          <div class="ban-meta-item">
+            <span class="emoji">📜</span>
+            <span>Appeal Status: Denied</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ban-item temporary">
+        <div class="ban-header">
+          <div class="ban-username">👤 TempBanUser456</div>
+          <span class="ban-badge temporary">Temporary Ban</span>
+        </div>
+        <div class="ban-details">
+          <strong>Reason:</strong> Exploiting game mechanics. First offense.
+        </div>
+        <div class="ban-meta">
+          <div class="ban-meta-item">
+            <span class="emoji">📅</span>
+            <span>Banned: Feb 10, 2026</span>
+          </div>
+          <div class="ban-meta-item">
+            <span class="emoji">⏰</span>
+            <span>Duration: 30 days</span>
+          </div>
+          <div class="ban-meta-item">
+            <span class="emoji">🔓</span>
+            <span>Unban Date: Mar 12, 2026</span>
+          </div>
+          <div class="ban-meta-item">
+            <span class="emoji">👮</span>
+            <span>Banned By: Moderator Team</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ban-item under-review">
+        <div class="ban-header">
+          <div class="ban-username">👤 AppealUser789</div>
+          <span class="ban-badge under-review">Under Review</span>
+        </div>
+        <div class="ban-details">
+          <strong>Reason:</strong> Inappropriate behavior in voice channels.
+        </div>
+        <div class="ban-meta">
+          <div class="ban-meta-item">
+            <span class="emoji">📅</span>
+            <span>Banned: Feb 5, 2026</span>
+          </div>
+          <div class="ban-meta-item">
+            <span class="emoji">⏰</span>
+            <span>Duration: 14 days</span>
+          </div>
+          <div class="ban-meta-item">
+            <span class="emoji">📜</span>
+            <span>Appeal: Under Review</span>
+          </div>
+          <div class="ban-meta-item">
+            <span class="emoji">🔍</span>
+            <span>Review Started: Feb 14, 2026</span>
+          </div>
+        </div>
+      </div>
+
+      -->
+    </div>
+
+    <!-- Ban Types Information -->
+    <div class="ban-types-info">
+      <h3>📚 Understanding Ban Types</h3>
+      <p style="color: #555; line-height: 1.7; margin-bottom: 15px;">
+        We have different types of bans depending on the severity of the violation. 
+        Here's what each ban type means:
+      </p>
+      
+      <div class="ban-types-grid">
+        <div class="ban-type">
+          <h4>
+            <span style="color: #ffc107;">⚠️</span>
+            Warning
+          </h4>
+          <p>
+            First offense for minor violations. No actual ban, but recorded in your history. 
+            Three warnings may result in a temporary ban.
+          </p>
+        </div>
+
+        <div class="ban-type">
+          <h4>
+            <span style="color: #ff9800;">⏱️</span>
+            Temporary Ban
+          </h4>
+          <p>
+            7-90 days depending on severity. Issued for rule violations, exploiting, or inappropriate behavior. 
+            You can return after the duration expires.
+          </p>
+        </div>
+
+        <div class="ban-type">
+          <h4>
+            <span style="color: #dc3545;">🚫</span>
+            Permanent Ban
+          </h4>
+          <p>
+            Indefinite removal from the community. Reserved for severe violations like hacking, doxxing, 
+            harassment campaigns, or repeated offenses.
+          </p>
+        </div>
+
+        <div class="ban-type">
+          <h4>
+            <span style="color: #17a2b8;">🔍</span>
+            Under Review
+          </h4>
+          <p>
+            An appeal has been submitted and is being reviewed by senior staff. 
+            The original ban remains in effect during review.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appeal Timeline Section -->
+    <div class="appeal-timeline">
+      <h2>⏰ Ban Appeal Process & Timeline</h2>
+      <p style="text-align: center; color: #666; max-width: 700px; margin: 0 auto 20px; line-height: 1.7;">
+        Wondering how long your ban appeal will take? Here's our standard appeal process and expected timelines 
+        for each step. Total time from submission to decision is typically <strong>3-7 days</strong>.
+      </p>
+
+      <div class="timeline-steps">
+        <div class="timeline-step">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h4>Submit Your Appeal</h4>
+            <p>
+              Join our Discord server and create a ticket in the support channel. Include your username, 
+              ban reason, and a clear explanation of why you believe the ban should be lifted.
+            </p>
+            <span class="time-estimate">⚡ Instant</span>
+          </div>
+        </div>
+
+        <div class="timeline-step">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h4>Initial Review</h4>
+            <p>
+              A moderator reviews your appeal to ensure it's complete and contains all necessary information. 
+              They may ask for additional details or clarification.
+            </p>
+            <span class="time-estimate">⏱️ 12-24 hours</span>
+          </div>
+        </div>
+
+        <div class="timeline-step">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h4>Investigation</h4>
+            <p>
+              The moderation team reviews logs, evidence, and your account history. For complex cases, 
+              multiple staff members may discuss the situation.
+            </p>
+            <span class="time-estimate">⏱️ 1-3 days</span>
+          </div>
+        </div>
+
+        <div class="timeline-step">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h4>Senior Review</h4>
+            <p>
+              A senior moderator or administrator reviews the investigation findings and makes a final decision. 
+              They consider all evidence and your appeal statement.
+            </p>
+            <span class="time-estimate">⏱️ 1-2 days</span>
+          </div>
+        </div>
+
+        <div class="timeline-step">
+          <div class="step-number">5</div>
+          <div class="step-content">
+            <h4>Decision & Notification</h4>
+            <p>
+              You'll receive a detailed response explaining the decision. If approved, your ban is lifted immediately. 
+              If denied, the response will explain why and outline any options for future appeals.
+            </p>
+            <span class="time-estimate">⏱️ Same day</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="background: #fff3cd; padding: 20px; border-radius: 8px; margin-top: 30px; border-left: 4px solid #ffc107;">
+        <h4 style="color: #856404; margin-bottom: 10px; font-size: 1.1rem;">📌 Important Notes</h4>
+        <ul style="color: #856404; line-height: 1.8; margin: 0; padding-left: 20px;">
+          <li><strong>Weekend/Holiday Delays:</strong> Appeals submitted on weekends or holidays may take longer to process.</li>
+          <li><strong>Rush Appeals:</strong> For urgent matters (e.g., wrongful bans), mention it in your ticket. We prioritize these.</li>
+          <li><strong>Multiple Appeals:</strong> Submitting multiple appeals for the same ban will delay the process.</li>
+          <li><strong>Complex Cases:</strong> Bans involving multiple violations or serious offenses may take up to 10 days to review thoroughly.</li>
+          <li><strong>Permanent Ban Appeals:</strong> These receive extra scrutiny and typically take the full 7 days or longer.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Ban Information Section -->
+    <div class="trello-section">
+      <h2>📊 Ban Statistics & Transparency</h2>
+      <div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 8px;">
+        <div style="font-size: 3rem; margin-bottom: 20px;">⚖️</div>
+        <h3 style="color: #666; margin-bottom: 15px; font-size: 1.5rem;">Our Commitment to Fair Moderation</h3>
+        <p style="color: #777; line-height: 1.8; max-width: 600px; margin: 0 auto;">
+          All bans are issued fairly and reviewed by our moderation team. We maintain this page 
+          to ensure transparency in our moderation actions and to demonstrate that we take community 
+          safety seriously while respecting everyone's right to appeal.
         </p>
       </div>
-
-      <!-- Embedded Trello Board (replace YOUR_BOARD_ID_HERE) -->
-      <div style="margin-top: 30px;">
-        <iframe 
-          class="trello-embed" 
-          id="trello-board"
-          src="about:blank"
-          loading="lazy">
-        </iframe>
-      </div>
-
-      <script>
-        // To display your Trello board, replace 'YOUR_BOARD_ID_HERE' with your actual Trello board ID
-        const TRELLO_BOARD_ID = '9SbBqljD';
-        
-        // If you have a board ID, load it
-        if (TRELLO_BOARD_ID && TRELLO_BOARD_ID !== 'YOUR_BOARD_ID_HERE') {
-          document.getElementById('trello-board').src = 
-            `https://trello.com/b/${TRELLO_BOARD_ID}.html`;
-        } else {
-          // Show placeholder message
-          const iframe = document.getElementById('trello-board');
-          iframe.style.display = 'none';
-          iframe.insertAdjacentHTML('afterend', `
-            <div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 8px; border: 2px dashed #ddd;">
-              <div style="font-size: 3rem; margin-bottom: 20px;">📋</div>
-              <h3 style="color: #666; margin-bottom: 10px;">Trello Board Not Configured</h3>
-              <p style="color: #999;">Please follow the setup instructions above to display your banned users list.</p>
-            </div>
-          `);
-        }
-      </script>
-
-      <!-- Link to Trello Board -->
-      <div class="trello-link-box">
-        <h3>View Full Trello Board</h3>
-        <p>Click below to view the complete banned users list on Trello with all details and history.</p>
-        <a href="#" class="trello-button" id="trello-link" target="_blank" rel="noopener noreferrer">
-          Open Trello Board
-        </a>
-      </div>
-
-      <script>
-        // Update the button link
-        const trelloLink = document.getElementById('trello-link');
-        if (TRELLO_BOARD_ID && TRELLO_BOARD_ID !== 'YOUR_BOARD_ID_HERE') {
-          trelloLink.href = `https://trello.com/b/${TRELLO_BOARD_ID}`;
-        } else {
-          // Default link for demo - replace with your actual Trello board URL
-          trelloLink.href = 'https://trello.com';
-          trelloLink.textContent = 'Configure Trello Board First';
-          trelloLink.style.opacity = '0.6';
-          trelloLink.style.cursor = 'not-allowed';
-          trelloLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            alert('Please configure your Trello board ID in the banned-users.html file first.');
-          });
-        }
-      </script>
     </div>
 
     <!-- Appeal Section -->
     <div class="appeal-section">
       <h3>
         <span>⚠️</span>
-        Think Your Ban Was Unfair?
+        Need to Submit an Appeal?
       </h3>
       <p>
         If you believe you were banned unfairly or wish to appeal your ban, please follow our official 
-        appeal process. All appeals are reviewed by senior staff members.
+        appeal process outlined above. All appeals are reviewed by senior staff members within 3-7 days.
       </p>
       <p>
         <strong>To submit an appeal:</strong> Join our 
         <a href="https://discord.gg/kUf97PV9H3" target="_blank">Discord Server</a> 
-        and create a ticket in the support channel. Provide your username, ban reason, 
-        and explanation for why you believe the ban should be lifted.
+        and create a ticket in the <strong>#support</strong> channel. Make sure to include:
+      </p>
+      <ul style="margin: 15px 0; padding-left: 25px; line-height: 1.8;">
+        <li>Your exact Roblox username</li>
+        <li>The date you were banned</li>
+        <li>The stated reason for your ban</li>
+        <li>A clear, honest explanation of why you believe the ban should be lifted</li>
+        <li>Any evidence that supports your case (screenshots, logs, etc.)</li>
+      </ul>
+      <p>
+        <strong>Appeal Tips:</strong> Be respectful, honest, and patient. Aggressive or dishonest appeals are automatically denied. 
+        If you genuinely made a mistake, acknowledge it and explain how you'll avoid it in the future.
       </p>
       <p style="margin-bottom: 0;">
-        Please note: Appeals for serious violations (hacking, harassment, etc.) are rarely approved. 
-        Be respectful and honest in your appeal.
+        <strong>Please note:</strong> Appeals for serious violations (hacking, doxxing, harassment campaigns) are rarely approved. 
+        Temporary bans typically cannot be appealed unless there was a clear error in the ban decision.
       </p>
     </div>
   </div>

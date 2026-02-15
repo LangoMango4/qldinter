@@ -22,7 +22,7 @@ Cloudflare Turnstile is now integrated into your Queensland Interactive website 
    - Open `/config.js`
    - Replace the placeholder site key on line 18:
    ```javascript
-   turnstileSiteKey: "YOUR_ACTUAL_SITE_KEY_HERE",
+   turnstileSiteKey: "0x4AAAAAACag3Ptpt7rqJlR6",
    ```
    - Save and push to GitHub
 

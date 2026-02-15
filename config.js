@@ -14,6 +14,10 @@ window.SITE_CONFIG = {
   // Leave as empty string "" to disable API features (stats will show "Unavailable")
   robloxProxyBase: "https://qldinter-production.up.railway.app",
   
+  // Railway server URL (for feedback/bug reports)
+  // Should be the same as robloxProxyBase
+  RAILWAY_SERVER_URL: "https://qldinter-production.up.railway.app",
+  
   // Cloudflare Turnstile
   // Get your site key from: https://dash.cloudflare.com/?to=/:account/turnstile
   // Set to empty string "" to disable Turnstile

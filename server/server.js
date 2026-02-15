@@ -5,6 +5,7 @@ const PORT = process.env.PORT || 3000;
 const GROUP_ID = 35458162;
 const TIKTOK_HANDLE = "qldinteractive";
 const TIKTOK_URL = `https://www.tiktok.com/@${TIKTOK_HANDLE}`;
+const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || "";
 app.use(express.json());
 
 const fetchJson = async (url) => {
@@ -181,6 +182,79 @@ app.get("/api/tiktok-stats", async (req, res) => {
     res.json(data);
   } catch (error) {
     res.status(502).json({ error: "Failed to fetch TikTok stats." });
+  }
+});
+
+app.post("/api/feedback", async (req, res) => {
+  try {
+    const { type, username, title, description, severity } = req.body;
+
+    // Validate required fields
+    if (!type || !username || !title || !description) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Check if webhook URL is configured
+    if (!DISCORD_WEBHOOK_URL) {
+      console.error("Discord webhook URL not configured");
+      return res.status(500).json({ error: "Webhook not configured" });
+    }
+
+    // Determine color based on type and severity
+    let color;
+    if (type === "bug") {
+      color = severity === "high" ? 0xdc3545 : severity === "medium" ? 0xff9800 : 0xffc107;
+    } else {
+      color = 0x1e90ff;
+    }
+
+    // Create Discord embed
+    const embed = {
+      embeds: [{
+        title: `${type === "bug" ? "🐛 Bug Report" : "💡 Feedback"}: ${title}`,
+        description: description,
+        color: color,
+        fields: [
+          {
+            name: "👤 Username",
+            value: username,
+            inline: true
+          },
+          {
+            name: "⚡ Priority",
+            value: severity.charAt(0).toUpperCase() + severity.slice(1),
+            inline: true
+          },
+          {
+            name: "📅 Submitted",
+            value: new Date().toLocaleString(),
+            inline: false
+          }
+        ],
+        footer: {
+          text: "Queensland Interactive Feedback System"
+        },
+        timestamp: new Date().toISOString()
+      }]
+    };
+
+    // Send to Discord webhook
+    const response = await fetch(DISCORD_WEBHOOK_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(embed)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Discord webhook failed: ${response.status}`);
+    }
+
+    res.json({ success: true, message: "Feedback submitted successfully" });
+  } catch (error) {
+    console.error("Error submitting feedback:", error);
+    res.status(500).json({ error: "Failed to submit feedback" });
   }
 });
 

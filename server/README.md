@@ -49,13 +49,24 @@ Server runs on http://localhost:3000
 
 ## Environment Variables
 
-No environment variables needed - the server is pre-configured!
+### Required for Feedback System
+
+- `DISCORD_WEBHOOK_URL` - Discord webhook URL for receiving feedback submissions
+
+**To set in Railway:**
+1. Go to your project settings
+2. Navigate to "Variables" tab
+3. Add `DISCORD_WEBHOOK_URL` with your Discord webhook URL
+4. Railway will auto-redeploy
+
+See [FEEDBACK_SETUP.md](../FEEDBACK_SETUP.md) for detailed setup instructions.
 
 ## API Endpoints
 
 - `GET /api/group-status` - Roblox group member count, games count, and active players
 - `GET /api/team-members` - Roblox team members with rank 198+
 - `GET /api/tiktok-stats` - TikTok followers, likes, and video count
+- `POST /api/feedback` - Submit feedback or bug reports (sends to Discord webhook)
 
 ## Caching
 
