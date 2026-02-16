@@ -25,6 +25,21 @@ const fetchJson = async (url) => {
   return response.json();
 };
 
+const setCardState = (cardEl, state) => {
+  if (!cardEl) {
+    return;
+  }
+
+  cardEl.classList.remove("status-good", "status-warn", "status-bad");
+  if (state === "good") {
+    cardEl.classList.add("status-good");
+  } else if (state === "warn") {
+    cardEl.classList.add("status-warn");
+  } else {
+    cardEl.classList.add("status-bad");
+  }
+};
+
 const loadGroupStatus = async () => {
   const membersEl = document.getElementById("group-member-count");
   const activeEl = document.getElementById("group-active-count");
@@ -44,7 +59,7 @@ const loadGroupStatus = async () => {
   }
 
   try {
-    const statusData = await fetchJson(buildProxyUrl("/api/group-status"));
+    const statusData = await fetchJson(buildProxyUrl(`/api/group-status?groupId=${GROUP_ID}`));
     membersEl.textContent = formatNumber(statusData.memberCount);
     gamesEl.textContent = formatNumber(statusData.gamesCount);
     activeEl.textContent = formatNumber(statusData.activeCount);
@@ -151,7 +166,7 @@ const loadTikTokStats = async () => {
   }
 };
 
-const applyServiceStatus = (service, valueEl, metaEl) => {
+const applyServiceStatus = (service, valueEl, metaEl, cardEl) => {
   if (!valueEl || !metaEl) {
     return;
   }
@@ -159,16 +174,19 @@ const applyServiceStatus = (service, valueEl, metaEl) => {
   if (!service) {
     valueEl.textContent = "Unavailable";
     metaEl.textContent = "Status API unavailable";
+    setCardState(cardEl, "bad");
     return;
   }
 
   if (service.state === "Not configured") {
     valueEl.textContent = "Not Set";
     metaEl.textContent = "Add endpoint in server config";
+    setCardState(cardEl, "warn");
     return;
   }
 
   valueEl.textContent = service.online ? "Online" : "Offline";
+  setCardState(cardEl, service.online ? "good" : "bad");
   if (typeof service.responseMs === "number") {
     metaEl.textContent = `Response ${service.responseMs}ms`;
   } else {
@@ -183,7 +201,9 @@ const loadLiveOperationsStatus = async () => {
   const websiteMetaEl = document.getElementById("uptime-website-meta");
   const gameEl = document.getElementById("uptime-game");
   const gameMetaEl = document.getElementById("uptime-game-meta");
-  const opsLinkEl = document.getElementById("ops-status-link");
+  const sessionCard = document.getElementById("ops-session-card");
+  const websiteCard = document.getElementById("ops-website-card");
+  const gameCard = document.getElementById("ops-game-card");
 
   if (!ssuValueEl || !websiteEl || !gameEl) {
     return;
@@ -196,31 +216,31 @@ const loadLiveOperationsStatus = async () => {
     ssuValueEl.textContent = ssu.label || "Unavailable";
     if (ssuMetaEl) {
       if (ssu.label === "Not configured") {
-        ssuMetaEl.textContent = "Connect your BotGhost SSU endpoint";
+        ssuMetaEl.textContent = "Connect your session status endpoint";
+        setCardState(sessionCard, "warn");
       } else if (typeof ssu.label === "string" && ssu.label.toUpperCase().includes("SSP")) {
         ssuMetaEl.textContent = ssu.active
           ? "Startup poll active (vote phase before SSU)"
           : "Startup poll closed";
+        setCardState(sessionCard, "warn");
       } else {
         ssuMetaEl.textContent = ssu.active ? "Session currently running" : "No active session";
+        setCardState(sessionCard, ssu.active ? "good" : "bad");
       }
     }
 
-    if (opsLinkEl && ssu.link) {
-      opsLinkEl.href = ssu.link;
-    }
-
     const services = data.services || {};
-    applyServiceStatus(services.website, websiteEl, websiteMetaEl);
-    applyServiceStatus(services.game, gameEl, gameMetaEl);
+    applyServiceStatus(services.website, websiteEl, websiteMetaEl, websiteCard);
+    applyServiceStatus(services.game, gameEl, gameMetaEl, gameCard);
   } catch (error) {
     ssuValueEl.textContent = "Unavailable";
     if (ssuMetaEl) {
       ssuMetaEl.textContent = "Status API unavailable";
     }
+    setCardState(sessionCard, "bad");
 
-    applyServiceStatus(null, websiteEl, websiteMetaEl);
-    applyServiceStatus(null, gameEl, gameMetaEl);
+    applyServiceStatus(null, websiteEl, websiteMetaEl, websiteCard);
+    applyServiceStatus(null, gameEl, gameMetaEl, gameCard);
   }
 };
 

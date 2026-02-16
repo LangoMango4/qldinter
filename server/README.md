@@ -62,6 +62,13 @@ Server runs on http://localhost:3000
 - `BOT_STATUS_URL` - URL to check bot uptime (BotGhost/public bot status endpoint)
 - `GAME_STATUS_URL` - URL to check game uptime (default: Roblox game URL)
 
+### Optional for Discord OAuth Login (Discord Developer Portal)
+
+- `DISCORD_CLIENT_ID` - Application client ID from Discord Developer Portal
+- `DISCORD_CLIENT_SECRET` - Application client secret from Discord Developer Portal
+- `DISCORD_REDIRECT_URI` - OAuth callback URL (recommended: `https://queenslandinteractive-rblx.com/auth/discord/callback`)
+- `DISCORD_OAUTH_SCOPES` - Space-separated scopes (recommended: `identify email guilds`)
+
 **To set in Railway:**
 1. Go to your project settings
 2. Navigate to "Variables" tab
@@ -79,6 +86,10 @@ See [FEEDBACK_SETUP.md](../FEEDBACK_SETUP.md) for detailed setup instructions.
 - `POST /api/ssu/start` - Mark SSU active (for BotGhost webhooks)
 - `POST /api/ssu/end` - Mark SSU inactive (for BotGhost webhooks)
 - `GET /api/live-status` - Active SSU status plus uptime checks for website, bot, and game
+- `GET /auth/discord/start` - Starts Discord OAuth login flow
+- `GET /auth/discord/callback` - Discord OAuth callback endpoint (set this in Discord Developer Portal)
+- `GET /api/auth/me` - Returns authenticated Discord user for current session cookie
+- `POST /api/auth/logout` - Clears Discord login session
 - `POST /api/feedback` - Submit feedback or bug reports (sends to Discord webhook)
 
 ### BotGhost session mode examples

@@ -410,6 +410,33 @@ h2,
   color: #64748b;
 }
 
+.status-card.status-good {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+
+.status-card.status-good strong {
+  color: #15803d;
+}
+
+.status-card.status-warn {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.status-card.status-warn strong {
+  color: #b45309;
+}
+
+.status-card.status-bad {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.status-card.status-bad strong {
+  color: #b91c1c;
+}
+
 /* TIKTOK STATUS */
 .tiktok-status {
   padding: 90px 8%;
@@ -462,6 +489,60 @@ h2,
   margin-bottom: 20px;
   line-height: 1.6;
   color: #334155;
+}
+
+.bot-link-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.bot-link-panel h3 {
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+}
+
+#bot-link-state {
+  margin-bottom: 10px;
+  color: #334155;
+  font-weight: 600;
+}
+
+.bot-link-form {
+  display: grid;
+  gap: 8px;
+}
+
+#bot-signin-code {
+  margin-top: 10px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.bot-link-form input,
+.bot-link-form select,
+.bot-link-form button {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-family: inherit;
+  font-size: 0.92rem;
+}
+
+.bot-link-form button {
+  background: #1e90ff;
+  color: #ffffff;
+  border-color: #1e90ff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bot-link-form button:hover {
+  background: #1873cc;
+  border-color: #1873cc;
 }
 
 .ops-status-cards {

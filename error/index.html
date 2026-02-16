@@ -14,145 +14,166 @@
       padding: 0;
       box-sizing: border-box;
     }
+
     body {
-      background: linear-gradient(135deg, #0a0f1c 0%, #1a2a4a 100%);
-      color: white;
+      background: #f4f6f9;
+      color: #111827;
       font-family: 'Poppins', sans-serif;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
       min-height: 100vh;
+      display: grid;
+      place-items: center;
       padding: 20px;
     }
+
     .container {
-      max-width: 700px;
-      animation: fadeIn 0.8s ease-out;
+      width: 100%;
+      max-width: 620px;
     }
+
     .content {
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 60px 40px;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 36px 28px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
     }
+
     .error-code {
-      font-size: 120px;
-      font-weight: 800;
-      background: linear-gradient(135deg, #ff6b6b 0%, #ff9999 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 20px;
-      line-height: 1;
-    }
-    h1 {
-      font-size: 2.8rem;
+      font-size: 44px;
       font-weight: 700;
-      margin-bottom: 15px;
-      background: linear-gradient(135deg, #1e90ff 0%, #00d4ff 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #ef4444;
+      margin-bottom: 14px;
+      line-height: 1;
+      text-align: center;
     }
+
+    h1 {
+      font-size: 1.65rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-align: center;
+      color: #0f172a;
+    }
+
     .subtitle {
-      font-size: 1.1rem;
-      color: rgba(255, 255, 255, 0.7);
-      margin-bottom: 30px;
+      font-size: 1rem;
+      color: #4b5563;
+      margin-bottom: 22px;
       line-height: 1.6;
+      text-align: center;
     }
+
     .divider {
-      width: 50px;
-      height: 3px;
-      background: linear-gradient(90deg, #1e90ff 0%, #00d4ff 100%);
-      margin: 30px auto;
+      width: 44px;
+      height: 2px;
+      background: #1e90ff;
+      margin: 18px auto 22px;
       border-radius: 2px;
     }
+
     .error-details {
-      background: rgba(255, 107, 107, 0.1);
-      border: 2px solid rgba(255, 107, 107, 0.3);
-      border-radius: 12px;
-      padding: 20px;
-      margin: 30px 0;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 16px;
+      margin: 20px 0;
       text-align: left;
       font-size: 0.95rem;
-      color: rgba(255, 255, 255, 0.8);
+      color: #374151;
     }
+
     .error-details p {
-      margin: 10px 0;
+      margin: 8px 0;
     }
+
     .error-details strong {
-      color: #ff9999;
+      color: #111827;
     }
+
     .actions {
       display: flex;
-      gap: 15px;
+      gap: 10px;
       justify-content: center;
-      margin-top: 35px;
+      margin-top: 18px;
       flex-wrap: wrap;
     }
+
     .btn {
-      padding: 14px 32px;
-      border-radius: 10px;
-      font-size: 1rem;
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-size: 0.95rem;
       font-weight: 600;
       text-decoration: none;
-      border: 2px solid;
+      border: 1px solid;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       font-family: 'Poppins', sans-serif;
     }
+
     .btn-primary {
-      background: linear-gradient(135deg, #1e90ff 0%, #00d4ff 100%);
+      background: #1e90ff;
       color: white;
       border-color: #1e90ff;
     }
+
     .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(30, 144, 255, 0.4);
+      background: #1873cc;
+      border-color: #1873cc;
     }
+
     .btn-secondary {
-      background: transparent;
-      color: rgba(255, 255, 255, 0.8);
-      border-color: rgba(255, 255, 255, 0.3);
+      background: #ffffff;
+      color: #374151;
+      border-color: #d1d5db;
     }
+
     .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.1);
-      border-color: rgba(255, 255, 255, 0.5);
+      background: #f3f4f6;
     }
+
     .footer {
       font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.5);
-      margin-top: 40px;
+      color: #6b7280;
+      margin-top: 20px;
+      text-align: center;
     }
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+
+    .quick-help {
+      color: #4b5563;
+      margin: 16px 0 8px;
+      font-size: 0.95rem;
     }
+
+    .quick-list {
+      text-align: left;
+      color: #4b5563;
+      margin: 10px 0;
+      padding-left: 20px;
+      line-height: 1.6;
+      font-size: 0.93rem;
+    }
+
     @media (max-width: 600px) {
       .content {
-        padding: 40px 25px;
+        padding: 28px 18px;
       }
+
       .error-code {
-        font-size: 80px;
+        font-size: 34px;
       }
+
       h1 {
-        font-size: 2rem;
+        font-size: 1.35rem;
       }
+
       .subtitle {
-        font-size: 1rem;
+        font-size: 0.95rem;
       }
+
       .actions {
         flex-direction: column;
       }
+
       .btn {
         width: 100%;
       }
@@ -162,10 +183,10 @@
 <body>
   <div class="container">
     <div class="content">
-      <div class="error-code">⚠️</div>
-      <h1>Oops! Something Went Wrong</h1>
+      <div class="error-code">Error</div>
+      <h1>Something went wrong</h1>
       <div class="divider"></div>
-      <p class="subtitle">We encountered an error while loading the page. Don't worry, our team is aware of this.</p>
+      <p class="subtitle">We couldn’t load this page right now.</p>
       
       <div class="error-details">
         <p><strong>Error Type:</strong> <span id="error-type">Page Load Error</span></p>
@@ -173,12 +194,11 @@
         <p><strong>Time:</strong> <span id="error-time"></span></p>
       </div>
 
-      <p style="color: rgba(255, 255, 255, 0.7); margin: 20px 0;">Here's what you can try:</p>
-      <ul style="text-align: left; color: rgba(255, 255, 255, 0.7); margin: 20px 0; padding-left: 20px;">
+      <p class="quick-help">Try these quick steps:</p>
+      <ul class="quick-list">
         <li>Refresh the page (F5 or Ctrl+R)</li>
-        <li>Clear your browser cache</li>
         <li>Check your internet connection</li>
-        <li>Try again in a few moments</li>
+        <li>Try again in a moment</li>
       </ul>
 
       <div class="actions">
