@@ -53,6 +53,15 @@ Server runs on http://localhost:3000
 
 - `DISCORD_WEBHOOK_URL` - Discord webhook URL for receiving feedback submissions
 
+### Optional for Live Operations Status (SSU/Uptime)
+
+- `BOTGHOST_DASHBOARD_URL` - Link opened from the Active SSU card (default: `https://botghost.com/`)
+- `BOTGHOST_SSU_STATUS_URL` - JSON endpoint for SSU status (supports `active`, `isActive`, or `status`)
+- `SSU_WEBHOOK_TOKEN` - Shared secret for `/api/ssu/start` and `/api/ssu/end` webhook auth
+- `WEBSITE_STATUS_URL` - URL to check website uptime (default: production site)
+- `BOT_STATUS_URL` - URL to check bot uptime (BotGhost/public bot status endpoint)
+- `GAME_STATUS_URL` - URL to check game uptime (default: Roblox game URL)
+
 **To set in Railway:**
 1. Go to your project settings
 2. Navigate to "Variables" tab
@@ -66,7 +75,21 @@ See [FEEDBACK_SETUP.md](../FEEDBACK_SETUP.md) for detailed setup instructions.
 - `GET /api/group-status` - Roblox group member count, games count, and active players
 - `GET /api/team-members` - Roblox team members with rank 198+
 - `GET /api/tiktok-stats` - TikTok followers, likes, and video count
+- `GET /api/ssu-status` - Current SSU state from local webhook state
+- `POST /api/ssu/start` - Mark SSU active (for BotGhost webhooks)
+- `POST /api/ssu/end` - Mark SSU inactive (for BotGhost webhooks)
+- `GET /api/live-status` - Active SSU status plus uptime checks for website, bot, and game
 - `POST /api/feedback` - Submit feedback or bug reports (sends to Discord webhook)
+
+### BotGhost session mode examples
+
+The webhook endpoints accept `mode` (or `type`/`session`) so you can show `SSU`, `SSD`, `SSP`, etc:
+
+- Start SSU: `GET /api/ssu/start?token=YOUR_TOKEN&mode=SSU`
+- Start SSD: `GET /api/ssu/start?token=YOUR_TOKEN&mode=SSD`
+- End SSP: `GET /api/ssu/end?token=YOUR_TOKEN&mode=SSP`
+
+If `mode` is provided, the site label becomes `MODE Active` or `MODE Inactive`.
 
 ## Caching
 
@@ -74,3 +97,4 @@ All endpoints cache responses:
 - Group status: 1 minute
 - Team members: 5 minutes
 - TikTok stats: 10 minutes
+- Live status: 30 seconds

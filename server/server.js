@@ -7,6 +7,12 @@ const TIKTOK_HANDLE = "qldinteractive";
 const TIKTOK_URL = `https://www.tiktok.com/@${TIKTOK_HANDLE}`;
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || "";
 const CAPTCHA_SECRET = process.env.CAPTCHA_SECRET || "";
+const BOTGHOST_DASHBOARD_URL = process.env.BOTGHOST_DASHBOARD_URL || "https://botghost.com/";
+const BOTGHOST_SSU_STATUS_URL = process.env.BOTGHOST_SSU_STATUS_URL || "";
+const SSU_WEBHOOK_TOKEN = process.env.SSU_WEBHOOK_TOKEN || "";
+const WEBSITE_STATUS_URL = process.env.WEBSITE_STATUS_URL || "https://queenslandinteractive-rblx.com/";
+const BOT_STATUS_URL = process.env.BOT_STATUS_URL || "";
+const GAME_STATUS_URL = process.env.GAME_STATUS_URL || "https://www.roblox.com/games/74079904616243/Westlands-Queenlands";
 app.use(express.json());
 
 const fetchJson = async (url) => {
@@ -28,7 +34,16 @@ const chunkArray = (items, size) => {
 const cache = {
   groupStatus: { value: null, expiresAt: 0 },
   teamMembers: { value: null, expiresAt: 0 },
-  tiktokStats: { value: null, expiresAt: 0 }
+  tiktokStats: { value: null, expiresAt: 0 },
+  liveStatus: { value: null, expiresAt: 0 }
+};
+
+const ssuState = {
+  active: false,
+  label: "Inactive",
+  link: BOTGHOST_DASHBOARD_URL,
+  source: "local",
+  updatedAt: new Date().toISOString()
 };
 
 const withCache = async (key, ttlMs, loader) => {
@@ -40,6 +55,168 @@ const withCache = async (key, ttlMs, loader) => {
   const value = await loader();
   cache[key] = { value, expiresAt: now + ttlMs };
   return value;
+};
+
+const checkServiceHealth = async (url) => {
+  if (!url) {
+    return {
+      state: "Not configured",
+      online: false,
+      responseMs: null,
+      detail: "No URL configured"
+    };
+  }
+
+  const startedAt = Date.now();
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      redirect: "follow",
+      cache: "no-store",
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "QI-StatusMonitor/1.0"
+      }
+    });
+
+    clearTimeout(timeoutId);
+    return {
+      state: response.ok ? "Online" : "Offline",
+      online: response.ok,
+      responseMs: Date.now() - startedAt,
+      detail: `HTTP ${response.status}`,
+      url
+    };
+  } catch (error) {
+    clearTimeout(timeoutId);
+    return {
+      state: "Offline",
+      online: false,
+      responseMs: null,
+      detail: error && error.name === "AbortError" ? "Timed out" : "Request failed",
+      url
+    };
+  }
+};
+
+const fetchSsuStatus = async () => {
+  if (!BOTGHOST_SSU_STATUS_URL) {
+    return {
+      active: ssuState.active,
+      label: ssuState.label,
+      link: ssuState.link,
+      source: ssuState.source,
+      updatedAt: ssuState.updatedAt
+    };
+  }
+
+  try {
+    const data = await fetchJson(BOTGHOST_SSU_STATUS_URL);
+    const statusText = typeof data.status === "string" ? data.status.toLowerCase() : "";
+    const labelText = typeof data.label === "string" ? data.label : "";
+    const modeText =
+      typeof data.mode === "string"
+        ? data.mode
+        : typeof data.type === "string"
+          ? data.type
+          : typeof data.session === "string"
+            ? data.session
+            : "";
+    const resolvedMode = normalizeSessionMode(modeText || labelText || statusText);
+    const active =
+      typeof data.active === "boolean"
+        ? data.active
+        : typeof data.isActive === "boolean"
+          ? data.isActive
+          : Boolean(resolvedMode) || statusText === "active" || statusText === "online" || statusText === "running";
+
+    return {
+      active,
+      label: data.label || (active ? (resolvedMode ? `${resolvedMode} Active` : "Active") : "Inactive"),
+      link: data.url || BOTGHOST_DASHBOARD_URL,
+      source: "botghost",
+      updatedAt: data.updatedAt || new Date().toISOString()
+    };
+  } catch (error) {
+    return {
+      active: ssuState.active,
+      label: ssuState.label,
+      link: ssuState.link,
+      source: "local-fallback",
+      updatedAt: ssuState.updatedAt
+    };
+  }
+};
+
+const isWebhookAuthorized = (req) => {
+  if (!SSU_WEBHOOK_TOKEN) {
+    return true;
+  }
+
+  const authHeader = req.headers.authorization || "";
+  const bearerToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : "";
+  const headerToken = req.headers["x-ssu-token"] || "";
+  const bodyToken = (req.body && req.body.token) || "";
+  const queryToken = (req.query && req.query.token) || "";
+
+  return (
+    bearerToken === SSU_WEBHOOK_TOKEN ||
+    headerToken === SSU_WEBHOOK_TOKEN ||
+    bodyToken === SSU_WEBHOOK_TOKEN ||
+    queryToken === SSU_WEBHOOK_TOKEN
+  );
+};
+
+const normalizeSessionMode = (value) => {
+  if (!value || typeof value !== "string") {
+    return "";
+  }
+
+  const upper = value.toUpperCase();
+  const knownMatch = upper.match(/\b(SSU|SSD|SSP)\b/);
+  if (knownMatch) {
+    return knownMatch[1];
+  }
+
+  const genericMatch = upper.match(/\bSS[A-Z0-9]{1,4}\b/);
+  if (genericMatch) {
+    return genericMatch[0];
+  }
+
+  const trimmed = upper.trim();
+  if (/^[A-Z0-9]{2,8}$/.test(trimmed)) {
+    return trimmed;
+  }
+
+  return "";
+};
+
+const getWebhookPayload = (req) => {
+  const payload = req.body && typeof req.body === "object" ? req.body : {};
+  const query = req.query && typeof req.query === "object" ? req.query : {};
+
+  return {
+    label: payload.label || query.label || "",
+    url: payload.url || query.url || "",
+    mode: payload.mode || payload.type || payload.session || query.mode || query.type || query.session || ""
+  };
+};
+
+const updateSsuState = ({ active, label, url, mode }) => {
+  const normalizedMode = normalizeSessionMode(mode || label);
+  ssuState.active = active;
+  ssuState.label =
+    label ||
+    (active
+      ? (normalizedMode ? `${normalizedMode} Active` : "Active")
+      : (normalizedMode ? `${normalizedMode} Inactive` : "Inactive"));
+  ssuState.link = url || BOTGHOST_DASHBOARD_URL;
+  ssuState.source = "botghost-webhook";
+  ssuState.updatedAt = new Date().toISOString();
+  cache.liveStatus = { value: null, expiresAt: 0 };
 };
 
 app.use((req, res, next) => {
@@ -183,6 +360,71 @@ app.get("/api/tiktok-stats", async (req, res) => {
     res.json(data);
   } catch (error) {
     res.status(502).json({ error: "Failed to fetch TikTok stats." });
+  }
+});
+
+app.get("/api/ssu-status", (req, res) => {
+  res.json({
+    active: ssuState.active,
+    label: ssuState.label,
+    url: ssuState.link,
+    updatedAt: ssuState.updatedAt,
+    source: ssuState.source
+  });
+});
+
+const handleSsuStart = (req, res) => {
+  if (!isWebhookAuthorized(req)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const { label, url, mode } = getWebhookPayload(req);
+  updateSsuState({ active: true, label, url, mode });
+
+  return res.json({ success: true, ssu: ssuState });
+};
+
+const handleSsuEnd = (req, res) => {
+  if (!isWebhookAuthorized(req)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const { label, url, mode } = getWebhookPayload(req);
+  updateSsuState({ active: false, label, url, mode });
+
+  return res.json({ success: true, ssu: ssuState });
+};
+
+app.post("/api/ssu/start", handleSsuStart);
+app.get("/api/ssu/start", handleSsuStart);
+
+app.post("/api/ssu/end", handleSsuEnd);
+app.get("/api/ssu/end", handleSsuEnd);
+
+app.get("/api/live-status", async (req, res) => {
+  try {
+    const data = await withCache("liveStatus", 30 * 1000, async () => {
+      const [website, bot, game, ssu] = await Promise.all([
+        checkServiceHealth(WEBSITE_STATUS_URL),
+        checkServiceHealth(BOT_STATUS_URL),
+        checkServiceHealth(GAME_STATUS_URL),
+        fetchSsuStatus()
+      ]);
+
+      return {
+        checkedAt: new Date().toISOString(),
+        ssu,
+        services: {
+          website,
+          bot,
+          game
+        }
+      };
+    });
+
+    res.json(data);
+  } catch (error) {
+    res.status(502).json({ error: "Failed to fetch live status." });
   }
 });
 

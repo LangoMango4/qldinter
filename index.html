@@ -5,13 +5,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1e90ff">
-  <meta name="description" content="Queensland Interactive - Roblox Roleplay Community">
+  <meta name="description" content="Queensland Interactive is a Roblox community focused on realism, professionalism, and immersive Queensland-inspired experiences. Join us for structured roleplay, active moderation, and a thriving community! https://discord.gg/kUf97PV9H3">
+  <meta property="og:title" content="Queensland Interactive">
+  <meta property="og:description" content="Queensland Interactive is a Roblox roleplay community with active moderation, immersive Queensland-inspired gameplay, live community stats, and open support tools.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://queenslandinteractive-rblx.com/">
+  <meta property="og:site_name" content="Queensland Interactive">
+  <meta property="og:image" content="https://queenslandinteractive-rblx.com/mainico.png">
+  <meta property="og:image:alt" content="Queensland Interactive logo">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Queensland Interactive">
+  <meta name="twitter:description" content="Queensland Interactive is a Roblox roleplay community with active moderation, immersive Queensland-inspired gameplay, live community stats, and open support tools.">
+  <meta name="twitter:image" content="https://queenslandinteractive-rblx.com/mainico.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="QLDInter">
   <title>Queensland Interactive</title>
-  <link rel="icon" href="./mainico.png">
-  <link rel="apple-touch-icon" href="./mainico.png">
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/mainico.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/mainico.png">
+  <link rel="shortcut icon" href="/mainico.png" type="image/png">
+  <link rel="apple-touch-icon" href="/mainico.png">
   <link rel="manifest" href="./manifest.json">
 
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -412,6 +426,24 @@
     </div>
   </a>
 
+  <a href="/feedback" class="tile reveal">
+    <img src="images_/card5.png" alt="">
+    <div class="tile-overlay">
+      <h3>Feedback</h3>
+      <p>Submit suggestions and bug reports</p>
+      <span>Open form →</span>
+    </div>
+  </a>
+
+  <a href="/banned-users" class="tile reveal">
+    <img src="images_/card4.png" alt="">
+    <div class="tile-overlay">
+      <h3>Banned Users</h3>
+      <p>Community moderation transparency</p>
+      <span>View list →</span>
+    </div>
+  </a>
+
 </section>
 
 <section class="group-status reveal" id="group-status">
@@ -433,6 +465,38 @@
       <div class="status-card">
         <span class="status-label">Games</span>
         <strong id="group-games-count">Loading...</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="ops-status reveal" id="ops-status">
+  <div class="ops-status-inner">
+    <div class="ops-status-copy">
+      <h2>Operations Status</h2>
+      <p>Active SSU state and live uptime checks for core services.</p>
+      <a class="status-link" id="ops-status-link" href="https://botghost.com/" target="_blank">Open BotGhost</a>
+    </div>
+    <div class="ops-status-cards">
+      <div class="status-card">
+        <span class="status-label">Active Session</span>
+        <strong id="ssu-active-status">Loading...</strong>
+        <small class="status-meta" id="ssu-active-meta">Waiting for update...</small>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Website Uptime</span>
+        <strong id="uptime-website">Loading...</strong>
+        <small class="status-meta" id="uptime-website-meta">Waiting for check...</small>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Bot Uptime</span>
+        <strong id="uptime-bot">Loading...</strong>
+        <small class="status-meta" id="uptime-bot-meta">Waiting for check...</small>
+      </div>
+      <div class="status-card">
+        <span class="status-label">Game Uptime</span>
+        <strong id="uptime-game">Loading...</strong>
+        <small class="status-meta" id="uptime-game-meta">Waiting for check...</small>
       </div>
     </div>
   </div>

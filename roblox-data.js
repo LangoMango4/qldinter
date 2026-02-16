@@ -151,8 +151,86 @@ const loadTikTokStats = async () => {
   }
 };
 
+const applyServiceStatus = (service, valueEl, metaEl) => {
+  if (!valueEl || !metaEl) {
+    return;
+  }
+
+  if (!service) {
+    valueEl.textContent = "Unavailable";
+    metaEl.textContent = "Status API unavailable";
+    return;
+  }
+
+  if (service.state === "Not configured") {
+    valueEl.textContent = "Not Set";
+    metaEl.textContent = "Add endpoint in server config";
+    return;
+  }
+
+  valueEl.textContent = service.online ? "Online" : "Offline";
+  if (typeof service.responseMs === "number") {
+    metaEl.textContent = `Response ${service.responseMs}ms`;
+  } else {
+    metaEl.textContent = service.detail || "Check unavailable";
+  }
+};
+
+const loadLiveOperationsStatus = async () => {
+  const ssuValueEl = document.getElementById("ssu-active-status");
+  const ssuMetaEl = document.getElementById("ssu-active-meta");
+  const websiteEl = document.getElementById("uptime-website");
+  const websiteMetaEl = document.getElementById("uptime-website-meta");
+  const botEl = document.getElementById("uptime-bot");
+  const botMetaEl = document.getElementById("uptime-bot-meta");
+  const gameEl = document.getElementById("uptime-game");
+  const gameMetaEl = document.getElementById("uptime-game-meta");
+  const opsLinkEl = document.getElementById("ops-status-link");
+
+  if (!ssuValueEl || !websiteEl || !botEl || !gameEl) {
+    return;
+  }
+
+  try {
+    const data = await fetchJson(buildProxyUrl("/api/live-status"));
+    const ssu = data.ssu || {};
+
+    ssuValueEl.textContent = ssu.label || "Unavailable";
+    if (ssuMetaEl) {
+      if (ssu.label === "Not configured") {
+        ssuMetaEl.textContent = "Connect your BotGhost SSU endpoint";
+      } else {
+        ssuMetaEl.textContent = ssu.active ? "Session currently running" : "No active session";
+      }
+    }
+
+    if (opsLinkEl && ssu.link) {
+      opsLinkEl.href = ssu.link;
+    }
+
+    const services = data.services || {};
+    applyServiceStatus(services.website, websiteEl, websiteMetaEl);
+    applyServiceStatus(services.bot, botEl, botMetaEl);
+    applyServiceStatus(services.game, gameEl, gameMetaEl);
+  } catch (error) {
+    ssuValueEl.textContent = "Unavailable";
+    if (ssuMetaEl) {
+      ssuMetaEl.textContent = "Status API unavailable";
+    }
+
+    applyServiceStatus(null, websiteEl, websiteMetaEl);
+    applyServiceStatus(null, botEl, botMetaEl);
+    applyServiceStatus(null, gameEl, gameMetaEl);
+  }
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   loadGroupStatus();
   loadTeamMembers();
   loadTikTokStats();
+  loadLiveOperationsStatus();
+
+  window.setInterval(() => {
+    loadLiveOperationsStatus();
+  }, 60 * 1000);
 });
