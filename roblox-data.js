@@ -181,13 +181,11 @@ const loadLiveOperationsStatus = async () => {
   const ssuMetaEl = document.getElementById("ssu-active-meta");
   const websiteEl = document.getElementById("uptime-website");
   const websiteMetaEl = document.getElementById("uptime-website-meta");
-  const botEl = document.getElementById("uptime-bot");
-  const botMetaEl = document.getElementById("uptime-bot-meta");
   const gameEl = document.getElementById("uptime-game");
   const gameMetaEl = document.getElementById("uptime-game-meta");
   const opsLinkEl = document.getElementById("ops-status-link");
 
-  if (!ssuValueEl || !websiteEl || !botEl || !gameEl) {
+  if (!ssuValueEl || !websiteEl || !gameEl) {
     return;
   }
 
@@ -199,6 +197,10 @@ const loadLiveOperationsStatus = async () => {
     if (ssuMetaEl) {
       if (ssu.label === "Not configured") {
         ssuMetaEl.textContent = "Connect your BotGhost SSU endpoint";
+      } else if (typeof ssu.label === "string" && ssu.label.toUpperCase().includes("SSP")) {
+        ssuMetaEl.textContent = ssu.active
+          ? "Startup poll active (vote phase before SSU)"
+          : "Startup poll closed";
       } else {
         ssuMetaEl.textContent = ssu.active ? "Session currently running" : "No active session";
       }
@@ -210,7 +212,6 @@ const loadLiveOperationsStatus = async () => {
 
     const services = data.services || {};
     applyServiceStatus(services.website, websiteEl, websiteMetaEl);
-    applyServiceStatus(services.bot, botEl, botMetaEl);
     applyServiceStatus(services.game, gameEl, gameMetaEl);
   } catch (error) {
     ssuValueEl.textContent = "Unavailable";
@@ -219,7 +220,6 @@ const loadLiveOperationsStatus = async () => {
     }
 
     applyServiceStatus(null, websiteEl, websiteMetaEl);
-    applyServiceStatus(null, botEl, botMetaEl);
     applyServiceStatus(null, gameEl, gameMetaEl);
   }
 };

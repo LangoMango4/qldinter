@@ -7,11 +7,11 @@ const TIKTOK_HANDLE = "qldinteractive";
 const TIKTOK_URL = `https://www.tiktok.com/@${TIKTOK_HANDLE}`;
 const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || "";
 const CAPTCHA_SECRET = process.env.CAPTCHA_SECRET || "";
-const BOTGHOST_DASHBOARD_URL = process.env.BOTGHOST_DASHBOARD_URL || "https://botghost.com/";
+const SSU_CHANNEL_URL = "https://discord.com/channels/1325971748377595934/1326450150595624981";
+const BOTGHOST_DASHBOARD_URL = process.env.BOTGHOST_DASHBOARD_URL || SSU_CHANNEL_URL;
 const BOTGHOST_SSU_STATUS_URL = process.env.BOTGHOST_SSU_STATUS_URL || "";
 const SSU_WEBHOOK_TOKEN = process.env.SSU_WEBHOOK_TOKEN || "";
 const WEBSITE_STATUS_URL = process.env.WEBSITE_STATUS_URL || "https://queenslandinteractive-rblx.com/";
-const BOT_STATUS_URL = process.env.BOT_STATUS_URL || "";
 const GAME_STATUS_URL = process.env.GAME_STATUS_URL || "https://www.roblox.com/games/74079904616243/Westlands-Queenlands";
 app.use(express.json());
 
@@ -135,7 +135,7 @@ const fetchSsuStatus = async () => {
 
     return {
       active,
-      label: data.label || (active ? (resolvedMode ? `${resolvedMode} Active` : "Active") : "Inactive"),
+      label: data.label || formatSessionLabel(resolvedMode, active),
       link: data.url || BOTGHOST_DASHBOARD_URL,
       source: "botghost",
       updatedAt: data.updatedAt || new Date().toISOString()
@@ -186,12 +186,19 @@ const normalizeSessionMode = (value) => {
     return genericMatch[0];
   }
 
-  const trimmed = upper.trim();
-  if (/^[A-Z0-9]{2,8}$/.test(trimmed)) {
-    return trimmed;
+  return "";
+};
+
+const formatSessionLabel = (mode, active) => {
+  if (!mode) {
+    return active ? "Active" : "Inactive";
   }
 
-  return "";
+  if (mode === "SSP") {
+    return active ? "SSP (Startup Poll) Active" : "SSP (Startup Poll) Inactive";
+  }
+
+  return `${mode} ${active ? "Active" : "Inactive"}`;
 };
 
 const getWebhookPayload = (req) => {
@@ -208,11 +215,7 @@ const getWebhookPayload = (req) => {
 const updateSsuState = ({ active, label, url, mode }) => {
   const normalizedMode = normalizeSessionMode(mode || label);
   ssuState.active = active;
-  ssuState.label =
-    label ||
-    (active
-      ? (normalizedMode ? `${normalizedMode} Active` : "Active")
-      : (normalizedMode ? `${normalizedMode} Inactive` : "Inactive"));
+  ssuState.label = label || formatSessionLabel(normalizedMode, active);
   ssuState.link = url || BOTGHOST_DASHBOARD_URL;
   ssuState.source = "botghost-webhook";
   ssuState.updatedAt = new Date().toISOString();
@@ -404,9 +407,8 @@ app.get("/api/ssu/end", handleSsuEnd);
 app.get("/api/live-status", async (req, res) => {
   try {
     const data = await withCache("liveStatus", 30 * 1000, async () => {
-      const [website, bot, game, ssu] = await Promise.all([
+      const [website, game, ssu] = await Promise.all([
         checkServiceHealth(WEBSITE_STATUS_URL),
-        checkServiceHealth(BOT_STATUS_URL),
         checkServiceHealth(GAME_STATUS_URL),
         fetchSsuStatus()
       ]);
@@ -416,7 +418,6 @@ app.get("/api/live-status", async (req, res) => {
         ssu,
         services: {
           website,
-          bot,
           game
         }
       };

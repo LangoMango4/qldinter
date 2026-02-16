@@ -201,8 +201,15 @@ body {
 
 
 .hero-content h1 {
+  font-family: "Merriweather", serif;
   font-size: clamp(2.2rem, 4vw, 3.2rem);
   line-height: 1.1;
+}
+
+h2,
+.tile-overlay h3,
+.footer-brand strong {
+  font-family: "Merriweather", serif;
 }
 
 .hero-btn {
