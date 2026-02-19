@@ -5,7 +5,10 @@ const images = [
   "images_/hero2.png",
   "images_/hero3.png",
   "images_/hero4.png",
-  "images_/hero5.png"
+  "images_/hero5.png",
+  "images_/hero6.png",
+  "images_/hero7.png",
+  "images_/hero8.png"
 ];
 
 let current = 0;
