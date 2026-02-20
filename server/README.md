@@ -68,7 +68,7 @@ Server runs on http://localhost:3000
 - `DISCORD_CLIENT_SECRET` - Application client secret from Discord Developer Portal
 - `DISCORD_REDIRECT_URI` - OAuth callback URL (recommended: `https://queenslandinteractive-rblx.com/auth/discord/callback`)
 - `DISCORD_OAUTH_SCOPES` - Space-separated scopes (recommended: `identify email guilds`)
-- `ADMIN_USER_IDS` - Comma-separated Discord user IDs allowed to use admin moderation APIs (if empty, any authenticated Discord user can use admin APIs)
+- `ADMIN_USER_IDS` - Comma-separated Discord user IDs allowed to use admin moderation APIs (required for admin access; if empty, admin APIs are disabled)
 
 **To set in Railway:**
 1. Go to your project settings

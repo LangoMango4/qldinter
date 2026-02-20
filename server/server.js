@@ -18,7 +18,7 @@ const BOT_LINK_WEBHOOK_URL = process.env.BOT_LINK_WEBHOOK_URL || DISCORD_WEBHOOK
 const BOT_AUTH_TOKEN = process.env.BOT_AUTH_TOKEN || SSU_WEBHOOK_TOKEN;
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || "";
-const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || "https://queenslandinteractive-rblx.com/auth/discord/callback";
+const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || "";
 const DISCORD_OAUTH_SCOPES = process.env.DISCORD_OAUTH_SCOPES || "identify email guilds";
 const ADMIN_USER_IDS = String(process.env.ADMIN_USER_IDS || "")
   .split(",")
@@ -157,6 +157,22 @@ const getMissingDiscordOAuthConfig = () => {
     missing.push("DISCORD_CLIENT_SECRET");
   }
   return missing;
+};
+
+const resolveDiscordRedirectUri = (req) => {
+  if (DISCORD_REDIRECT_URI) {
+    return DISCORD_REDIRECT_URI;
+  }
+
+  const forwardedProto = String(req.headers["x-forwarded-proto"] || "").split(",")[0].trim();
+  const protocol = forwardedProto || req.protocol || "https";
+  const host = String(req.headers.host || "").trim();
+
+  if (!host) {
+    return "";
+  }
+
+  return `${protocol}://${host}/auth/discord/callback`;
 };
 
 const fetchJson = async (url) => {
@@ -304,7 +320,14 @@ const requireAdmin = (req, res, next) => {
     return res.status(401).json({ error: "Authentication required." });
   }
 
-  if (ADMIN_USER_IDS.length > 0 && !ADMIN_USER_IDS.includes(String(session.user.id))) {
+  if (ADMIN_USER_IDS.length === 0) {
+    return res.status(503).json({
+      error: "Admin allowlist is not configured.",
+      hint: "Set ADMIN_USER_IDS to one or more Discord user IDs."
+    });
+  }
+
+  if (!ADMIN_USER_IDS.includes(String(session.user.id))) {
     return res.status(403).json({ error: "Admin access required." });
   }
 
@@ -696,10 +719,12 @@ app.get("/api/live-status", async (req, res) => {
 
 app.get("/api/auth/config", (req, res) => {
   const missing = getMissingDiscordOAuthConfig();
+  const effectiveRedirectUri = resolveDiscordRedirectUri(req);
   return res.json({
     oauthConfigured: missing.length === 0,
     missing,
-    redirectUri: DISCORD_REDIRECT_URI
+    redirectUri: DISCORD_REDIRECT_URI,
+    effectiveRedirectUri
   });
 });
 
@@ -710,6 +735,14 @@ app.get("/auth/discord/start", (req, res) => {
       error: "Discord OAuth is not configured.",
       missing,
       hint: "Set missing variables in your Railway service and redeploy."
+    });
+  }
+
+  const redirectUri = resolveDiscordRedirectUri(req);
+  if (!redirectUri) {
+    return res.status(500).json({
+      error: "Discord OAuth redirect URI could not be resolved.",
+      hint: "Set DISCORD_REDIRECT_URI in your environment."
     });
   }
 
@@ -732,13 +765,14 @@ app.get("/auth/discord/start", (req, res) => {
   oauthStates.set(state, {
     createdAt: Date.now(),
     expiresAt: Date.now() + 10 * 60 * 1000,
-    returnTo: safeReturnTo
+    returnTo: safeReturnTo,
+    redirectUri
   });
 
   const params = new URLSearchParams({
     client_id: DISCORD_CLIENT_ID,
     response_type: "code",
-    redirect_uri: DISCORD_REDIRECT_URI,
+    redirect_uri: redirectUri,
     scope: DISCORD_OAUTH_SCOPES,
     state
   });
@@ -774,12 +808,17 @@ app.get("/auth/discord/callback", async (req, res) => {
     }
     oauthStates.delete(state);
 
+    const redirectUri = stateEntry.redirectUri || resolveDiscordRedirectUri(req);
+    if (!redirectUri) {
+      return res.status(500).send("Discord OAuth redirect URI could not be resolved.");
+    }
+
     const tokenBody = new URLSearchParams({
       client_id: DISCORD_CLIENT_ID,
       client_secret: DISCORD_CLIENT_SECRET,
       grant_type: "authorization_code",
       code,
-      redirect_uri: DISCORD_REDIRECT_URI
+      redirect_uri: redirectUri
     });
 
     const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
@@ -876,7 +915,7 @@ app.get("/api/admin/me", requireAdmin, (req, res) => {
   return res.json({
     authenticated: true,
     user: req.adminUser,
-    adminMode: ADMIN_USER_IDS.length > 0 ? "allowlist" : "authenticated-user"
+    adminMode: "allowlist"
   });
 });
 
