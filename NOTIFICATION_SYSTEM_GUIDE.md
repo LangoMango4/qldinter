@@ -12,6 +12,7 @@ Queensland Interactive now has a smart notification system that shows important 
 🎯 **Type-Specific Styling** - Different colors and icons for different notification types
 ⏰ **Auto-Dismiss** - Non-persistent notifications auto-close after 10 seconds
 🔄 **Stackable** - Multiple notifications can appear with staggered timing
+🛠️ **Admin Push Support** - Admins can publish notifications from `/admin/`, and clients will poll `/api/notifications`
 
 ## Notification Types
 

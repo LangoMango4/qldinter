@@ -1,5 +1,6 @@
 const express = require("express");
 const { randomUUID } = require("crypto");
+const fs = require("fs");
 const path = require("path");
 
 const app = express();
@@ -19,16 +20,144 @@ const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || "";
 const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || "https://queenslandinteractive-rblx.com/auth/discord/callback";
 const DISCORD_OAUTH_SCOPES = process.env.DISCORD_OAUTH_SCOPES || "identify email guilds";
+const ADMIN_USER_IDS = String(process.env.ADMIN_USER_IDS || "")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
 const SESSION_COOKIE_NAME = "qldinter_session";
 const WEBSITE_STATUS_URL = process.env.WEBSITE_STATUS_URL || "https://queenslandinteractive-rblx.com/";
 const GAME_STATUS_URL = process.env.GAME_STATUS_URL || "https://www.roblox.com/games/74079904616243/Westlands-Queenlands";
 const WEBSITE_ROOT = path.resolve(__dirname, "..");
+const DATA_DIR = path.join(__dirname, "data");
+const MODERATION_DATA_FILE = path.join(DATA_DIR, "moderation-state.json");
 app.use(express.json());
 app.set("trust proxy", 1);
 
 const botAuthChallenges = new Map();
 const oauthStates = new Map();
 const discordSessions = new Map();
+let moderationState = {
+  bans: [],
+  notifications: []
+};
+
+const ensureDataDirectory = () => {
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+};
+
+const createDefaultModerationState = () => ({
+  bans: [
+    {
+      id: "ban-h3yt5-2026-01-12",
+      username: "h3yt5",
+      altUsername: "jakobecollinsbbsc213",
+      reason: "ToS Violation: Exploiting",
+      type: "permanent",
+      bannedBy: "SYSTEM",
+      appealStatus: "Permanent Ban - Not Appealable",
+      bannedAt: "2026-01-12T12:25:00.000Z",
+      createdAt: "2026-01-12T12:25:00.000Z"
+    },
+    {
+      id: "ban-officer2971-2026-01-12",
+      username: "officer2971",
+      altUsername: "",
+      reason: "ToS Violation: Exploiting",
+      type: "permanent",
+      bannedBy: "SYSTEM",
+      appealStatus: "Permanent Ban - Not Appealable",
+      bannedAt: "2026-01-12T21:17:00.000Z",
+      createdAt: "2026-01-12T21:17:00.000Z"
+    },
+    {
+      id: "ban-bravo-delta54-2026-01-14",
+      username: "BRAVO_DELTA54",
+      altUsername: "",
+      reason: "ToS Violation: Exploiting",
+      type: "permanent",
+      bannedBy: "SYSTEM",
+      appealStatus: "Permanent Ban - Not Appealable",
+      bannedAt: "2026-01-14T14:29:00.000Z",
+      createdAt: "2026-01-14T14:29:00.000Z"
+    },
+    {
+      id: "ban-skeeta2021-2026-01-12",
+      username: "Skeeta2021",
+      altUsername: "",
+      reason: "Fail Roleplay, Mass Copbaiting, and Disrespecting Staff",
+      type: "temporary",
+      bannedBy: "lango_mango13",
+      appealStatus: "Appealable - Must Appeal to be Unbanned",
+      bannedAt: "2026-01-12T17:26:00.000Z",
+      createdAt: "2026-01-12T17:26:00.000Z"
+    },
+    {
+      id: "ban-mrogan-benchick-2026-02-03",
+      username: "Mrogan_Benchick",
+      altUsername: "",
+      reason: "Joined Version Two and failed to listen to staff instructions to leave.",
+      type: "temporary",
+      bannedBy: "lango_mango13",
+      appealStatus: "Appealable - Must Appeal to be Unbanned",
+      bannedAt: "2026-02-03T19:48:00.000Z",
+      createdAt: "2026-02-03T19:48:00.000Z"
+    }
+  ],
+  notifications: []
+});
+
+const saveModerationState = () => {
+  ensureDataDirectory();
+  fs.writeFileSync(MODERATION_DATA_FILE, JSON.stringify(moderationState, null, 2), "utf8");
+};
+
+const loadModerationState = () => {
+  ensureDataDirectory();
+
+  if (!fs.existsSync(MODERATION_DATA_FILE)) {
+    moderationState = createDefaultModerationState();
+    saveModerationState();
+    return;
+  }
+
+  try {
+    const raw = fs.readFileSync(MODERATION_DATA_FILE, "utf8");
+    const parsed = JSON.parse(raw);
+    moderationState = {
+      bans: Array.isArray(parsed.bans) ? parsed.bans : [],
+      notifications: Array.isArray(parsed.notifications) ? parsed.notifications : []
+    };
+  } catch (error) {
+    moderationState = createDefaultModerationState();
+    saveModerationState();
+  }
+};
+
+const toIsoDate = (value) => {
+  if (!value) {
+    return new Date().toISOString();
+  }
+
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) {
+    return new Date().toISOString();
+  }
+
+  return parsed.toISOString();
+};
+
+const getMissingDiscordOAuthConfig = () => {
+  const missing = [];
+  if (!DISCORD_CLIENT_ID) {
+    missing.push("DISCORD_CLIENT_ID");
+  }
+  if (!DISCORD_CLIENT_SECRET) {
+    missing.push("DISCORD_CLIENT_SECRET");
+  }
+  return missing;
+};
 
 const fetchJson = async (url) => {
   const response = await fetch(url, { cache: "no-store" });
@@ -109,7 +238,7 @@ const setSessionCookie = (res, token, maxAgeMs) => {
     "Path=/",
     "HttpOnly",
     "Secure",
-    "SameSite=Lax",
+    "SameSite=None",
     `Max-Age=${maxAgeSeconds}`
   ].join("; ");
   res.setHeader("Set-Cookie", cookie);
@@ -121,7 +250,7 @@ const clearSessionCookie = (res) => {
     "Path=/",
     "HttpOnly",
     "Secure",
-    "SameSite=Lax",
+    "SameSite=None",
     "Max-Age=0"
   ].join("; ");
   res.setHeader("Set-Cookie", cookie);
@@ -167,6 +296,20 @@ const getDiscordSession = (req) => {
     token,
     ...session
   };
+};
+
+const requireAdmin = (req, res, next) => {
+  const session = getDiscordSession(req);
+  if (!session) {
+    return res.status(401).json({ error: "Authentication required." });
+  }
+
+  if (ADMIN_USER_IDS.length > 0 && !ADMIN_USER_IDS.includes(String(session.user.id))) {
+    return res.status(403).json({ error: "Admin access required." });
+  }
+
+  req.adminUser = session.user;
+  return next();
 };
 
 const checkServiceHealth = async (url) => {
@@ -335,8 +478,16 @@ const updateSsuState = ({ active, label, url, mode }) => {
 };
 
 app.use((req, res, next) => {
-  res.set("Access-Control-Allow-Origin", "*");
-  res.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  const requestOrigin = String(req.headers.origin || "").trim();
+  if (requestOrigin) {
+    res.set("Access-Control-Allow-Origin", requestOrigin);
+    res.set("Vary", "Origin");
+  } else {
+    res.set("Access-Control-Allow-Origin", "*");
+  }
+
+  res.set("Access-Control-Allow-Credentials", "true");
+  res.set("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
   res.set("Access-Control-Allow-Headers", "Content-Type");
 
   if (req.method === "OPTIONS") {
@@ -543,16 +694,45 @@ app.get("/api/live-status", async (req, res) => {
   }
 });
 
+app.get("/api/auth/config", (req, res) => {
+  const missing = getMissingDiscordOAuthConfig();
+  return res.json({
+    oauthConfigured: missing.length === 0,
+    missing,
+    redirectUri: DISCORD_REDIRECT_URI
+  });
+});
+
 app.get("/auth/discord/start", (req, res) => {
-  if (!DISCORD_CLIENT_ID || !DISCORD_CLIENT_SECRET) {
-    return res.status(500).json({ error: "Discord OAuth is not configured." });
+  const missing = getMissingDiscordOAuthConfig();
+  if (missing.length > 0) {
+    return res.status(500).json({
+      error: "Discord OAuth is not configured.",
+      missing,
+      hint: "Set missing variables in your Railway service and redeploy."
+    });
   }
 
   cleanupDiscordAuthState();
   const state = randomUUID();
+  const returnTo = String((req.query && req.query.returnTo) || "").trim();
+  let safeReturnTo = "/";
+
+  if (returnTo) {
+    try {
+      const parsed = new URL(returnTo);
+      if (["http:", "https:"].includes(parsed.protocol)) {
+        safeReturnTo = returnTo;
+      }
+    } catch (error) {
+      safeReturnTo = "/";
+    }
+  }
+
   oauthStates.set(state, {
     createdAt: Date.now(),
-    expiresAt: Date.now() + 10 * 60 * 1000
+    expiresAt: Date.now() + 10 * 60 * 1000,
+    returnTo: safeReturnTo
   });
 
   const params = new URLSearchParams({
@@ -568,8 +748,9 @@ app.get("/auth/discord/start", (req, res) => {
 
 app.get("/auth/discord/callback", async (req, res) => {
   try {
-    if (!DISCORD_CLIENT_ID || !DISCORD_CLIENT_SECRET) {
-      return res.status(500).send("Discord OAuth is not configured.");
+    const missing = getMissingDiscordOAuthConfig();
+    if (missing.length > 0) {
+      return res.status(500).send(`Discord OAuth is not configured. Missing: ${missing.join(", ")}`);
     }
 
     cleanupDiscordAuthState();
@@ -644,7 +825,8 @@ app.get("/auth/discord/callback", async (req, res) => {
     });
 
     setSessionCookie(res, sessionToken, 24 * 60 * 60 * 1000);
-    return res.redirect("/");
+    const redirectTo = typeof stateEntry.returnTo === "string" && stateEntry.returnTo ? stateEntry.returnTo : "/";
+    return res.redirect(redirectTo);
   } catch (error) {
     return res.status(500).send("Discord OAuth callback failed.");
   }
@@ -661,6 +843,138 @@ app.get("/api/auth/me", (req, res) => {
     user: session.user,
     expiresAt: new Date(session.expiresAt).toISOString()
   });
+});
+
+app.get("/api/bans", (req, res) => {
+  const bans = [...moderationState.bans].sort((a, b) => {
+    return new Date(b.bannedAt || b.createdAt || 0).getTime() - new Date(a.bannedAt || a.createdAt || 0).getTime();
+  });
+
+  return res.json({ bans });
+});
+
+app.get("/api/notifications", (req, res) => {
+  const since = String((req.query && req.query.since) || "").trim();
+  const sinceTime = since ? new Date(since).getTime() : 0;
+  const isValidSince = Number.isFinite(sinceTime) && sinceTime > 0;
+
+  const notifications = [...moderationState.notifications]
+    .filter((item) => {
+      if (!isValidSince) {
+        return true;
+      }
+      return new Date(item.createdAt || item.date || 0).getTime() > sinceTime;
+    })
+    .sort((a, b) => {
+      return new Date(a.createdAt || a.date || 0).getTime() - new Date(b.createdAt || b.date || 0).getTime();
+    });
+
+  return res.json({ notifications });
+});
+
+app.get("/api/admin/me", requireAdmin, (req, res) => {
+  return res.json({
+    authenticated: true,
+    user: req.adminUser,
+    adminMode: ADMIN_USER_IDS.length > 0 ? "allowlist" : "authenticated-user"
+  });
+});
+
+app.get("/api/admin/moderation", requireAdmin, (req, res) => {
+  return res.json({
+    bans: moderationState.bans,
+    notifications: moderationState.notifications
+  });
+});
+
+app.post("/api/admin/bans", requireAdmin, (req, res) => {
+  const username = String((req.body && req.body.username) || "").trim();
+  const altUsername = String((req.body && req.body.altUsername) || "").trim();
+  const reason = String((req.body && req.body.reason) || "").trim();
+  const typeInput = String((req.body && req.body.type) || "permanent").trim().toLowerCase();
+  const bannedByInput = String((req.body && req.body.bannedBy) || "").trim();
+  const appealStatus = String((req.body && req.body.appealStatus) || "").trim();
+  const bannedAt = toIsoDate((req.body && req.body.bannedAt) || "");
+
+  if (!username || !reason) {
+    return res.status(400).json({ error: "username and reason are required." });
+  }
+
+  const type = ["permanent", "temporary", "under-review"].includes(typeInput) ? typeInput : "permanent";
+  const bannedBy = bannedByInput || req.adminUser.username || "ADMIN";
+
+  const newBan = {
+    id: `ban-${randomUUID()}`,
+    username,
+    altUsername,
+    reason,
+    type,
+    bannedBy,
+    appealStatus: appealStatus || (type === "permanent" ? "Permanent Ban - Not Appealable" : "Appealable - Must Appeal to be Unbanned"),
+    bannedAt,
+    createdAt: new Date().toISOString()
+  };
+
+  moderationState.bans.unshift(newBan);
+  saveModerationState();
+  return res.status(201).json({ success: true, ban: newBan });
+});
+
+app.delete("/api/admin/bans/:banId", requireAdmin, (req, res) => {
+  const banId = String((req.params && req.params.banId) || "").trim();
+  if (!banId) {
+    return res.status(400).json({ error: "banId is required." });
+  }
+
+  const nextBans = moderationState.bans.filter((ban) => ban.id !== banId);
+  if (nextBans.length === moderationState.bans.length) {
+    return res.status(404).json({ error: "Ban not found." });
+  }
+
+  moderationState.bans = nextBans;
+  saveModerationState();
+  return res.json({ success: true, removedId: banId });
+});
+
+app.post("/api/admin/notifications", requireAdmin, (req, res) => {
+  const title = String((req.body && req.body.title) || "").trim();
+  const message = String((req.body && req.body.message) || "").trim();
+  const typeInput = String((req.body && req.body.type) || "announcement").trim().toLowerCase();
+  const link = String((req.body && req.body.link) || "").trim();
+  const linkText = String((req.body && req.body.linkText) || "").trim();
+  const persistent = Boolean(req.body && req.body.persistent);
+
+  if (!title || !message) {
+    return res.status(400).json({ error: "title and message are required." });
+  }
+
+  const type = ["update", "announcement", "warning", "info"].includes(typeInput) ? typeInput : "announcement";
+  const now = new Date();
+
+  const notification = {
+    id: `admin-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
+    title,
+    message,
+    type,
+    date: now.toISOString().slice(0, 10),
+    persistent,
+    createdAt: now.toISOString(),
+    createdBy: req.adminUser.username || req.adminUser.id
+  };
+
+  if (link && linkText) {
+    notification.link = link;
+    notification.linkText = linkText;
+  }
+
+  moderationState.notifications.push(notification);
+
+  if (moderationState.notifications.length > 200) {
+    moderationState.notifications = moderationState.notifications.slice(-200);
+  }
+
+  saveModerationState();
+  return res.status(201).json({ success: true, notification });
 });
 
 app.post("/api/auth/logout", (req, res) => {
@@ -981,6 +1295,8 @@ app.post("/api/feedback", async (req, res) => {
   }
 });
 
+
+loadModerationState();
 
 app.listen(PORT, () => {
   console.log(`Roblox proxy running on ${PORT}`);

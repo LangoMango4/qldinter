@@ -35,6 +35,7 @@
   
   <script defer src="./navigation.js"></script>
   <script defer src="./notifications.js"></script>
+  <script defer src="./banned-users.js"></script>
 
   <style>
     .banned-users-page {
@@ -466,6 +467,8 @@
   </ul>
 </nav>
 
+
+
 <div class="banned-users-page">
   <div class="banned-container">
     <div class="banned-header">
@@ -495,113 +498,26 @@
       </div>
     </div>
 
+ <!-- Appeal Section -->
+    <div class="appeal-section">
+      <h3>
+        Need to Submit an Appeal?
+      </h3>
+      <p>
+        If you believe you were banned unfairly or wish to appeal your ban, please follow our official 
+        appeal process below. All appeals are reviewed by senior staff members within 3-7 days or depending on the complexity of the case.
+      </p>
+      <p>
+       To submit an appeal, please visit the Google Forms Link <a href="https://docs.google.com/forms/d/e/1FAIpQLSfcYmEUWhCBHE3Gnw8IoSHG2xUhpQF9n8-iIZeU0r-Mvm1YLg/viewform?usp=header" target="_blank">here</a> and fill out the required information. Be sure to provide as much detail as possible to help us understand your case.
+    </div>
+
     <!-- Current Banned Users Section -->
     <div class="banned-list-section">
       <h2>Current Banned Users</h2>
-
-      <div class="ban-item permanent">
-        <div class="ban-header">
-          <div class="ban-username">h3yt5</div>
-          <div class="ban-username">Alt: jakobecollinsbbsc213</div>
-          <span class="ban-badge permanent">Permanent Ban</span>
-        </div>
-        <div class="ban-details">
-          <strong>Reason:</strong> ToS Violation: Exploiting
-        </div>
-        <div class="ban-meta">
-          <div class="ban-meta-item">
-            <span>Banned: Jan 12, 2026, 12:25 PM</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Banned By: SYSTEM</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Appeal Status: Permanent Ban - Not Appealable</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="ban-item permanent">
-        <div class="ban-header">
-          <div class="ban-username">officer2971</div>
-          <span class="ban-badge permanent">Permanent Ban</span>
-        </div>
-        <div class="ban-details">
-          <strong>Reason:</strong> ToS Violation: Exploiting
-        </div>
-        <div class="ban-meta">
-          <div class="ban-meta-item">
-            <span>Banned: Jan 12, 2026, 9:17 PM</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Banned By: SYSTEM</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Appeal Status: Permanent Ban - Not Appealable</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="ban-item permanent">
-        <div class="ban-header">
-          <div class="ban-username">BRAVO_DELTA54</div>
-          <span class="ban-badge permanent">Permanent Ban</span>
-        </div>
-        <div class="ban-details">
-          <strong>Reason:</strong> ToS Violation: Exploiting
-        </div>
-        <div class="ban-meta">
-          <div class="ban-meta-item">
-            <span>Banned: Jan 14, 2026, 2:29 PM</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Banned By: SYSTEM</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Appeal Status: Permanent Ban - Not Appealable</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="ban-item temporary">
-        <div class="ban-header">
-          <div class="ban-username">Skeeta2021</div>
-          <span class="ban-badge temporary">Temporary Ban</span>
-        </div>
-        <div class="ban-details">
-          <strong>Reason:</strong> Fail Roleplay, Mass Copbaiting, and Disrespecting Staff
-        </div>
-        <div class="ban-meta">
-          <div class="ban-meta-item">
-            <span>Banned: Jan 12, 2026, 5:26 PM</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Banned By: lango_mango13</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Appeal Status: Appealable - Must Appeal to be Unbanned</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="ban-item temporary">
-        <div class="ban-header">
-          <div class="ban-username">Mrogan_Benchick</div>
-          <span class="ban-badge temporary">Temporary Ban</span>
-        </div>
-        <div class="ban-details">
-          <strong>Reason:</strong> Joined Version Two and failed to listen to staff instructions to leave.
-        </div>
-        <div class="ban-meta">
-          <div class="ban-meta-item">
-            <span>Banned: Feb 3, 2026, 7:48 PM</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Banned By: lango_mango13</span>
-          </div>
-          <div class="ban-meta-item">
-            <span>Appeal Status: Appealable - Must Appeal to be Unbanned</span>
-          </div>
+      <div id="bans-list">
+        <div class="no-bans">
+          <div class="icon">⏳</div>
+          <h3>Loading current bans...</h3>
         </div>
       </div>
 
@@ -740,49 +656,6 @@
       </div>
     </div>
 
-    <!-- Ban Information Section -->
-    <div class="trello-section">
-      <h2>Ban Statistics & Transparency</h2>
-      <div style="text-align: center; padding: 60px 20px; background: #f8f9fa; border-radius: 8px;">
-        <h3 style="color: #666; margin-bottom: 15px; font-size: 1.5rem;">Our Commitment to Fair Moderation</h3>
-        <p style="color: #777; line-height: 1.8; max-width: 600px; margin: 0 auto;">
-          All bans are issued fairly and reviewed by our moderation team. We maintain this page 
-          to ensure transparency in our moderation actions and to demonstrate that we take community 
-          safety seriously while respecting everyone's right to appeal.
-        </p>
-      </div>
-    </div>
-
-    <!-- Appeal Section -->
-    <div class="appeal-section">
-      <h3>
-        Need to Submit an Appeal?
-      </h3>
-      <p>
-        If you believe you were banned unfairly or wish to appeal your ban, please follow our official 
-        appeal process outlined above. All appeals are reviewed by senior staff members within 3-7 days.
-      </p>
-      <p>
-        <strong>To submit an appeal:</strong> Join our 
-        <a href="https://discord.gg/kUf97PV9H3" target="_blank">Discord Server</a> 
-        and create a ticket in the <strong>#support</strong> channel. Make sure to include:
-      </p>
-      <ul style="margin: 15px 0; padding-left: 25px; line-height: 1.8;">
-        <li>Your exact Roblox username</li>
-        <li>The date you were banned</li>
-        <li>The stated reason for your ban</li>
-        <li>A clear, honest explanation of why you believe the ban should be lifted</li>
-        <li>Any evidence that supports your case (screenshots, logs, etc.)</li>
-      </ul>
-      <p>
-        <strong>Appeal Tips:</strong> Be respectful, honest, and patient. Aggressive or dishonest appeals are automatically denied. 
-        If you genuinely made a mistake, acknowledge it and explain how you'll avoid it in the future.
-      </p>
-      <p style="margin-bottom: 0;">
-        <strong>Please note:</strong> Appeals for serious violations (hacking, doxxing, harassment campaigns) are rarely approved. 
-        Temporary bans typically cannot be appealed unless there was a clear error in the ban decision.
-      </p>
-    </div>
   </div>
 </div>
 

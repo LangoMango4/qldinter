@@ -2,6 +2,11 @@
 class NotificationSystem {
   constructor() {
     this.storageKey = 'qldinter_notifications_seen';
+    this.apiBase = this.resolveApiBase();
+    this.serverNotificationsUrl = `${this.apiBase}/api/notifications`;
+    this.serverPollIntervalMs = 30000;
+    this.serverPollTimer = null;
+    this.latestServerNotificationAt = '';
     this.notifications = [
       // Add notifications here - newest first
       {
@@ -44,10 +49,76 @@ class NotificationSystem {
     ];
   }
 
+  resolveApiBase() {
+    const configured = (window.SITE_CONFIG && (window.SITE_CONFIG.RAILWAY_SERVER_URL || window.SITE_CONFIG.robloxProxyBase)) || '';
+    const cleanConfigured = String(configured || '').trim().replace(/\/$/, '');
+    return cleanConfigured || window.location.origin;
+  }
+
   // Check which notifications have been seen
   getSeenNotifications() {
     const seen = localStorage.getItem(this.storageKey);
     return seen ? JSON.parse(seen) : [];
+  }
+
+  // Basic HTML escaping for safe template rendering
+  escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  // Ensure links are http(s) or root-relative
+  sanitizeLink(url) {
+    const value = String(url || '').trim();
+    if (!value) return '';
+    if (value.startsWith('/')) return value;
+    if (/^https?:\/\//i.test(value)) return value;
+    return '';
+  }
+
+  normalizeNotification(notification) {
+    const type = ['update', 'announcement', 'warning', 'info'].includes(notification.type)
+      ? notification.type
+      : 'info';
+
+    return {
+      id: String(notification.id || `notif-${Date.now()}-${Math.floor(Math.random() * 10000)}`),
+      title: String(notification.title || 'Notification'),
+      message: String(notification.message || ''),
+      type,
+      date: String(notification.date || new Date().toISOString().slice(0, 10)),
+      persistent: Boolean(notification.persistent),
+      link: this.sanitizeLink(notification.link),
+      linkText: String(notification.linkText || ''),
+      createdAt: String(notification.createdAt || '')
+    };
+  }
+
+  hasNotification(notificationId) {
+    return this.notifications.some(n => n.id === notificationId);
+  }
+
+  mergeNotifications(items) {
+    let merged = 0;
+
+    items.forEach((item) => {
+      const notification = this.normalizeNotification(item);
+      if (!this.hasNotification(notification.id)) {
+        this.notifications.unshift(notification);
+        merged += 1;
+      }
+
+      const marker = notification.createdAt || notification.date;
+      if (marker && (!this.latestServerNotificationAt || new Date(marker).getTime() > new Date(this.latestServerNotificationAt).getTime())) {
+        this.latestServerNotificationAt = marker;
+      }
+    });
+
+    return merged;
   }
 
   // Mark notification as seen
@@ -69,19 +140,24 @@ class NotificationSystem {
   showNotification(notification) {
     const notifEl = document.createElement('div');
     notifEl.className = `qld-notification qld-notification-${notification.type}`;
+
+    const safeTitle = this.escapeHtml(notification.title);
+    const safeMessage = this.escapeHtml(notification.message);
+    const safeLink = this.sanitizeLink(notification.link);
+    const safeLinkText = this.escapeHtml(notification.linkText);
     
-    const linkHtml = notification.link && notification.linkText 
-      ? `<a href="${notification.link}" class="qld-notification-link" ${notification.link.startsWith('http') ? 'target="_blank"' : ''}>${notification.linkText}</a>`
+    const linkHtml = safeLink && safeLinkText
+      ? `<a href="${safeLink}" class="qld-notification-link" ${safeLink.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''}>${safeLinkText}</a>`
       : '';
     
     notifEl.innerHTML = `
       <div class="qld-notification-content">
         <div class="qld-notification-header">
           <div class="qld-notification-icon">${this.getIcon(notification.type)}</div>
-          <h3 class="qld-notification-title">${notification.title}</h3>
+          <h3 class="qld-notification-title">${safeTitle}</h3>
           <button class="qld-notification-close" aria-label="Close">&times;</button>
         </div>
-        <p class="qld-notification-message">${notification.message}</p>
+        <p class="qld-notification-message">${safeMessage}</p>
         ${linkHtml}
         <div class="qld-notification-date">${this.formatDate(notification.date)}</div>
       </div>
@@ -309,10 +385,51 @@ class NotificationSystem {
   init() {
     // Wait for DOM to be ready
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.showUnseen());
+      document.addEventListener('DOMContentLoaded', () => this.initialize());
     } else {
-      this.showUnseen();
+      this.initialize();
     }
+  }
+
+  async initialize() {
+    await this.fetchServerNotifications();
+    this.showUnseen();
+    this.startServerNotificationPolling();
+  }
+
+  async fetchServerNotifications() {
+    try {
+      const params = new URLSearchParams();
+      if (this.latestServerNotificationAt) {
+        params.set('since', this.latestServerNotificationAt);
+      }
+
+      const query = params.toString();
+      const url = query ? `${this.serverNotificationsUrl}?${query}` : this.serverNotificationsUrl;
+      const response = await fetch(url, { cache: 'no-store' });
+      if (!response.ok) {
+        return 0;
+      }
+
+      const payload = await response.json().catch(() => ({}));
+      const items = Array.isArray(payload.notifications) ? payload.notifications : [];
+      return this.mergeNotifications(items);
+    } catch (error) {
+      return 0;
+    }
+  }
+
+  startServerNotificationPolling() {
+    if (this.serverPollTimer) {
+      clearInterval(this.serverPollTimer);
+    }
+
+    this.serverPollTimer = setInterval(async () => {
+      const merged = await this.fetchServerNotifications();
+      if (merged > 0) {
+        this.showUnseen();
+      }
+    }, this.serverPollIntervalMs);
   }
 
   // Show all unseen notifications
@@ -327,9 +444,13 @@ class NotificationSystem {
 
   // Add a new notification programmatically
   addNotification(notification) {
-    this.notifications.unshift(notification);
-    if (!this.getSeenNotifications().includes(notification.id)) {
-      this.showNotification(notification);
+    const normalized = this.normalizeNotification(notification);
+    if (!this.hasNotification(normalized.id)) {
+      this.notifications.unshift(normalized);
+    }
+
+    if (!this.getSeenNotifications().includes(normalized.id)) {
+      this.showNotification(normalized);
     }
   }
 

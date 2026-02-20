@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1e90ff">
+  <title>Admin Panel - Queensland Interactive</title>
+  <link rel="icon" href="../mainico.png">
+  <link rel="manifest" href="../manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+  <script defer src="../navigation.js"></script>
+  <script defer src="../notifications.js"></script>
+  <script defer src="./admin-panel.js"></script>
+  <style>
+    .admin-page { padding-top: 80px; min-height: 100vh; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
+    .admin-container { max-width: 1100px; margin: 0 auto; padding: 50px 20px 70px; }
+    .admin-card { background: #fff; border-radius: 12px; padding: 28px; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08); margin-bottom: 24px; }
+    .admin-title { margin: 0 0 14px; color: #1e90ff; }
+    .admin-subtitle { margin: 0 0 24px; color: #666; }
+    .admin-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+    .admin-btn { border: none; border-radius: 8px; padding: 11px 16px; cursor: pointer; font-weight: 600; font-family: 'Poppins', sans-serif; }
+    .admin-btn-primary { background: #1e90ff; color: #fff; }
+    .admin-btn-danger { background: #dc3545; color: #fff; }
+    .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .admin-field { margin-bottom: 14px; }
+    .admin-field label { display: block; margin-bottom: 6px; color: #333; font-weight: 600; }
+    .admin-field input, .admin-field textarea, .admin-field select { width: 100%; box-sizing: border-box; border: 2px solid #e0e0e0; border-radius: 8px; padding: 11px 12px; font-family: 'Poppins', sans-serif; }
+    .admin-field textarea { min-height: 110px; resize: vertical; }
+    .admin-list { margin-top: 12px; display: grid; gap: 10px; }
+    .admin-list-item { padding: 12px 14px; border: 1px solid #e3e3e3; border-radius: 8px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+    .admin-meta { color: #666; font-size: 0.9rem; }
+    .admin-status { border-left: 4px solid #1e90ff; background: #e8f3ff; color: #0a4a8a; border-radius: 8px; padding: 12px; margin-bottom: 14px; }
+    .admin-error { border-left-color: #dc3545; background: #fdeaea; color: #8a1f2b; }
+    .admin-success { border-left-color: #22a559; background: #e9f9ef; color: #146a38; }
+    @media (max-width: 900px) { .admin-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo">
+      <img src="../mainico.png" alt="QI Logo" class="logo-img">
+      <span>Queensland Interactive</span>
+    </a>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul id="nav-menu">
+      <li><a href="/">Home</a></li>
+      <li><a href="/banned-users">Banned Users</a></li>
+      <li><a href="/feedback.html">Feedback</a></li>
+      <li><a class="cta" href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a></li>
+    </ul>
+  </nav>
+
+  <main class="admin-page">
+    <div class="admin-container">
+      <div class="admin-card">
+        <h1 class="admin-title">Admin Panel</h1>
+        <p class="admin-subtitle">Manage bans and push toast notifications to all users.</p>
+        <div id="admin-status" class="admin-status">Checking admin access...</div>
+        <div class="admin-actions">
+          <button id="admin-login" class="admin-btn admin-btn-primary" type="button">Login with Discord</button>
+          <button id="admin-logout" class="admin-btn admin-btn-danger" type="button">Logout</button>
+        </div>
+      </div>
+
+      <div class="admin-grid">
+        <section class="admin-card">
+          <h2 class="admin-title">Add Ban</h2>
+          <form id="ban-form">
+            <div class="admin-field"><label for="ban-username">Username</label><input id="ban-username" required></div>
+            <div class="admin-field"><label for="ban-alt">Alt Username (optional)</label><input id="ban-alt"></div>
+            <div class="admin-field"><label for="ban-type">Type</label><select id="ban-type"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="under-review">Under Review</option></select></div>
+            <div class="admin-field"><label for="ban-reason">Reason</label><textarea id="ban-reason" required></textarea></div>
+            <div class="admin-field"><label for="ban-by">Banned By</label><input id="ban-by"></div>
+            <div class="admin-field"><label for="ban-appeal">Appeal Status</label><input id="ban-appeal"></div>
+            <button class="admin-btn admin-btn-primary" type="submit">Add Ban</button>
+          </form>
+        </section>
+
+        <section class="admin-card">
+          <h2 class="admin-title">Push Toast Notification</h2>
+          <form id="notification-form">
+            <div class="admin-field"><label for="notif-title">Title</label><input id="notif-title" required></div>
+            <div class="admin-field"><label for="notif-message">Message</label><textarea id="notif-message" required></textarea></div>
+            <div class="admin-field"><label for="notif-type">Type</label><select id="notif-type"><option value="announcement">Announcement</option><option value="update">Update</option><option value="warning">Warning</option><option value="info">Info</option></select></div>
+            <div class="admin-field"><label for="notif-link">Link (optional)</label><input id="notif-link" placeholder="https://..."></div>
+            <div class="admin-field"><label for="notif-link-text">Link Text (optional)</label><input id="notif-link-text" placeholder="Read more"></div>
+            <div class="admin-field"><label><input id="notif-persistent" type="checkbox"> Persistent (stays until dismissed)</label></div>
+            <button class="admin-btn admin-btn-primary" type="submit">Send Notification</button>
+          </form>
+        </section>
+      </div>
+
+      <section class="admin-card">
+        <h2 class="admin-title">Current Bans</h2>
+        <div id="ban-list" class="admin-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="../maintenance.js"></script>
+  <script src="../config.js"></script>
+</body>
+</html>

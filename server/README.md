@@ -68,6 +68,7 @@ Server runs on http://localhost:3000
 - `DISCORD_CLIENT_SECRET` - Application client secret from Discord Developer Portal
 - `DISCORD_REDIRECT_URI` - OAuth callback URL (recommended: `https://queenslandinteractive-rblx.com/auth/discord/callback`)
 - `DISCORD_OAUTH_SCOPES` - Space-separated scopes (recommended: `identify email guilds`)
+- `ADMIN_USER_IDS` - Comma-separated Discord user IDs allowed to use admin moderation APIs (if empty, any authenticated Discord user can use admin APIs)
 
 **To set in Railway:**
 1. Go to your project settings
@@ -91,6 +92,13 @@ See [FEEDBACK_SETUP.md](../FEEDBACK_SETUP.md) for detailed setup instructions.
 - `GET /api/auth/me` - Returns authenticated Discord user for current session cookie
 - `POST /api/auth/logout` - Clears Discord login session
 - `POST /api/feedback` - Submit feedback or bug reports (sends to Discord webhook)
+- `GET /api/bans` - Public list of active bans (used by `/banned-users`)
+- `GET /api/notifications` - Public admin-pushed toast notifications
+- `GET /api/admin/me` - Verify admin auth/access
+- `GET /api/admin/moderation` - Admin moderation data snapshot
+- `POST /api/admin/bans` - Add a ban entry
+- `DELETE /api/admin/bans/:banId` - Remove a ban entry
+- `POST /api/admin/notifications` - Push a toast notification to users
 
 ### BotGhost session mode examples
 
