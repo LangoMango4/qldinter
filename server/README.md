@@ -86,6 +86,8 @@ See [FEEDBACK_SETUP.md](../FEEDBACK_SETUP.md) for detailed setup instructions.
 - `GET /api/ssu-status` - Current SSU state from local webhook state
 - `POST /api/ssu/start` - Mark SSU active (for BotGhost webhooks)
 - `POST /api/ssu/end` - Mark SSU inactive (for BotGhost webhooks)
+- `POST /api/ssu/startup-poll/start` - Mark startup poll (SSP) active
+- `POST /api/ssu/startup-poll/end` - Mark startup poll (SSP) inactive
 - `GET /api/live-status` - Active SSU status plus uptime checks for website, bot, and game
 - `GET /auth/discord/start` - Starts Discord OAuth login flow
 - `GET /auth/discord/callback` - Discord OAuth callback endpoint (set this in Discord Developer Portal)
@@ -108,7 +110,17 @@ The webhook endpoints accept `mode` (or `type`/`session`) so you can show `SSU`,
 - Start SSD: `GET /api/ssu/start?token=YOUR_TOKEN&mode=SSD`
 - End SSP: `GET /api/ssu/end?token=YOUR_TOKEN&mode=SSP`
 
-If `mode` is provided, the site label becomes `MODE Active` or `MODE Inactive`.
+### Startup poll quick URLs
+
+- Start startup poll: `GET /api/ssu/startup-poll/start?token=YOUR_TOKEN`
+- End startup poll: `GET /api/ssu/startup-poll/end?token=YOUR_TOKEN`
+
+You can still use generic routes with mode values like `mode=SSP`, `mode=STARTUP_POLL`, or `mode=SSUP`.
+
+If `mode` is provided, labels are formatted as:
+- `SSP (Startup Poll) Active/Inactive`
+- `SSU (Server Startup) Active/Inactive`
+- `SSD (Server Shutdown) Active/Inactive`
 
 ## Caching
 

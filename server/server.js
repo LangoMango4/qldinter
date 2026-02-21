@@ -454,6 +454,24 @@ const normalizeSessionMode = (value) => {
   }
 
   const upper = value.toUpperCase();
+  if (
+    upper === "SSP" ||
+    upper === "SSUP" ||
+    upper.includes("STARTUP_POLL") ||
+    upper.includes("STARTUP POLL") ||
+    (upper.includes("POLL") && upper.includes("STARTUP"))
+  ) {
+    return "SSP";
+  }
+
+  if (upper === "SSU" || upper.includes("SERVER STARTUP") || upper.includes("SERVER_STARTUP")) {
+    return "SSU";
+  }
+
+  if (upper === "SSD" || upper.includes("SERVER SHUTDOWN") || upper.includes("SERVER_SHUTDOWN")) {
+    return "SSD";
+  }
+
   const knownMatch = upper.match(/\b(SSU|SSD|SSP)\b/);
   if (knownMatch) {
     return knownMatch[1];
@@ -474,6 +492,14 @@ const formatSessionLabel = (mode, active) => {
 
   if (mode === "SSP") {
     return active ? "SSP (Startup Poll) Active" : "SSP (Startup Poll) Inactive";
+  }
+
+  if (mode === "SSU") {
+    return active ? "SSU (Server Startup) Active" : "SSU (Server Startup) Inactive";
+  }
+
+  if (mode === "SSD") {
+    return active ? "SSD (Server Shutdown) Active" : "SSD (Server Shutdown) Inactive";
   }
 
   return `${mode} ${active ? "Active" : "Inactive"}`;
@@ -686,11 +712,49 @@ const handleSsuEnd = (req, res) => {
   return res.json({ success: true, ssu: ssuState });
 };
 
+const handleStartupPollStart = (req, res) => {
+  if (!isWebhookAuthorized(req)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const { label, url } = getWebhookPayload(req);
+  updateSsuState({
+    active: true,
+    label: label || "SSP (Startup Poll) Active",
+    url,
+    mode: "SSP"
+  });
+
+  return res.json({ success: true, ssu: ssuState });
+};
+
+const handleStartupPollEnd = (req, res) => {
+  if (!isWebhookAuthorized(req)) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  const { label, url } = getWebhookPayload(req);
+  updateSsuState({
+    active: false,
+    label: label || "SSP (Startup Poll) Inactive",
+    url,
+    mode: "SSP"
+  });
+
+  return res.json({ success: true, ssu: ssuState });
+};
+
 app.post("/api/ssu/start", handleSsuStart);
 app.get("/api/ssu/start", handleSsuStart);
 
 app.post("/api/ssu/end", handleSsuEnd);
 app.get("/api/ssu/end", handleSsuEnd);
+
+app.post("/api/ssu/startup-poll/start", handleStartupPollStart);
+app.get("/api/ssu/startup-poll/start", handleStartupPollStart);
+
+app.post("/api/ssu/startup-poll/end", handleStartupPollEnd);
+app.get("/api/ssu/startup-poll/end", handleStartupPollEnd);
 
 app.get("/api/live-status", async (req, res) => {
   try {
