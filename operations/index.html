@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1e90ff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Operations Status - Queensland Interactive</title>
+  <link rel="icon" href="../mainico.png">
+  <link rel="apple-touch-icon" href="../mainico.png">
+  <link rel="manifest" href="../manifest.json">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+
+  <script defer src="../config.js"></script>
+  <script defer src="../navigation.js"></script>
+  <script defer src="../notifications.js"></script>
+  <script defer src="./operations-status.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="/" class="logo">
+    <img src="../mainico.png" alt="QI Logo" class="logo-img">
+    <span>Queensland Interactive</span>
+  </a>
+
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <ul id="nav-menu">
+    <li><a href="/#about">About</a></li>
+    <li><a href="/#sections">Community</a></li>
+    <li><a href="/ourteam/">Team</a></li>
+    <li><a href="/faq/">FAQ</a></li>
+    <li><a href="/operations/">Operations</a></li>
+    <li><a href="/feedback.html">Feedback</a></li>
+    <li><a href="/banned-users">Banned Users</a></li>
+    <li><a href="/tos">TOS</a></li>
+    <li><a href="/licence.html">Licence</a></li>
+    <li><a class="cta" href="https://discord.gg/kUf97PV9H3" target="_blank">Discord</a></li>
+  </ul>
+</nav>
+
+<main style="padding-top: 90px; min-height: 100vh;">
+  <section class="ops-status reveal" id="ops-status">
+    <div class="ops-status-inner" style="max-width: 1200px; margin: 0 auto;">
+      <div class="ops-status-copy">
+        <h2>Operations Status</h2>
+        <p>Active SSU state and live uptime checks for core services.</p>
+      </div>
+      <div class="ops-status-cards">
+        <div class="status-card" id="ops-session-card">
+          <span class="status-label">Active Session</span>
+          <strong id="ssu-active-status">Loading...</strong>
+          <small class="status-meta" id="ssu-active-meta">Waiting for update...</small>
+        </div>
+        <div class="status-card" id="ops-website-card">
+          <span class="status-label">Website Uptime</span>
+          <strong id="uptime-website">Loading...</strong>
+          <small class="status-meta" id="uptime-website-meta">Waiting for check...</small>
+        </div>
+        <div class="status-card" id="ops-game-card">
+          <span class="status-label">Game Uptime</span>
+          <strong id="uptime-game">Loading...</strong>
+          <small class="status-meta" id="uptime-game-meta">Waiting for check...</small>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="../maintenance.js"></script>
+</body>
+</html>
