@@ -87,6 +87,11 @@ const loadLiveOperationsStatus = async () => {
           ? "Startup poll active (vote phase before SSU)"
           : "Startup poll closed";
         setCardState(sessionCard, "warn");
+      } else if (typeof ssu.label === "string" && ssu.label.toUpperCase().includes("SSD")) {
+        ssuMetaEl.textContent = ssu.active
+          ? "Server shutdown in progress"
+          : "Server shutdown status recorded";
+        setCardState(sessionCard, "bad");
       } else {
         ssuMetaEl.textContent = ssu.active ? "Session currently running" : "No active session";
         setCardState(sessionCard, ssu.active ? "good" : "bad");

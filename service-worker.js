@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qldinter-v7';
+const CACHE_NAME = 'qldinter-v8';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -17,6 +17,7 @@ const urlsToCache = [
   '/ourteam/',
   '/licence.html',
   '/tos.html',
+  '/operations/',
   '/banned-users.html',
   '/feedback.html'
 ];
@@ -53,41 +54,65 @@ self.addEventListener('activate', (event) => {
   return self.clients.claim();
 });
 
-// Fetch event - serve from cache, fallback to network
+const networkFirst = async (request) => {
+  const cache = await caches.open(CACHE_NAME);
+
+  try {
+    const networkResponse = await fetch(request);
+    if (networkResponse && networkResponse.status === 200 && request.method === 'GET') {
+      cache.put(request, networkResponse.clone());
+    }
+    return networkResponse;
+  } catch (error) {
+    const cachedResponse = await cache.match(request);
+    if (cachedResponse) {
+      return cachedResponse;
+    }
+    throw error;
+  }
+};
+
+const cacheFirst = async (request) => {
+  const cache = await caches.open(CACHE_NAME);
+  const cachedResponse = await cache.match(request);
+  if (cachedResponse) {
+    return cachedResponse;
+  }
+
+  const networkResponse = await fetch(request);
+  if (networkResponse && networkResponse.status === 200 && request.method === 'GET') {
+    cache.put(request, networkResponse.clone());
+  }
+  return networkResponse;
+};
+
+// Fetch event - network-first for page/code updates, cache-first for static media
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') {
+    return;
+  }
+
+  const requestUrl = new URL(event.request.url);
+  if (requestUrl.origin !== self.location.origin) {
+    return;
+  }
+
+  const destination = event.request.destination;
+  const pathname = requestUrl.pathname;
+  const shouldUseNetworkFirst =
+    event.request.mode === 'navigate' ||
+    destination === 'document' ||
+    destination === 'script' ||
+    destination === 'style' ||
+    pathname.endsWith('.html') ||
+    pathname.endsWith('.js') ||
+    pathname.endsWith('.css');
+
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Cache hit - return response
-        if (response) {
-          return response;
-        }
-
-        // Clone the request
-        const fetchRequest = event.request.clone();
-
-        return fetch(fetchRequest).then((response) => {
-          // Check if valid response
-          if (!response || response.status !== 200 || response.type !== 'basic') {
-            return response;
-          }
-
-          // Clone the response
-          const responseToCache = response.clone();
-
-          // Cache the fetched response for future use
-          caches.open(CACHE_NAME)
-            .then((cache) => {
-              cache.put(event.request, responseToCache);
-            });
-
-          return response;
-        }).catch((error) => {
-          console.error('Fetch failed:', error);
-          // You could return a custom offline page here
-          return caches.match('/error/');
-        });
-      })
+    (shouldUseNetworkFirst ? networkFirst(event.request) : cacheFirst(event.request)).catch(async () => {
+      const fallback = await caches.match('/index.html');
+      return fallback || new Response('Offline', { status: 503, statusText: 'Offline' });
+    })
   );
 });
 
