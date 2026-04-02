@@ -12,11 +12,11 @@ window.SITE_CONFIG = {
   // Roblox API proxy base URL
   // Set this to your deployed server URL (e.g., "https://your-server.railway.app")
   // Leave as empty string "" to disable API features (stats will show "Unavailable")
-  robloxProxyBase: "https://qldinter-production.up.railway.app",
+  robloxProxyBase: "https://api.queenslandinteractive-rblx.com",
   
   // Railway server URL (for feedback/bug reports)
   // Should be the same as robloxProxyBase
-  RAILWAY_SERVER_URL: "https://qldinter-production.up.railway.app",
+  RAILWAY_SERVER_URL: "https://api.queenslandinteractive-rblx.com",
   
   // Cloudflare Turnstile
   // Get your site key from: https://dash.cloudflare.com/?to=/:account/turnstile

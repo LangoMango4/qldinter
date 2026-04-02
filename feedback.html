@@ -454,7 +454,7 @@
 
     try {
       // Get the Railway server URL from config
-      const serverUrl = window.SITE_CONFIG?.RAILWAY_SERVER_URL || window.RAILWAY_SERVER_URL || 'https://qldinter-production.up.railway.app';
+      const serverUrl = window.SITE_CONFIG?.RAILWAY_SERVER_URL || window.RAILWAY_SERVER_URL || 'https://api.queenslandinteractive-rblx.com';
       
       const response = await fetch(`${serverUrl}/api/feedback`, {
         method: 'POST',
