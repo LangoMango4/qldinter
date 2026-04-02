@@ -153,3 +153,4 @@ The widget won't render when the site key is empty.
 ## 📚 Documentation
 
 Full Cloudflare Turnstile docs: https://developers.cloudflare.com/turnstile/
+

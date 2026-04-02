@@ -177,4 +177,5 @@ If you encounter issues:
 
 ---
 
-**Need Help?** Join our [Discord Server](https://discord.gg/kUf97PV9H3) for technical support.
+**Need Help?** Join our [Discord Server](https://discord.gg/9jaAn54Ydx) for technical support.
+

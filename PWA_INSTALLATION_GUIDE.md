@@ -165,3 +165,4 @@ To further improve the PWA experience:
 - ✅ Install prompt ready
 
 Your website is now a fully functional Progressive Web App! 🎉
+

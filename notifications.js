@@ -26,7 +26,7 @@ class NotificationSystem {
         type: 'info',
         date: '2026-02-15',
         persistent: false,
-        link: 'https://discord.gg/kUf97PV9H3',
+        link: 'https://discord.gg/9jaAn54Ydx',
         linkText: 'Join Discord'
       },
       {
@@ -473,3 +473,4 @@ notificationSystem.init();
 //   date: new Date().toISOString().split('T')[0],
 //   persistent: false
 // });
+

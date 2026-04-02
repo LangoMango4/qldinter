@@ -24,3 +24,4 @@ setInterval(() => {
   current = (current + 1) % slides.length;
   slides[current].classList.add("active");
 }, 5000);
+

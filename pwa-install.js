@@ -175,3 +175,4 @@ if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.
   // App is installed and running in standalone mode
   // You can add special behavior here for installed app
 }
+

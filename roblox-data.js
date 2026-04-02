@@ -259,3 +259,4 @@ document.addEventListener("DOMContentLoaded", () => {
     loadLiveOperationsStatus();
   }, 60 * 1000);
 });
+

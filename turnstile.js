@@ -99,3 +99,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Expose globally
 window.TurnstileManager = TurnstileManager;
+

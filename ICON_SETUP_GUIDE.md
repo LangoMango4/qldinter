@@ -147,3 +147,4 @@ For even better results, you could add:
 ---
 
 **Note**: The current setup will work fine using `mainico.png` at multiple sizes, but creating dedicated size-optimized icons will provide the best visual quality across all platforms.
+

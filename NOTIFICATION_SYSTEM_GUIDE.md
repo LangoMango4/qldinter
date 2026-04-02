@@ -242,4 +242,5 @@ Notification styles can be customized in [notifications.js](notifications.js) st
 
 ---
 
-**Need Help?** Join our [Discord](https://discord.gg/kUf97PV9H3) for support!
+**Need Help?** Join our [Discord](https://discord.gg/9jaAn54Ydx) for support!
+

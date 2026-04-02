@@ -171,3 +171,4 @@
   // Then update every second
   setInterval(updateTimer, 1000);
 })();
+
