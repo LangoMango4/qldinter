@@ -549,6 +549,10 @@ app.use((req, res, next) => {
 
 app.use(express.static(WEBSITE_ROOT));
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(WEBSITE_ROOT, "index.html"));
+});
+
 app.get("/api/group-status", async (req, res) => {
   try {
     const data = await withCache("groupStatus", 60 * 1000, async () => {
