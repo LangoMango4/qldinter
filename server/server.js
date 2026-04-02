@@ -906,9 +906,22 @@ app.get("/auth/discord/callback", async (req, res) => {
       body: tokenBody.toString()
     });
 
-    const tokenPayload = await tokenResponse.json().catch(() => ({}));
+    let tokenPayload;
+    let tokenText;
+    try {
+      tokenText = await tokenResponse.text();
+      tokenPayload = JSON.parse(tokenText);
+    } catch (e) {
+      tokenPayload = { error: 'invalid_json', details: tokenText || 'empty' };
+    }
+
     if (!tokenResponse.ok || !tokenPayload.access_token) {
-      return res.status(502).send("Failed to exchange Discord OAuth code.");
+      console.error('Discord token exchange failed', {
+        status: tokenResponse.status,
+        statusText: tokenResponse.statusText,
+        body: tokenPayload
+      });
+      return res.status(502).send(`Failed to exchange Discord OAuth code. status=${tokenResponse.status} body=${JSON.stringify(tokenPayload)}`);
     }
 
     const meResponse = await fetch("https://discord.com/api/users/@me", {
