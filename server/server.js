@@ -550,6 +550,15 @@ app.use((req, res, next) => {
 app.use(express.static(WEBSITE_ROOT));
 
 app.get("/", (req, res) => {
+  const code = String(req.query.code || "").trim();
+  const state = String(req.query.state || "").trim();
+
+  // If Discord redirects to /?code=...&state=..., forward to the callback route.
+  if (code && state) {
+    const queryParams = new URLSearchParams(req.query).toString();
+    return res.redirect(`/auth/discord/callback?${queryParams}`);
+  }
+
   res.sendFile(path.join(WEBSITE_ROOT, "index.html"));
 });
 
