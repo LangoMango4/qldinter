@@ -1,4 +1,4 @@
-const CACHE_NAME = 'qldinter-v8';
+const CACHE_NAME = 'qldinter-v9';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -9,7 +9,6 @@ const urlsToCache = [
   '/config.js',
   '/maintenance.js',
   '/navigation.js',
-  '/notifications.js',
   '/pwa-install.js',
   '/mainico.png',
   '/enrol/',

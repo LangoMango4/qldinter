@@ -4,7 +4,6 @@ class AdminPanel {
     this.loginBtn = document.getElementById('admin-login');
     this.logoutBtn = document.getElementById('admin-logout');
     this.banForm = document.getElementById('ban-form');
-    this.notifForm = document.getElementById('notification-form');
     this.banList = document.getElementById('ban-list');
     this.isAdmin = false;
     this.apiBase = this.resolveApiBase();
@@ -27,7 +26,6 @@ class AdminPanel {
     });
 
     this.banForm?.addEventListener('submit', (event) => this.handleBanSubmit(event));
-    this.notifForm?.addEventListener('submit', (event) => this.handleNotificationSubmit(event));
   }
 
   resolveApiBase() {
@@ -45,11 +43,9 @@ class AdminPanel {
   }
 
   toggleForms(enabled) {
-    [this.banForm, this.notifForm].forEach((form) => {
-      if (!form) return;
-      Array.from(form.elements).forEach((field) => {
-        field.disabled = !enabled;
-      });
+    if (!this.banForm) return;
+    Array.from(this.banForm.elements).forEach((field) => {
+      field.disabled = !enabled;
     });
   }
 
@@ -127,38 +123,6 @@ class AdminPanel {
       await this.loadBans();
     } catch (error) {
       this.setStatus('Failed to add ban. Check your admin access and try again.', 'error');
-    }
-  }
-
-  async handleNotificationSubmit(event) {
-    event.preventDefault();
-    if (!this.isAdmin) return;
-
-    const payload = {
-      title: document.getElementById('notif-title')?.value.trim(),
-      message: document.getElementById('notif-message')?.value.trim(),
-      type: document.getElementById('notif-type')?.value,
-      link: document.getElementById('notif-link')?.value.trim(),
-      linkText: document.getElementById('notif-link-text')?.value.trim(),
-      persistent: Boolean(document.getElementById('notif-persistent')?.checked)
-    };
-
-    try {
-      const response = await fetch(`${this.apiBase}/api/admin/notifications`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to push notification.');
-      }
-
-      this.setStatus('Toast notification pushed to users.', 'success');
-      this.notifForm.reset();
-    } catch (error) {
-      this.setStatus('Failed to push notification. Check your admin access and try again.', 'error');
     }
   }
 

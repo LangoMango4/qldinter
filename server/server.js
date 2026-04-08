@@ -982,25 +982,6 @@ app.get("/api/bans", (req, res) => {
   return res.json({ bans });
 });
 
-app.get("/api/notifications", (req, res) => {
-  const since = String((req.query && req.query.since) || "").trim();
-  const sinceTime = since ? new Date(since).getTime() : 0;
-  const isValidSince = Number.isFinite(sinceTime) && sinceTime > 0;
-
-  const notifications = [...moderationState.notifications]
-    .filter((item) => {
-      if (!isValidSince) {
-        return true;
-      }
-      return new Date(item.createdAt || item.date || 0).getTime() > sinceTime;
-    })
-    .sort((a, b) => {
-      return new Date(a.createdAt || a.date || 0).getTime() - new Date(b.createdAt || b.date || 0).getTime();
-    });
-
-  return res.json({ notifications });
-});
-
 app.get("/api/admin/me", requireAdmin, (req, res) => {
   return res.json({
     authenticated: true,
@@ -1011,8 +992,7 @@ app.get("/api/admin/me", requireAdmin, (req, res) => {
 
 app.get("/api/admin/moderation", requireAdmin, (req, res) => {
   return res.json({
-    bans: moderationState.bans,
-    notifications: moderationState.notifications
+    bans: moderationState.bans
   });
 });
 
@@ -1063,47 +1043,6 @@ app.delete("/api/admin/bans/:banId", requireAdmin, (req, res) => {
   moderationState.bans = nextBans;
   saveModerationState();
   return res.json({ success: true, removedId: banId });
-});
-
-app.post("/api/admin/notifications", requireAdmin, (req, res) => {
-  const title = String((req.body && req.body.title) || "").trim();
-  const message = String((req.body && req.body.message) || "").trim();
-  const typeInput = String((req.body && req.body.type) || "announcement").trim().toLowerCase();
-  const link = String((req.body && req.body.link) || "").trim();
-  const linkText = String((req.body && req.body.linkText) || "").trim();
-  const persistent = Boolean(req.body && req.body.persistent);
-
-  if (!title || !message) {
-    return res.status(400).json({ error: "title and message are required." });
-  }
-
-  const type = ["update", "announcement", "warning", "info"].includes(typeInput) ? typeInput : "announcement";
-  const now = new Date();
-
-  const notification = {
-    id: `admin-${Date.now()}-${Math.floor(Math.random() * 100000)}`,
-    title,
-    message,
-    type,
-    date: now.toISOString().slice(0, 10),
-    persistent,
-    createdAt: now.toISOString(),
-    createdBy: req.adminUser.username || req.adminUser.id
-  };
-
-  if (link && linkText) {
-    notification.link = link;
-    notification.linkText = linkText;
-  }
-
-  moderationState.notifications.push(notification);
-
-  if (moderationState.notifications.length > 200) {
-    moderationState.notifications = moderationState.notifications.slice(-200);
-  }
-
-  saveModerationState();
-  return res.status(201).json({ success: true, notification });
 });
 
 app.post("/api/auth/logout", (req, res) => {

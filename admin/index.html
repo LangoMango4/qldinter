@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../styles.css">
   <script defer src="../navigation.js"></script>
-  <script defer src="../notifications.js"></script>
   <script defer src="./admin-panel.js"></script>
   <style>
     .admin-page { padding-top: 80px; min-height: 100vh; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
@@ -55,7 +54,7 @@
     <div class="admin-container">
       <div class="admin-card">
         <h1 class="admin-title">Admin Panel</h1>
-        <p class="admin-subtitle">Manage bans and push toast notifications to all users.</p>
+        <p class="admin-subtitle">Manage bans and moderation tools for your community.</p>
         <div id="admin-status" class="admin-status">Checking admin access...</div>
         <div class="admin-actions">
           <button id="admin-login" class="admin-btn admin-btn-primary" type="button">Login with Discord</button>
@@ -77,18 +76,6 @@
           </form>
         </section>
 
-        <section class="admin-card">
-          <h2 class="admin-title">Push Toast Notification</h2>
-          <form id="notification-form">
-            <div class="admin-field"><label for="notif-title">Title</label><input id="notif-title" required></div>
-            <div class="admin-field"><label for="notif-message">Message</label><textarea id="notif-message" required></textarea></div>
-            <div class="admin-field"><label for="notif-type">Type</label><select id="notif-type"><option value="announcement">Announcement</option><option value="update">Update</option><option value="warning">Warning</option><option value="info">Info</option></select></div>
-            <div class="admin-field"><label for="notif-link">Link (optional)</label><input id="notif-link" placeholder="https://..."></div>
-            <div class="admin-field"><label for="notif-link-text">Link Text (optional)</label><input id="notif-link-text" placeholder="Read more"></div>
-            <div class="admin-field"><label><input id="notif-persistent" type="checkbox"> Persistent (stays until dismissed)</label></div>
-            <button class="admin-btn admin-btn-primary" type="submit">Send Notification</button>
-          </form>
-        </section>
       </div>
 
       <section class="admin-card">
