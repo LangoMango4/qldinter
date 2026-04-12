@@ -84,11 +84,11 @@ class AdminPanel {
 
       const payload = await response.json();
       this.isAdmin = true;
-      this.setStatus(`Signed in as ${payload.user.username}. Admin access active.`, 'success');
+      this.setStatus(`Welcome, ${payload.user.username}. Admin access active.`, 'success');
       this.toggleForms(true);
     } catch (error) {
       this.isAdmin = false;
-      this.setStatus('Could not verify admin session right now.', 'error');
+      this.setStatus('Please retry otherwise contact your IT Administrator', 'error');
       this.toggleForms(false);
     }
   }
