@@ -5,7 +5,11 @@ class AdminPanel {
     this.logoutBtn = document.getElementById('admin-logout');
     this.banForm = document.getElementById('ban-form');
     this.banList = document.getElementById('ban-list');
+    this.adminArea = document.getElementById('admin-access-area');
+    this.webhookTestBtn = document.getElementById('test-webhook-btn');
+    this.webhookTestStatus = document.getElementById('webhook-test-status');
     this.isAdmin = false;
+    this.lastWebhookTest = 0;
     this.apiBase = this.resolveApiBase();
 
     this.bindEvents();
@@ -26,6 +30,8 @@ class AdminPanel {
     });
 
     this.banForm?.addEventListener('submit', (event) => this.handleBanSubmit(event));
+
+    this.webhookTestBtn?.addEventListener('click', () => this.testWebhook());
   }
 
   resolveApiBase() {
@@ -49,6 +55,18 @@ class AdminPanel {
     });
   }
 
+  toggleAdminArea(enabled) {
+    if (this.adminArea) {
+      this.adminArea.style.display = enabled ? 'block' : 'none';
+    }
+    if (this.loginBtn) {
+      this.loginBtn.style.display = enabled ? 'none' : 'inline-flex';
+    }
+    if (this.logoutBtn) {
+      this.logoutBtn.style.display = enabled ? 'inline-flex' : 'none';
+    }
+  }
+
   formatDate(value) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return 'Unknown';
@@ -66,6 +84,7 @@ class AdminPanel {
 
   async initialize() {
     this.toggleForms(false);
+    this.toggleAdminArea(false);
     await this.refreshAuth();
     if (this.isAdmin) {
       await this.loadBans();
@@ -86,6 +105,7 @@ class AdminPanel {
       this.isAdmin = true;
       this.setStatus(`Welcome, ${payload.user.username}. Admin access active.`, 'success');
       this.toggleForms(true);
+      this.toggleAdminArea(true);
     } catch (error) {
       this.isAdmin = false;
       this.setStatus('Please retry otherwise contact your IT Administrator', 'error');
@@ -183,6 +203,75 @@ class AdminPanel {
     } catch (error) {
       this.setStatus('Failed to remove ban. Check your admin access and try again.', 'error');
     }
+  }
+
+  async testWebhook() {
+    if (!this.isAdmin) {
+      this.setWebhookTestStatus('Not authenticated as admin.', 'error');
+      return;
+    }
+
+    const now = Date.now();
+    const timeSinceLastTest = (now - this.lastWebhookTest) / 1000;
+    const cooldownRemaining = 20 - Math.floor(timeSinceLastTest);
+
+    if (timeSinceLastTest < 20) {
+      this.setWebhookTestStatus(`Cooldown active. Try again in ${cooldownRemaining} second${cooldownRemaining !== 1 ? 's' : ''}.`, 'error');
+      return;
+    }
+
+    this.webhookTestBtn.disabled = true;
+    this.webhookTestBtn.style.opacity = '0.6';
+    this.setWebhookTestStatus('Sending test notification...', 'info');
+
+    try {
+      const response = await fetch(`${this.apiBase}/api/notify-status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          service: 'test',
+          status: 'offline',
+          message: '[TEST] Service notification system test - This is a test webhook alert from the admin panel.',
+          timestamp: new Date().toISOString(),
+          isTest: true
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status} - ${errorText}`);
+      }
+
+      const result = await response.json();
+      this.lastWebhookTest = now;
+
+      if (result.notified) {
+        this.setWebhookTestStatus('✓ Test notification sent successfully! Check Discord.', 'success');
+      } else {
+        this.setWebhookTestStatus('⚠ Test sent but webhook not configured (STATUSAPI_WEBHOOK not set).', 'warn');
+      }
+    } catch (error) {
+      this.setWebhookTestStatus(`Failed to send test notification: ${error.message}`, 'error');
+    } finally {
+      this.webhookTestBtn.disabled = false;
+      this.webhookTestBtn.style.opacity = '1';
+    }
+  }
+
+  setWebhookTestStatus(message, type = 'info') {
+    if (!this.webhookTestStatus) return;
+
+    const styles = {
+      info: 'border-left: 4px solid #1e90ff; background: #e8f3ff; color: #0a4a8a;',
+      success: 'border-left: 4px solid #22c55e; background: #e9f9ef; color: #146a38;',
+      error: 'border-left: 4px solid #dc3545; background: #fdeaea; color: #8a1f2b;',
+      warn: 'border-left: 4px solid #f59e0b; background: #fffbeb; color: #92400e;'
+    };
+
+    this.webhookTestStatus.style.cssText = `${styles[type]} border-radius: 8px; padding: 12px; margin-top: 12px; font-size: 0.95rem;`;
+    this.webhookTestStatus.textContent = message;
   }
 }
 

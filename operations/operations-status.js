@@ -1,5 +1,11 @@
 const PROXY_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.robloxProxyBase) || "";
 
+// Track last known status to detect transitions
+const lastStatus = {
+  website: null,
+  game: null
+};
+
 const buildProxyUrl = (path) => {
   if (!PROXY_BASE) {
     return path;
@@ -13,6 +19,40 @@ const fetchJson = async (url) => {
     throw new Error(`Request failed: ${response.status}`);
   }
   return response.json();
+};
+
+// Send status notification to backend which will trigger webhook
+const notifyStatusChange = async (service, isOnline) => {
+  try {
+    // Only notify when transitioning to offline
+    if (isOnline) {
+      return;
+    }
+
+    const message = `${service.charAt(0).toUpperCase() + service.slice(1)} service has gone offline.`;
+    
+    const response = await fetch(buildProxyUrl("/api/notify-status"), {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        service: service,
+        status: "offline",
+        message: message,
+        timestamp: new Date().toISOString()
+      })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      if (result.notified) {
+        console.log(`Status webhook sent for ${service}`);
+      }
+    }
+  } catch (error) {
+    console.error(`Failed to notify status change for ${service}:`, error);
+  }
 };
 
 const setCardState = (cardEl, state) => {
@@ -30,7 +70,7 @@ const setCardState = (cardEl, state) => {
   }
 };
 
-const applyServiceStatus = (service, valueEl, metaEl, cardEl) => {
+const applyServiceStatus = (service, valueEl, metaEl, cardEl, serviceName) => {
   if (!valueEl || !metaEl) {
     return;
   }
@@ -39,6 +79,12 @@ const applyServiceStatus = (service, valueEl, metaEl, cardEl) => {
     valueEl.textContent = "Unavailable";
     metaEl.textContent = "Status API unavailable";
     setCardState(cardEl, "bad");
+    
+    // Check if this is a transition to offline
+    if (lastStatus[serviceName] === true) {
+      notifyStatusChange(serviceName, false);
+    }
+    lastStatus[serviceName] = false;
     return;
   }
 
@@ -46,16 +92,26 @@ const applyServiceStatus = (service, valueEl, metaEl, cardEl) => {
     valueEl.textContent = "Not Set";
     metaEl.textContent = "Add endpoint in server config";
     setCardState(cardEl, "warn");
+    lastStatus[serviceName] = null;
     return;
   }
 
-  valueEl.textContent = service.online ? "Online" : "Offline";
-  setCardState(cardEl, service.online ? "good" : "bad");
+  const isOnline = service.online;
+  valueEl.textContent = isOnline ? "Online" : "Offline";
+  setCardState(cardEl, isOnline ? "good" : "bad");
+  
   if (typeof service.responseMs === "number") {
     metaEl.textContent = `Response ${service.responseMs}ms`;
   } else {
     metaEl.textContent = service.detail || "Check unavailable";
   }
+
+  // Detect transition from online to offline
+  if (lastStatus[serviceName] === true && isOnline === false) {
+    notifyStatusChange(serviceName, false);
+  }
+  
+  lastStatus[serviceName] = isOnline;
 };
 
 const loadLiveOperationsStatus = async () => {
@@ -99,8 +155,8 @@ const loadLiveOperationsStatus = async () => {
     }
 
     const services = data.services || {};
-    applyServiceStatus(services.website, websiteEl, websiteMetaEl, websiteCard);
-    applyServiceStatus(services.game, gameEl, gameMetaEl, gameCard);
+    applyServiceStatus(services.website, websiteEl, websiteMetaEl, websiteCard, "website");
+    applyServiceStatus(services.game, gameEl, gameMetaEl, gameCard, "game");
   } catch (error) {
     ssuValueEl.textContent = "Unavailable";
     if (ssuMetaEl) {
@@ -108,8 +164,8 @@ const loadLiveOperationsStatus = async () => {
     }
     setCardState(sessionCard, "bad");
 
-    applyServiceStatus(null, websiteEl, websiteMetaEl, websiteCard);
-    applyServiceStatus(null, gameEl, gameMetaEl, gameCard);
+    applyServiceStatus(null, websiteEl, websiteMetaEl, websiteCard, "website");
+    applyServiceStatus(null, gameEl, gameMetaEl, gameCard, "game");
   }
 };
 

@@ -54,37 +54,44 @@
     <div class="admin-container">
       <div class="admin-card">
         <h1 class="admin-title">Admin Panel</h1>
-        <p class="admin-subtitle">Manage bans and moderation tools for your community.</p>
+        <p class="admin-subtitle">Manage bans, and other cool stuff here! - Strictly admins only!</p>
         <div id="admin-status" class="admin-status">Checking admin access...</div>
         <div class="admin-actions">
           <button id="admin-login" class="admin-btn admin-btn-primary" type="button">Login with Discord</button>
-          <button id="admin-logout" class="admin-btn admin-btn-danger" type="button">Logout</button>
+          <button id="admin-logout" class="admin-btn admin-btn-danger" type="button" style="display: none;">Logout</button>
         </div>
       </div>
 
-      <div class="admin-grid">
+      <div id="admin-access-area" style="display: none;">
+        <div class="admin-grid">
+          <section class="admin-card">
+            <h2 class="admin-title">Add Ban</h2>
+            <form id="ban-form">
+              <div class="admin-field"><label for="ban-username">Username</label><input id="ban-username" required></div>
+              <div class="admin-field"><label for="ban-alt">Alt Username (optional)</label><input id="ban-alt"></div>
+              <div class="admin-field"><label for="ban-type">Type</label><select id="ban-type"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="under-review">Under Review</option></select></div>
+              <div class="admin-field"><label for="ban-reason">Reason</label><textarea id="ban-reason" required></textarea></div>
+              <div class="admin-field"><label for="ban-by">Banned By</label><input id="ban-by"></div>
+              <div class="admin-field"><label for="ban-appeal">Appeal Status</label><input id="ban-appeal"></div>
+              <button class="admin-btn admin-btn-primary" type="submit">Add Ban</button>
+            </form>
+          </section>
+
+          <section class="admin-card">
+            <h3 style="margin: 0 0 12px; color: #1e90ff; font-size: 1.1rem;">Webhook Testing</h3>
+            <p style="margin: 0 0 16px; color: #555; font-size: 0.95rem;">Test the status notification system. 20-second cooldown between tests.</p>
+            <button id="test-webhook-btn" class="admin-btn admin-btn-primary" type="button">Test Service Alert Webhook</button>
+            <div id="webhook-test-status" style="margin-top: 12px;"></div>
+          </section>
+        </div>
+
         <section class="admin-card">
-          <h2 class="admin-title">Add Ban</h2>
-          <form id="ban-form">
-            <div class="admin-field"><label for="ban-username">Username</label><input id="ban-username" required></div>
-            <div class="admin-field"><label for="ban-alt">Alt Username (optional)</label><input id="ban-alt"></div>
-            <div class="admin-field"><label for="ban-type">Type</label><select id="ban-type"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="under-review">Under Review</option></select></div>
-            <div class="admin-field"><label for="ban-reason">Reason</label><textarea id="ban-reason" required></textarea></div>
-            <div class="admin-field"><label for="ban-by">Banned By</label><input id="ban-by"></div>
-            <div class="admin-field"><label for="ban-appeal">Appeal Status</label><input id="ban-appeal"></div>
-            <button class="admin-btn admin-btn-primary" type="submit">Add Ban</button>
-          </form>
+          <h2 class="admin-title">Current Bans</h2>
+          <div id="ban-list" class="admin-list"></div>
         </section>
-
       </div>
-
-      <section class="admin-card">
-        <h2 class="admin-title">Current Bans</h2>
-        <div id="ban-list" class="admin-list"></div>
-      </section>
     </div>
   </main>
-
   <script src="../maintenance.js"></script>
   <script src="../config.js"></script>
 </body>

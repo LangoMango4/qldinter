@@ -46,10 +46,19 @@
 </nav>
 
 <main style="padding-top: 90px; min-height: 100vh;">
+  <!-- OPS HERO -->
+  <section class="ops-hero reveal" style="padding: 60px 8%; text-align: center; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div style="max-width: 800px; margin: 0 auto;">
+      <h1 style="font-size: 2.8rem; margin-bottom: 16px; color: #1e90ff;">System Status</h1>
+      <p style="font-size: 1.1rem; color: #555; line-height: 1.6; margin-bottom: 20px;">Real-time monitoring of Queensland Interactive infrastructure and services. All systems operational unless noted below.</p>
+    </div>
+  </section>
+
+  <!-- STATUS CARDS -->
   <section class="ops-status reveal" id="ops-status">
     <div class="ops-status-inner" style="max-width: 1200px; margin: 0 auto;">
       <div class="ops-status-copy">
-        <h2>Operations Status</h2>
+        <h2>Live Service Status</h2>
         <p>Active SSU state and live uptime checks for core services.</p>
       </div>
       <div class="ops-status-cards">
@@ -67,6 +76,48 @@
           <span class="status-label">Game Uptime</span>
           <strong id="uptime-game">Loading...</strong>
           <small class="status-meta" id="uptime-game-meta">Waiting for check...</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INFO SECTION -->
+  <section class="ops-info reveal" style="padding: 90px 8%; background: #ffffff; border-top: 1px solid #e2e8f0;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <h2 style="font-size: 2.2rem; margin-bottom: 40px; text-align: center; color: #0f172a;">Service Information</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+        <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border-left: 4px solid #1e90ff;">
+          <h3 style="color: #1e90ff; margin-bottom: 12px; font-size: 1.3rem;">Website</h3>
+          <p style="color: #555; line-height: 1.6; margin: 0;">Our main website hosted globally with CDN acceleration. Provides information, community links, and admin access for staff members.</p>
+        </div>
+        <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border-left: 4px solid #22c55e;">
+          <h3 style="color: #22c55e; margin-bottom: 12px; font-size: 1.3rem;">Game Server</h3>
+          <p style="color: #555; line-height: 1.6; margin: 0;">Primary Roblox game instance running Westlands - Queensland with 24/7 monitoring. SSU (Structured Session Unit) manages active roleplayers.</p>
+        </div>
+        <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; border-left: 4px solid #f59e0b;">
+          <h3 style="color: #f59e0b; margin-bottom: 12px; font-size: 1.3rem;">Infrastructure</h3>
+          <p style="color: #555; line-height: 1.6; margin: 0;">Backend API and database systems powered by Railway hosting. Provides authentication, data storage, and real-time integration services.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATUS LEGEND -->
+  <section class="ops-legend reveal" style="padding: 60px 8%; background: #eef3f9;">
+    <div style="max-width: 900px; margin: 0 auto;">
+      <h3 style="font-size: 1.4rem; margin-bottom: 24px; color: #0f172a;">Understanding Status Indicators</h3>
+      <div style="display: grid; gap: 16px;">
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div style="background: #22c55e; width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;"></div>
+          <p style="margin: 0; color: #555;"><strong style="color: #0f172a;">Operational:</strong> Service is running normally with no issues detected.</p>
+        </div>
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div style="background: #f59e0b; width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;"></div>
+          <p style="margin: 0; color: #555;"><strong style="color: #0f172a;">Degraded:</strong> Service is running but experiencing performance issues or partial outage.</p>
+        </div>
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div style="background: #ef4444; width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;"></div>
+          <p style="margin: 0; color: #555;"><strong style="color: #0f172a;">Offline:</strong> Service is unavailable. Incident response team has been notified.</p>
         </div>
       </div>
     </div>

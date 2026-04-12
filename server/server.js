@@ -16,6 +16,7 @@ const BOTGHOST_SSU_STATUS_URL = process.env.BOTGHOST_SSU_STATUS_URL || "";
 const SSU_WEBHOOK_TOKEN = process.env.SSU_WEBHOOK_TOKEN || "";
 const BOT_LINK_WEBHOOK_URL = process.env.BOT_LINK_WEBHOOK_URL || DISCORD_WEBHOOK_URL;
 const BOT_AUTH_TOKEN = process.env.BOT_AUTH_TOKEN || SSU_WEBHOOK_TOKEN;
+const STATUSAPI_WEBHOOK = process.env.STATUSAPI_WEBHOOK || "";
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || "";
 const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || "";
@@ -1366,6 +1367,74 @@ app.post("/api/feedback", async (req, res) => {
 
 
 loadModerationState();
+
+// Service status notification endpoint
+app.post("/api/notify-status", async (req, res) => {
+  try {
+    const { service, status, message, timestamp, isTest } = req.body;
+
+    if (!service || !status || !message) {
+      return res.status(400).json({ error: "Missing required fields: service, status, message" });
+    }
+
+    // Only send webhook if service is offline
+    if (status === "offline" && STATUSAPI_WEBHOOK) {
+      const title = isTest 
+        ? `🧪 [TEST] Service Alert: ${service} is Offline`
+        : `🔴 Service Alert: ${service} is Offline`;
+      
+      const embed = {
+        embeds: [
+          {
+            title: title,
+            description: message,
+            color: isTest ? 0x6366f1 : 0xef4444,
+            fields: [
+              {
+                name: "Service",
+                value: service.charAt(0).toUpperCase() + service.slice(1),
+                inline: true
+              },
+              {
+                name: "Status",
+                value: isTest ? "Test Alert" : "Offline",
+                inline: true
+              },
+              {
+                name: isTest ? "Test Time" : "Detected At",
+                value: new Date(timestamp || Date.now()).toLocaleString(),
+                inline: false
+              }
+            ],
+            footer: {
+              text: isTest ? "Queensland Interactive Status API - Test Mode" : "Queensland Interactive Status API"
+            },
+            timestamp: new Date().toISOString()
+          }
+        ]
+      };
+
+      const response = await fetch(STATUSAPI_WEBHOOK, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(embed)
+      });
+
+      if (!response.ok) {
+        console.error(`Failed to send status webhook: ${response.status}`);
+      } else {
+        console.log(`Status notification sent for ${service}${isTest ? ' (test)' : ''}`);
+      }
+    }
+
+    return res.json({ success: true, notified: status === "offline" && !!STATUSAPI_WEBHOOK });
+  } catch (error) {
+    console.error("Error sending status notification:", error);
+    return res.status(500).json({ error: "Failed to send status notification" });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Roblox proxy running on ${PORT}`);
