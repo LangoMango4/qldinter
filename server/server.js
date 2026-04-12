@@ -891,17 +891,18 @@ app.get("/auth/discord/callback", async (req, res) => {
     }
 
     const tokenBody = new URLSearchParams({
-      client_id: DISCORD_CLIENT_ID,
-      client_secret: DISCORD_CLIENT_SECRET,
       grant_type: "authorization_code",
       code,
       redirect_uri: redirectUri
     });
 
+    const authHeader = `Basic ${Buffer.from(`${DISCORD_CLIENT_ID}:${DISCORD_CLIENT_SECRET}`).toString("base64")}`;
+
     const tokenResponse = await fetch("https://discord.com/api/oauth2/token", {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/x-www-form-urlencoded",
+        Authorization: authHeader
       },
       body: tokenBody.toString()
     });
