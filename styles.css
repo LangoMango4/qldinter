@@ -737,7 +737,9 @@ h2,
   margin-top: 30px;
   padding-top: 20px;
   border-top: 1px solid rgba(255, 255, 255, 0.15);
-  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   opacity: 0.85;
 }
 
@@ -1027,6 +1029,22 @@ h2,
 .faq-answer p {
   margin: 0;
   font-size: 0.95rem;
+}
+
+.faq-unavailable {
+  padding: 40px 24px;
+  background: #f8f9ff;
+  border: 1px solid #d8e3f7;
+  border-radius: 14px;
+  text-align: center;
+  color: #415165;
+  font-size: 1rem;
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+
+.faq-template {
+  display: none !important;
 }
 
 @media (max-width: 768px) {

@@ -10,7 +10,7 @@ const urlsToCache = [
   '/maintenance.js',
   '/navigation.js',
   '/pwa-install.js',
-  '/mainico.png',
+  '/favicon.png',
   '/enrol/',
   '/faq/',
   '/ourteam/',

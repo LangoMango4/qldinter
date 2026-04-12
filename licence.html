@@ -5,11 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1e90ff">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Licence - QLDINTER</title>
-  <link rel="icon" href="./mainico.png">
-  <link rel="apple-touch-icon" href="./mainico.png">
+  <title>Licence - Queensland Interactive</title>
+  <link rel="icon" href="./favicon.png">
+  <link rel="apple-touch-icon" href="./favicon.png">
   <link rel="manifest" href="./manifest.json">
-
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  
   <!-- Error handling -->
   <script>
     window.addEventListener('error', function(event) {
@@ -34,105 +36,216 @@
   <script defer src="./navigation.js"></script>
 
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
-    body {
-      margin: 0;
-      height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: linear-gradient(135deg, #f8f9fa, #e0e0e0);
-      font-family: 'Roboto', sans-serif;
-      overflow: hidden;
+    .licence-page {
+      padding-top: 80px;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     }
 
-    .container {
+    .licence-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 60px 20px;
+    }
+
+    .licence-header {
       text-align: center;
-      animation: fadeIn 1s ease forwards;
+      margin-bottom: 50px;
     }
 
-    h1 {
-      font-size: 8rem;
-      margin: 0;
-      color: #e74c3c;
-      animation: bounce 2s infinite;
-    }
-
-    p {
-      font-size: 1.5rem;
-      margin: 20px 0;
-      color: #333;
-      opacity: 0;
-      animation: fadeIn 2s ease forwards;
-      animation-delay: 0.5s;
-    }
-
-    a {
-      display: inline-block;
-      padding: 12px 25px;
-      background-color: #3498db;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 5px;
+    .licence-header h1 {
+      font-size: 2.5rem;
+      color: #1e90ff;
+      margin-bottom: 15px;
       font-weight: 700;
-      transition: transform 0.3s, background-color 0.3s;
-      opacity: 0;
-      animation: fadeIn 2s ease forwards;
-      animation-delay: 1s;
     }
 
-    a:hover {
-      background-color: #2980b9;
-      transform: scale(1.1);
+    .licence-header p {
+      color: #666;
+      font-size: 1.1rem;
+      max-width: 700px;
+      margin: 0 auto;
+      line-height: 1.6;
     }
 
-    /* Animations */
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-30px); }
-      60% { transform: translateY(-15px); }
+    .licence-content {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 40px;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .licence-content h2 {
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .licence-content p {
+      color: #555;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      font-size: 1rem;
+    }
+
+    .licence-content pre {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      color: #333;
+    }
+
+    .contact-info {
+      background: #e3f2fd;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: center;
+      border-left: 4px solid #1e90ff;
+    }
+
+    .contact-info p {
+      margin: 0;
+      color: #0d47a1;
+      font-weight: 500;
+    }
+
+    @media (max-width: 768px) {
+      .licence-header h1 {
+        font-size: 2rem;
+      }
+
+      .licence-content {
+        padding: 20px;
+      }
+
+      .licence-content pre {
+        font-size: 0.8rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="images_/ErrorIcon.png" alt="">
-    <h1>Queensland Interactive Licence</h1>
-    <p>MIT License
 
-Copyright (c) 2026 Skibidi._fish
+<!-- NAV -->
+<nav class="navbar">
+  <a href="/" class="logo">
+    <img src="./favicon.png" alt="QI Logo" class="logo-img">
+    <span>Queensland Interactive</span>
+  </a>
+  
+  <button class="hamburger" id="hamburger" aria-label="Menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+  <ul id="nav-menu">
+    <li><a href="/#about">About</a></li>
+    <li><a href="/#sections">Community</a></li>
+    <li><a href="/ourteam/">Team</a></li>
+    <li><a href="/faq/">FAQ</a></li>
+    <li><a href="/operations/">Operations</a></li>
+    <li><a href="/feedback.html">Feedback</a></li>
+    <li><a href="/banned-users">Banned Users</a></li>
+    <li><a href="/tos">TOS</a></li>
+    <li><a href="/licence.html">Licence</a></li>
+    <li><a class="cta" href="https://discord.gg/9jaAn54Ydx" target="_blank">Discord</a></li>
+  </ul>
+</nav>
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+<div class="licence-page">
+  <div class="licence-container">
+    <div class="licence-header">
+      <h1>Licence</h1>
+      <p>
+        Queensland Interactive is software licensed under the MIT License. 
+        This page contains the full licence text and contact information.
+      </p>
+    </div>
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.</p>
-    <p>Please contact Management @ QI-Queensland-Interactive if you require support</p>
-    <a href="/">Go Back</a>
-    <p>᲼<p>
-    <p>᲼<p>
-    <p> © 2026 Queensland Interactive / skibidi._fish <p>    
+    <div class="licence-content" id="licence-content">
+      <h2>MIT License</h2>
+      <p><strong>Copyright (c) 2026 Skibidi._fish</strong></p>
+      <p>
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+      </p>
+      <p>
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+      </p>
+      <p>
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+      </p>
+    </div>
 
+    <div class="contact-info">
+      <p>Please contact QI Management if you require support</p>
+      <p>© 2026 Queensland Interactive - Granted and Licensed by @skibidi._fish</p>
+    </div>
   </div>
+</div>
 
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <strong>Queensland Interactive</strong>
+      <p>Roblox community focused on realism, professionalism, and immersive Queensland-inspired experiences.</p>
+    </div>
+    <div class="footer-links">
+      <h4>More Info</h4>
+      <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank">Roblox Community</a>
+      <a href="/licence.html">Licence</a>
+    </div>
+    <div class="footer-contact">
+      <h4>Contact</h4>
+      <a href="mailto:support@queenslandinteractive-rblx.com">support@queenslandinteractive-rblx.com</a>
+      <a href="mailto:copyright@queenslandinteractive-rblx.com">copyright@queenslandinteractive-rblx.com</a>
+    </div>
+    <div class="footer-social">
+      <h4>Social</h4>
+      <div class="social-icons">
+        <a class="social-icon" href="https://discord.gg/9jaAn54Ydx" target="_blank" aria-label="Discord">
+          <img src="./images_/discord-logo.png" alt="Discord">
+        </a>
+        <a class="social-icon" href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" aria-label="Roblox">
+          <img src="./images_/roblox-icon.png" alt="Roblox">
+        </a>
+      </div>
+    </div>
+    <div class="footer-ack">
+      <h4>Acknowledgement</h4>
+      <p>We acknowledge the First Nations peoples of Australia, the traditional custodians of the land, seas, skies and waterways on which we reside, work, travel and meet.</p>
+      <p>We pay our respect to First Nations elders past, present, and emerging, and support the Uluru Statement From The Heart. We acknowledge that the land, seas, skies and waterways of Australia were, are and always will be, that of the First Nations peoples.</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 Queensland Interactive</span>
+    <a href="#licence-content" style="color: inherit; text-decoration: none;">made by @skibidi._fish</a>
+  </div>
+</footer>
+
+<script src="./maintenance.js"></script>
+<script src="./config.js"></script>
+<script src="./animations.js"></script>
 
 </body>
 </html>

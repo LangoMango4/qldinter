@@ -58,25 +58,17 @@ class BannedUsersPage {
     }
 
     this.listElement.innerHTML = bans.map((ban) => {
-      const type = ['permanent', 'temporary', 'under-review'].includes(ban.type)
-        ? ban.type
-        : 'permanent';
       const username = this.escapeHtml(ban.username || 'Unknown User');
       const altUsername = this.escapeHtml(ban.altUsername || '');
-      const reason = this.escapeHtml(ban.reason || 'No reason provided');
       const bannedBy = this.escapeHtml(ban.bannedBy || 'SYSTEM');
       const appealStatus = this.escapeHtml(ban.appealStatus || 'Not specified');
       const bannedAt = this.formatDate(ban.bannedAt || ban.createdAt);
 
       return `
-        <div class="ban-item ${type}">
+        <div class="ban-item">
           <div class="ban-header">
             <div class="ban-username">${username}</div>
             ${altUsername ? `<div class="ban-username">Alt: ${altUsername}</div>` : ''}
-            <span class="ban-badge ${type}">${this.formatType(type)}</span>
-          </div>
-          <div class="ban-details">
-            <strong>Reason:</strong> ${reason}
           </div>
           <div class="ban-meta">
             <div class="ban-meta-item">
