@@ -7,6 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Error - Queensland Interactive</title>
   <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * {
@@ -205,8 +206,6 @@
         <button class="btn btn-primary" onclick="window.location.href='/'">Go to Home</button>
         <button class="btn btn-secondary" onclick="location.reload()">Reload Page</button>
       </div>
-
-      <p class="footer">If the problem persists, contact us at support@queenslandinteractive-rblx.com</p>
     </div>
   </div>
 
@@ -220,7 +219,43 @@
     if (params.get('type')) {
       document.getElementById('error-type').textContent = decodeURIComponent(params.get('type'));
     }
+
+    async function send404Webhook() {
+      try {
+        if (sessionStorage.getItem('qi_error_webhook_sent') === 'true') {
+          return;
+        }
+
+        const path = window.location.pathname;
+        if (path === '/error/' || path === '/error/index.html') {
+          return;
+        }
+
+        const payload = {
+          title: '404 Error Page Viewed',
+          page: window.location.href,
+          username: 'Unknown user',
+          userId: 'Unknown ID',
+          details: `The 404 page was shown for ${window.location.href}`
+        };
+
+        const response = await fetch('/api/notify-404', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+          sessionStorage.setItem('qi_error_webhook_sent', 'true');
+        }
+      } catch (error) {
+        console.error('Failed to send 404 webhook:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', send404Webhook);
   </script>
+  <script defer src="../navigation.js"></script>
 </body>
 </html>
 

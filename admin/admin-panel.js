@@ -19,6 +19,7 @@ class AdminPanel {
 
   bindEvents() {
     this.loginBtn?.addEventListener('click', () => {
+      sessionStorage.setItem('qi_admin_login_attempt', 'true');
       const returnTo = encodeURIComponent(window.location.href);
       window.location.href = `${this.apiBase}/auth/discord/start?returnTo=${returnTo}`;
     });
@@ -41,6 +42,12 @@ class AdminPanel {
     const configured = (window.SITE_CONFIG && (window.SITE_CONFIG.RAILWAY_SERVER_URL || window.SITE_CONFIG.robloxProxyBase)) || '';
     const cleanConfigured = String(configured || '').trim().replace(/\/$/, '');
     return cleanConfigured || window.location.origin;
+  }
+
+  consumeLoginAttempt() {
+    const attempted = sessionStorage.getItem('qi_admin_login_attempt') === 'true';
+    sessionStorage.removeItem('qi_admin_login_attempt');
+    return attempted;
   }
 
   setStatus(message, type = 'info') {
@@ -130,11 +137,13 @@ class AdminPanel {
         this.toggleTrelloLink(false);
 
         if (response.status === 401 || response.status === 403) {
-          this.setStatus('Unauthorized admin access attempt logged. Redirecting to home...', 'error');
-          this.notifySecurityAlert(response.status);
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 2500);
+          const attemptedLogin = this.consumeLoginAttempt();
+          if (attemptedLogin) {
+            this.setStatus('Unauthorized login failed. Security alert has been recorded.', 'error');
+            this.notifySecurityAlert(response.status);
+          } else {
+            this.setStatus('Not authenticated as admin. Login with Discord to continue.', 'error');
+          }
         } else {
           this.setStatus('Not authenticated as admin. Login with Discord to continue.', 'error');
         }

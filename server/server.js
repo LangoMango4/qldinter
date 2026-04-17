@@ -262,6 +262,42 @@ const setSessionCookie = (res, token, maxAgeMs) => {
   res.setHeader("Set-Cookie", cookie);
 };
 
+const notifyNotFoundWebhook = async (req) => {
+  if (!SECURITY_ALERTS_WEBHOOK) {
+    return;
+  }
+
+  const webhookPayload = {
+    embeds: [
+      {
+        title: "404 Not Found Alert",
+        description: `A 404 page not found error occurred for ${req.method} ${req.originalUrl}`,
+        color: 0xf59e0b,
+        fields: [
+          { name: "URL", value: `${req.originalUrl}`, inline: true },
+          { name: "Method", value: `${req.method}`, inline: true }
+        ],
+        footer: {
+          text: "Queensland Interactive Error Webhook"
+        },
+        timestamp: new Date().toISOString()
+      }
+    ]
+  };
+
+  try {
+    await fetch(SECURITY_ALERTS_WEBHOOK, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(webhookPayload)
+    });
+  } catch (error) {
+    console.error("Failed to send 404 webhook:", error);
+  }
+};
+
 const clearSessionCookie = (res) => {
   const cookie = [
     `${SESSION_COOKIE_NAME}=`,
@@ -549,8 +585,6 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static(WEBSITE_ROOT));
-
 app.get("/", (req, res) => {
   const code = String(req.query.code || "").trim();
   const state = String(req.query.state || "").trim();
@@ -563,6 +597,8 @@ app.get("/", (req, res) => {
 
   res.sendFile(path.join(WEBSITE_ROOT, "index.html"));
 });
+
+app.use(express.static(WEBSITE_ROOT));
 
 app.get("/api/group-status", async (req, res) => {
   try {
@@ -1382,7 +1418,6 @@ app.post("/api/notify-security", async (req, res) => {
     const username = String(payload.username || "Unknown user");
     const userId = String(payload.userId || "Unknown ID");
     const page = String(payload.page || req.originalUrl || "admin page");
-    const remoteIp = String(req.headers["x-forwarded-for"] || req.ip || "Unknown IP");
     const details = String(payload.details || "An unauthorized request was blocked.");
 
     const embed = {
@@ -1394,8 +1429,7 @@ app.post("/api/notify-security", async (req, res) => {
           fields: [
             { name: "Page", value: page, inline: true },
             { name: "Username", value: username, inline: true },
-            { name: "Discord ID", value: userId, inline: true },
-            { name: "IP Address", value: remoteIp, inline: false }
+            { name: "Discord ID", value: userId, inline: true }
           ],
           footer: {
             text: "Queensland Interactive Security Alerts"
@@ -1422,6 +1456,55 @@ app.post("/api/notify-security", async (req, res) => {
   } catch (error) {
     console.error("Error sending security alert:", error);
     return res.status(500).json({ error: "Failed to send security alert." });
+  }
+});
+
+app.post("/api/notify-404", async (req, res) => {
+  try {
+    const webhookUrl = SECURITY_ALERTS_WEBHOOK;
+    if (!webhookUrl) {
+      return res.status(500).json({ error: "Security webhook is not configured." });
+    }
+
+    const payload = req.body && typeof req.body === "object" ? req.body : {};
+    const title = String(payload.title || "404 Page Viewed");
+    const page = String(payload.page || req.originalUrl || "Unknown page");
+    const details = String(payload.details || "A 404 page was displayed.");
+
+    const embed = {
+      embeds: [
+        {
+          title: title,
+          description: details,
+          color: 0xf59e0b,
+          fields: [
+            { name: "Page", value: page, inline: true }
+          ],
+          footer: {
+            text: "Queensland Interactive Error Webhook"
+          },
+          timestamp: new Date().toISOString()
+        }
+      ]
+    };
+
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(embed)
+    });
+
+    if (!response.ok) {
+      console.error(`404 webhook failed: ${response.status}`);
+      return res.status(500).json({ error: "Failed to send 404 webhook." });
+    }
+
+    return res.json({ success: true, message: "404 alert sent." });
+  } catch (error) {
+    console.error("Error sending 404 webhook:", error);
+    return res.status(500).json({ error: "Failed to send 404 webhook." });
   }
 });
 
@@ -1490,6 +1573,16 @@ app.post("/api/notify-status", async (req, res) => {
     console.error("Error sending status notification:", error);
     return res.status(500).json({ error: "Failed to send status notification" });
   }
+});
+
+app.use(async (req, res) => {
+  await notifyNotFoundWebhook(req);
+
+  if (req.accepts('html')) {
+    return res.status(404).sendFile(path.join(WEBSITE_ROOT, 'error', 'index.html'));
+  }
+
+  return res.status(404).json({ error: 'Not found' });
 });
 
 app.listen(PORT, () => {
