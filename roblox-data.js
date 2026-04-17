@@ -102,10 +102,16 @@ const loadTeamMembers = async () => {
       card.rel = "noopener";
 
       const img = document.createElement("img");
+      img.loading = 'lazy';
+      img.decoding = 'async';
       img.src =
         member.avatarUrl ||
         `https://www.roblox.com/headshot-thumbnail/image?userId=${member.id}&width=150&height=150&format=png`;
-      img.alt = member.name;
+      img.alt = member.name || 'Team member';
+      img.onerror = () => {
+        img.onerror = null;
+        img.src = '/mainico.png';
+      };
 
       const info = document.createElement("div");
       info.className = "team-info";

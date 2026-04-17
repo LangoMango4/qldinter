@@ -44,7 +44,7 @@
     <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
     <ul id="nav-menu">
       <li><a href="/">Home</a></li>
-      <li><a class="cta" href="https://trello.com/b/9SbBqljD/westlands-gameban-mangement" target="_blank">Game Trello</a></li>
+      <li><a id="admin-trello-link" class="cta" href="https://trello.com/b/9SbBqljD/westlands-gameban-mangement" target="_blank" style="display:none;">Game Trello</a></li>
     </ul>
   </nav>
 
@@ -69,7 +69,6 @@
               <div class="admin-field"><label for="ban-alt">Alt Username (optional)</label><input id="ban-alt"></div>
               <div class="admin-field"><label for="ban-type">Type</label><select id="ban-type"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="under-review">Under Review</option></select></div>
               <div class="admin-field"><label for="ban-reason">Reason</label><textarea id="ban-reason" required></textarea></div>
-              <div class="admin-field"><label for="ban-by">Banned By</label><input id="ban-by"></div>
               <div class="admin-field"><label for="ban-appeal">Appeal Status</label><input id="ban-appeal"></div>
               <button class="admin-btn admin-btn-primary" type="submit">Add Ban</button>
             </form>

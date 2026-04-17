@@ -15,6 +15,7 @@ const BOTGHOST_DASHBOARD_URL = process.env.BOTGHOST_DASHBOARD_URL || SSU_CHANNEL
 const BOTGHOST_SSU_STATUS_URL = process.env.BOTGHOST_SSU_STATUS_URL || "";
 const SSU_WEBHOOK_TOKEN = process.env.SSU_WEBHOOK_TOKEN || "";
 const BOT_LINK_WEBHOOK_URL = process.env.BOT_LINK_WEBHOOK_URL || DISCORD_WEBHOOK_URL;
+const SECURITY_ALERTS_WEBHOOK = process.env.SECURITY_ALERTS_WEBHOOK || DISCORD_WEBHOOK_URL;
 const BOT_AUTH_TOKEN = process.env.BOT_AUTH_TOKEN || SSU_WEBHOOK_TOKEN;
 const STATUSAPI_WEBHOOK = process.env.STATUSAPI_WEBHOOK || "";
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
@@ -1369,6 +1370,61 @@ app.post("/api/feedback", async (req, res) => {
 loadModerationState();
 
 // Service status notification endpoint
+app.post("/api/notify-security", async (req, res) => {
+  try {
+    const webhookUrl = SECURITY_ALERTS_WEBHOOK;
+    if (!webhookUrl) {
+      return res.status(500).json({ error: "Security webhook is not configured." });
+    }
+
+    const payload = req.body && typeof req.body === "object" ? req.body : {};
+    const title = String(payload.title || "Unauthorized Admin Access Attempt");
+    const username = String(payload.username || "Unknown user");
+    const userId = String(payload.userId || "Unknown ID");
+    const page = String(payload.page || req.originalUrl || "admin page");
+    const remoteIp = String(req.headers["x-forwarded-for"] || req.ip || "Unknown IP");
+    const details = String(payload.details || "An unauthorized request was blocked.");
+
+    const embed = {
+      embeds: [
+        {
+          title: title,
+          description: details,
+          color: 0xdc3545,
+          fields: [
+            { name: "Page", value: page, inline: true },
+            { name: "Username", value: username, inline: true },
+            { name: "Discord ID", value: userId, inline: true },
+            { name: "IP Address", value: remoteIp, inline: false }
+          ],
+          footer: {
+            text: "Queensland Interactive Security Alerts"
+          },
+          timestamp: new Date().toISOString()
+        }
+      ]
+    };
+
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(embed)
+    });
+
+    if (!response.ok) {
+      console.error(`Security webhook failed: ${response.status}`);
+      return res.status(500).json({ error: "Failed to send security webhook." });
+    }
+
+    return res.json({ success: true, message: "Security alert sent." });
+  } catch (error) {
+    console.error("Error sending security alert:", error);
+    return res.status(500).json({ error: "Failed to send security alert." });
+  }
+});
+
 app.post("/api/notify-status", async (req, res) => {
   try {
     const { service, status, message, timestamp, isTest } = req.body;

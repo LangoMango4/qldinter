@@ -8,6 +8,7 @@ class AdminPanel {
     this.adminArea = document.getElementById('admin-access-area');
     this.webhookTestBtn = document.getElementById('test-webhook-btn');
     this.webhookTestStatus = document.getElementById('webhook-test-status');
+    this.trelloLink = document.getElementById('admin-trello-link');
     this.isAdmin = false;
     this.lastWebhookTest = 0;
     this.apiBase = this.resolveApiBase();
@@ -27,6 +28,8 @@ class AdminPanel {
       this.isAdmin = false;
       this.setStatus('Logged out.', 'info');
       this.toggleForms(false);
+      this.toggleAdminArea(false);
+      this.toggleTrelloLink(false);
     });
 
     this.banForm?.addEventListener('submit', (event) => this.handleBanSubmit(event));
@@ -85,9 +88,35 @@ class AdminPanel {
   async initialize() {
     this.toggleForms(false);
     this.toggleAdminArea(false);
+    this.toggleTrelloLink(false);
     await this.refreshAuth();
     if (this.isAdmin) {
       await this.loadBans();
+    }
+  }
+
+  toggleTrelloLink(enabled) {
+    if (!this.trelloLink) {
+      return;
+    }
+    this.trelloLink.style.display = enabled ? 'inline-flex' : 'none';
+  }
+
+  async notifySecurityAlert(statusCode) {
+    try {
+      await fetch(`${this.apiBase}/api/notify-security`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: 'Unauthorized Admin Panel Access Attempt',
+          page: window.location.pathname,
+          userId: 'Unknown',
+          username: 'Unknown',
+          details: `Attempt to access admin interface failed with status ${statusCode}.`
+        })
+      });
+    } catch (error) {
+      console.error('Failed to send security alert:', error);
     }
   }
 
@@ -96,8 +125,20 @@ class AdminPanel {
       const response = await fetch(`${this.apiBase}/api/admin/me`, { credentials: 'include', cache: 'no-store' });
       if (!response.ok) {
         this.isAdmin = false;
-        this.setStatus('Not authenticated as admin. Login with Discord to continue.', 'error');
         this.toggleForms(false);
+        this.toggleAdminArea(false);
+        this.toggleTrelloLink(false);
+
+        if (response.status === 401 || response.status === 403) {
+          this.setStatus('Unauthorized admin access attempt logged. Redirecting to home...', 'error');
+          this.notifySecurityAlert(response.status);
+          setTimeout(() => {
+            window.location.href = '/';
+          }, 2500);
+        } else {
+          this.setStatus('Not authenticated as admin. Login with Discord to continue.', 'error');
+        }
+
         return;
       }
 
@@ -106,10 +147,13 @@ class AdminPanel {
       this.setStatus(`Welcome, ${payload.user.username}. Admin access active.`, 'success');
       this.toggleForms(true);
       this.toggleAdminArea(true);
+      this.toggleTrelloLink(true);
     } catch (error) {
       this.isAdmin = false;
       this.setStatus('Please retry otherwise contact your IT Administrator', 'error');
       this.toggleForms(false);
+      this.toggleAdminArea(false);
+      this.toggleTrelloLink(false);
     }
   }
 
@@ -122,7 +166,6 @@ class AdminPanel {
       altUsername: document.getElementById('ban-alt')?.value.trim(),
       type: document.getElementById('ban-type')?.value,
       reason: document.getElementById('ban-reason')?.value.trim(),
-      bannedBy: document.getElementById('ban-by')?.value.trim(),
       appealStatus: document.getElementById('ban-appeal')?.value.trim()
     };
 

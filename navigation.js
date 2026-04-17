@@ -44,6 +44,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // External Link Warning
   setupExternalLinkWarning();
+
+  // Service worker update prompt
+  setupServiceWorkerUpdate();
+
+  // Ensure every page has the main site footer
+  ensureGlobalFooter();
 });
 
 // User Authentication Functions
@@ -140,6 +146,237 @@ function ensureFloatingUserProfile() {
     document.body.appendChild(floatingProfile);
   }
   return floatingProfile;
+}
+
+function injectUpdateBannerStyles() {
+  if (document.getElementById('update-banner-styles')) {
+    return;
+  }
+
+  const style = document.createElement('style');
+  style.id = 'update-banner-styles';
+  style.textContent = `
+    #update-banner {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10001;
+      width: min(95%, 720px);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      background: #1e90ff;
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 16px 18px;
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    #update-banner p {
+      margin: 0;
+      color: #f8fbff;
+      line-height: 1.5;
+      flex: 1 1 320px;
+    }
+
+    #update-banner-actions {
+      display: flex;
+      gap: 10px;
+      flex: 0 0 auto;
+      align-items: center;
+    }
+
+    #update-banner button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    #update-refresh {
+      background: #ffffff;
+      color: #1e90ff;
+    }
+
+    #update-refresh:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    #update-dismiss {
+      background: rgba(255, 255, 255, 0.18);
+      color: #f8fbff;
+    }
+
+    #update-dismiss:hover {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    @media (max-width: 600px) {
+      #update-banner {
+        top: 12px;
+        left: 12px;
+        transform: none;
+        width: calc(100% - 24px);
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      #update-banner-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      #update-banner button {
+        width: auto;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+}
+
+function promptServiceWorkerUpdate(registration) {
+  if (!registration || !registration.waiting || document.getElementById('update-banner')) {
+    return;
+  }
+
+  injectUpdateBannerStyles();
+
+  const banner = document.createElement('div');
+  banner.id = 'update-banner';
+  banner.innerHTML = `
+    <p><strong>Update ready:</strong> A new version of Queensland Interactive is available. Refresh to apply the latest site updates.</p>
+    <div id="update-banner-actions">
+      <button id="update-refresh" type="button">Refresh now</button>
+      <button id="update-dismiss" type="button">Dismiss</button>
+    </div>
+  `;
+
+  document.body.appendChild(banner);
+
+  const refreshButton = document.getElementById('update-refresh');
+  const dismissButton = document.getElementById('update-dismiss');
+
+  if (refreshButton) {
+    refreshButton.addEventListener('click', () => {
+      if (registration.waiting) {
+        registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+      }
+    });
+  }
+
+  if (dismissButton) {
+    dismissButton.addEventListener('click', () => {
+      banner.remove();
+    });
+  }
+}
+
+function ensureGlobalFooter() {
+  if (document.querySelector('.site-footer')) {
+    return;
+  }
+
+  const footerHtml = `
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <strong>Queensland Interactive</strong>
+          <p>Roblox community focused on realism, professionalism, and immersive Queensland-inspired experiences.</p>
+        </div>
+        <div class="footer-links">
+          <h4>More info</h4>
+          <a href="https://discord.gg/9jaAn54Ydx" target="_blank">Discord</a>
+          <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank">Roblox Community</a>
+          <a href="/licence.html">Licence</a>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <a href="mailto:support@queenslandinteractive-rblx.com">support@queenslandinteractive-rblx.com</a>
+          <a href="mailto:copyright@queenslandinteractive-rblx.com">copyright@queenslandinteractive-rblx.com</a>
+        </div>
+        <div class="footer-social">
+          <h4>Social</h4>
+          <div class="social-icons">
+            <a class="social-icon" href="https://discord.gg/9jaAn54Ydx" target="_blank" aria-label="Discord">
+              <img src="/images_/discord-logo.png" alt="Discord">
+            </a>
+            <a class="social-icon" href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" aria-label="Roblox">
+              <img src="/images_/roblox-icon.png" alt="Roblox">
+            </a>
+          </div>
+        </div>
+        <div class="footer-staff">
+          <h4>Staff only</h4>
+          <p><a href="/admin/">Admin panel</a></p>
+        </div>
+        <div class="footer-ack">
+          <h4>Acknowledgement</h4>
+          <p>We acknowledge the First Nations peoples of Australia, the traditional custodians of the land, seas, skies and waterways on which we reside, work, travel and meet.</p>
+          <p>We pay our respect to First Nations elders past, present, and emerging, and support the Uluru Statement From The Heart. We acknowledge that the land, seas, skies and waterways of Australia were, are and always will be, that of the First Nations peoples.</p>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Queensland Interactive</div>
+    </footer>
+  `;
+
+  const footerContainer = document.createElement('div');
+  footerContainer.innerHTML = footerHtml;
+  document.body.appendChild(footerContainer.firstElementChild);
+}
+
+function setupServiceWorkerUpdate() {
+  if (!('serviceWorker' in navigator)) {
+    return;
+  }
+
+  navigator.serviceWorker.register('/service-worker.js')
+    .then((registration) => {
+      if (registration.waiting) {
+        promptServiceWorkerUpdate(registration);
+      }
+
+      if (registration.installing) {
+        registration.installing.addEventListener('statechange', () => {
+          if (registration.installing.state === 'installed' && navigator.serviceWorker.controller) {
+            promptServiceWorkerUpdate(registration);
+          }
+        });
+      }
+
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        if (!newWorker) {
+          return;
+        }
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            promptServiceWorkerUpdate(registration);
+          }
+        });
+      });
+    })
+    .catch((error) => {
+      console.error('Service worker registration failed:', error);
+    });
+
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (window.__swReloading) {
+      return;
+    }
+
+    window.__swReloading = true;
+    window.location.reload();
+  });
 }
 
 // External Link Warning System
