@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Update package-lock.json",
+			"type": "shell",
+			"command": "npm install"
+		}
+	]
+}
