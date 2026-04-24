@@ -131,12 +131,12 @@ const sendBanToTrello = async (ban) => {
 
   console.log("Sending ban to Trello:", ban.username);
 
-  const cardName = `Ban: ${ban.username || "Unknown"} (${ban.type || "ban"})`;
+  const cardName = `${ban.username || "Unknown"}`;
   const cardDesc = [
     `Reason: ${ban.reason || "No reason provided"}`,
-    `Administrator: ${ban.bannedBy || "Unknown"}`,
+    `If you think this is a mistake, visit our website to appeal`,
     ``,
-    `Visit our website to appeal: queenslandinteractive-rblx.com/banned-users`
+    `Administrator: ${ban.bannedBy || "System"}`
   ].join("\n");
 
   const params = new URLSearchParams({
@@ -1104,7 +1104,7 @@ app.post("/api/admin/bans", requireAdmin, async (req, res) => {
     reason,
     type,
     bannedBy,
-    appealStatus: appealStatus || (type === "permanent" ? "Permanent Ban - Not Appealable" : "Appealable - Must Appeal to be Unbanned"),
+    appealStatus: appealStatus || (type === "permanent" ? "Permanent Ban" : "Appealable"),
     groupId: groupId || null,
     bannedAt,
     createdAt: new Date().toISOString()

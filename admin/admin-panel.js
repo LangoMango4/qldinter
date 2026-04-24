@@ -36,6 +36,19 @@ class AdminPanel {
     this.banForm?.addEventListener('submit', (event) => this.handleBanSubmit(event));
 
     this.webhookTestBtn?.addEventListener('click', () => this.testWebhook());
+
+    const banReasonSelect = document.getElementById('ban-reason');
+    const otherReasonInput = document.getElementById('ban-other-reason');
+
+    if (banReasonSelect && otherReasonInput) {
+      banReasonSelect.addEventListener('change', () => {
+        const isOther = banReasonSelect.value === 'Other';
+        otherReasonInput.style.display = isOther ? 'block' : 'none';
+        if (!isOther) {
+          otherReasonInput.value = '';
+        }
+      });
+    }
   }
 
   resolveApiBase() {
@@ -69,12 +82,23 @@ class AdminPanel {
     event.preventDefault();
     if (!this.isAdmin) return;
 
+    const banReasonSelect = document.getElementById('ban-reason');
+    const selectedReason = banReasonSelect?.value?.trim() || '';
+
+    if (!selectedReason) {
+      this.setStatus('Please select a reason for the ban.', 'error');
+      return;
+    }
+
+    const otherReasonInput = document.getElementById('ban-other-reason');
+    const otherReason = otherReasonInput?.value.trim();
+    const reason = selectedReason === 'Other' && otherReason ? `Other: ${otherReason}` : selectedReason;
+
     const payload = {
       username: document.getElementById('ban-username')?.value.trim(),
       altUsername: document.getElementById('ban-alt')?.value.trim(),
       type: document.getElementById('ban-type')?.value,
-      reason: document.getElementById('ban-reason')?.value,
-      appealStatus: document.getElementById('ban-appeal')?.value.trim(),
+      reason,
       groupId: document.getElementById('ban-group-id')?.value.trim()
     };
 
@@ -92,6 +116,14 @@ class AdminPanel {
 
       this.setStatus('Ban added successfully.', 'success');
       this.banForm.reset();
+      
+      // Hide custom reason input after reset
+      const otherReasonInput = document.getElementById('ban-other-reason');
+      if (otherReasonInput) {
+        otherReasonInput.style.display = 'none';
+        otherReasonInput.value = '';
+      }
+      
       await this.loadBans();
     } catch (error) {
       this.setStatus('Failed to add ban. Check your admin access and try again.', 'error');
@@ -175,7 +207,7 @@ class AdminPanel {
             this.setStatus('Unauthorized login failed. Security alert has been recorded.', 'error');
             this.notifySecurityAlert(response.status);
           } else {
-            this.setStatus('Not authenticated as admin. Login with Discord to continue.', 'error');
+            this.setStatus('Login with Discord to continue, otherwise contact your IT Administrator', 'error');
           }
         } else {
           this.setStatus('Not authenticated as admin. Login with Discord to continue.', 'error');
@@ -196,39 +228,6 @@ class AdminPanel {
       this.toggleForms(false);
       this.toggleAdminArea(false);
       this.toggleTrelloLink(false);
-    }
-  }
-
-  async handleBanSubmit(event) {
-    event.preventDefault();
-    if (!this.isAdmin) return;
-
-    const payload = {
-      username: document.getElementById('ban-username')?.value.trim(),
-      altUsername: document.getElementById('ban-alt')?.value.trim(),
-      type: document.getElementById('ban-type')?.value,
-      reason: document.getElementById('ban-reason')?.value.trim(),
-      appealStatus: document.getElementById('ban-appeal')?.value.trim(),
-      groupId: document.getElementById('ban-group-id')?.value.trim()
-    };
-
-    try {
-      const response = await fetch(`${this.apiBase}/api/admin/bans`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(payload)
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to add ban.');
-      }
-
-      this.setStatus('Ban added successfully.', 'success');
-      this.banForm.reset();
-      await this.loadBans();
-    } catch (error) {
-      this.setStatus('Failed to add ban. Check your admin access and try again.', 'error');
     }
   }
 

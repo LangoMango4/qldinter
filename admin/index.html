@@ -68,8 +68,22 @@
               <div class="admin-field"><label for="ban-username">Username</label><input id="ban-username" required></div>
               <div class="admin-field"><label for="ban-alt">Alt Username (optional)</label><input id="ban-alt"></div>
               <div class="admin-field"><label for="ban-type">Type</label><select id="ban-type"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="under-review">Under Review</option></select></div>
-              <div class="admin-field"><label for="ban-reason">Reason</label><select id="ban-reason" required><option value="">Select a reason...</option><option value="Roblox TOS Violation: Exploiting">Roblox TOS Violation: Exploiting</option><option value="Roblox TOS Violation: Harassment">Roblox TOS Violation: Inappropriate avatar/character</option><option value="Roblox TOS Violation: Inappropriate Content">Roblox TOS Violation: Inappropriate Content</option><option value="Community Guideline Breaking: Fail Roleplay">Community Guideline Breaking: Fail Roleplay</option><option value="Community Guideline Breaking: Mass Copbaiting">Community Guideline Breaking: Mass Copbaiting</option><option value="Community Guideline Breaking: Disrespecting Staff">Community Guideline Breaking: Disrespecting Staff</option><option value="Other">Other</option></select></div>
-              <div class="admin-field"><label for="ban-appeal">Appeal Status</label><input id="ban-appeal"></div>
+              <div class="admin-field">
+                <label for="ban-reason">Reason</label>
+                <select id="ban-reason" required>
+                  <option value="">Select a reason...</option>
+                  <option value="Roblox ToS Violation(s): Exploiting">Roblox ToS Violation(s): Exploiting</option>
+                  <option value="Roblox ToS Violation(s): Bypassing Filter / Racial Slurs">Roblox ToS Violation(s): Bypassing Filter / Racial Slurs</option>
+                  <option value="Roblox ToS Violation(s): Bypassing Filter / Inappropriate Content">Roblox ToS Violation(s): Bypassing Filter / Inappropriate Content</option>
+                  <option value="Roblox ToS Violation(s): Inappropriate voice content">Roblox ToS Violation(s): Inappropriate voice content</option>
+                  <option value="Roblox ToS Violation(s): Impersonating QI Staff">Roblox ToS Violation(s): Impersonating QI Staff</option>
+                  <option value="QI ToS Violation(s): Fail Roleplay">QI ToS Violation(s): Fail Roleplay</option>
+                  <option value="QI ToS Violation(s): Mass Copbaiting">QI ToS Violation(s): Mass Copbaiting</option>
+                  <option value="QI ToS Violation(s): Disrespecting Staff">QI ToS Violation(s): Disrespecting Staff</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input id="ban-other-reason" type="text" placeholder="Specify other reason (optional)" style="margin-top: 8px; display: none; width: 100%;">
+              </div>
               <div class="admin-field"><label for="ban-group-id">Roblox Group ID (optional, for group bans)</label><input id="ban-group-id" type="number"></div>
               <button class="admin-btn admin-btn-primary" type="submit">Add Ban</button>
             </form>
