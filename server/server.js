@@ -130,20 +130,12 @@ const sendBanToTrello = async (ban) => {
   }
 
   console.log("Sending ban to Trello:", ban.username);
-
-  const cardName = `Ban: ${ban.username || "Unknown"} (${ban.type || "ban"})`;
-  const cardDesc = [
-    `Username: ${ban.username || "Unknown"}`,
-    `Alt Username: ${ban.altUsername || "N/A"}`,
-    `Reason: ${ban.reason || "No reason provided"}`,
-    `Type: ${ban.type || "Unknown"}`,
-    `Banned By: ${ban.bannedBy || "Unknown"}`,
-    `Appeal Status: ${ban.appealStatus || "N/A"}`,
-    `Group ID: ${ban.groupId || "N/A"}`,
-    `Banned At: ${ban.bannedAt || ban.createdAt || "Unknown"}`,
-    `Created At: ${ban.createdAt || "Unknown"}`
-  ].join("\n");
-
+const cardDesc = [
+  `Reason: ${ban.reason || "No reason provided"}`,
+  `Administrator: ${ban.bannedBy || "Unknown"}`,
+  ``,
+  `Visit our website to appeal: queenslandinteractive-rblx.com/banned-users`
+].join("\n");
   const params = new URLSearchParams({
     key: TRELLO_API_KEY,
     token: TRELLO_API_TOKEN,
