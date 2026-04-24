@@ -133,10 +133,10 @@ const sendBanToTrello = async (ban) => {
 
   const cardName = `${ban.username || "Unknown"}`;
   const cardDesc = [
-    `Reason: ${ban.reason || "No reason provided"}`,
+    `${ban.reason || "No reason provided"}`,
     `If you think this is a mistake, visit our website to appeal`,
     ``,
-    `Administrator: ${ban.bannedBy || "System"}`
+    `Moderator: ${ban.bannedBy || "System"}`
   ].join("\n");
 
   const params = new URLSearchParams({
