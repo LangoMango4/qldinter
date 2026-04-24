@@ -68,8 +68,9 @@
               <div class="admin-field"><label for="ban-username">Username</label><input id="ban-username" required></div>
               <div class="admin-field"><label for="ban-alt">Alt Username (optional)</label><input id="ban-alt"></div>
               <div class="admin-field"><label for="ban-type">Type</label><select id="ban-type"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="under-review">Under Review</option></select></div>
-              <div class="admin-field"><label for="ban-reason">Reason</label><textarea id="ban-reason" required></textarea></div>
+              <div class="admin-field"><label for="ban-reason">Reason</label><select id="ban-reason" required><option value="">Select a reason...</option><option value="Roblox TOS Violation: Exploiting">Roblox TOS Violation: Exploiting</option><option value="Roblox TOS Violation: Harassment">Roblox TOS Violation: Harassment</option><option value="Roblox TOS Violation: Inappropriate Content">Roblox TOS Violation: Inappropriate Content</option><option value="Community Guideline Breaking: Fail Roleplay">Community Guideline Breaking: Fail Roleplay</option><option value="Community Guideline Breaking: Mass Copbaiting">Community Guideline Breaking: Mass Copbaiting</option><option value="Community Guideline Breaking: Disrespecting Staff">Community Guideline Breaking: Disrespecting Staff</option><option value="Other">Other</option></select></div>
               <div class="admin-field"><label for="ban-appeal">Appeal Status</label><input id="ban-appeal"></div>
+              <div class="admin-field"><label for="ban-group-id">Roblox Group ID (optional, for group bans)</label><input id="ban-group-id" type="number"></div>
               <button class="admin-btn admin-btn-primary" type="submit">Add Ban</button>
             </form>
           </section>

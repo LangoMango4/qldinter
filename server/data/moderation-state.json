@@ -1,0 +1,60 @@
+{
+  "bans": [
+    {
+      "id": "ban-h3yt5-2026-01-12",
+      "username": "h3yt5",
+      "altUsername": "jakobecollinsbbsc213",
+      "reason": "ToS Violation: Exploiting",
+      "type": "permanent",
+      "bannedBy": "SYSTEM",
+      "appealStatus": "Permanent Ban - Not Appealable",
+      "bannedAt": "2026-01-12T12:25:00.000Z",
+      "createdAt": "2026-01-12T12:25:00.000Z"
+    },
+    {
+      "id": "ban-officer2971-2026-01-12",
+      "username": "officer2971",
+      "altUsername": "",
+      "reason": "ToS Violation: Exploiting",
+      "type": "permanent",
+      "bannedBy": "SYSTEM",
+      "appealStatus": "Permanent Ban - Not Appealable",
+      "bannedAt": "2026-01-12T21:17:00.000Z",
+      "createdAt": "2026-01-12T21:17:00.000Z"
+    },
+    {
+      "id": "ban-bravo-delta54-2026-01-14",
+      "username": "BRAVO_DELTA54",
+      "altUsername": "",
+      "reason": "ToS Violation: Exploiting",
+      "type": "permanent",
+      "bannedBy": "SYSTEM",
+      "appealStatus": "Permanent Ban - Not Appealable",
+      "bannedAt": "2026-01-14T14:29:00.000Z",
+      "createdAt": "2026-01-14T14:29:00.000Z"
+    },
+    {
+      "id": "ban-skeeta2021-2026-01-12",
+      "username": "Skeeta2021",
+      "altUsername": "",
+      "reason": "Fail Roleplay, Mass Copbaiting, and Disrespecting Staff",
+      "type": "temporary",
+      "bannedBy": "lango_mango13",
+      "appealStatus": "Appealable - Must Appeal to be Unbanned",
+      "bannedAt": "2026-01-12T17:26:00.000Z",
+      "createdAt": "2026-01-12T17:26:00.000Z"
+    },
+    {
+      "id": "ban-mrogan-benchick-2026-02-03",
+      "username": "Mrogan_Benchick",
+      "altUsername": "",
+      "reason": "Joined Version Two and failed to listen to staff instructions to leave.",
+      "type": "temporary",
+      "bannedBy": "lango_mango13",
+      "appealStatus": "Appealable - Must Appeal to be Unbanned",
+      "bannedAt": "2026-02-03T19:48:00.000Z",
+      "createdAt": "2026-02-03T19:48:00.000Z"
+    }
+  ],
+  "notifications": []
+}

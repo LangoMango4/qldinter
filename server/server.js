@@ -18,6 +18,9 @@ const BOT_LINK_WEBHOOK_URL = process.env.BOT_LINK_WEBHOOK_URL || DISCORD_WEBHOOK
 const SECURITY_ALERTS_WEBHOOK = process.env.SECURITY_ALERTS_WEBHOOK || DISCORD_WEBHOOK_URL;
 const BOT_AUTH_TOKEN = process.env.BOT_AUTH_TOKEN || SSU_WEBHOOK_TOKEN;
 const STATUSAPI_WEBHOOK = process.env.STATUSAPI_WEBHOOK || "";
+const TRELLO_API_KEY = process.env.TRELLO_API_KEY || "";
+const TRELLO_API_TOKEN = process.env.TRELLO_API_TOKEN || "";
+const TRELLO_BANS_LIST_ID = process.env.TRELLO_BANS_LIST_ID || "";
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || "";
 const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || "";
@@ -113,6 +116,45 @@ const createDefaultModerationState = () => ({
 const saveModerationState = () => {
   ensureDataDirectory();
   fs.writeFileSync(MODERATION_DATA_FILE, JSON.stringify(moderationState, null, 2), "utf8");
+};
+
+const sendBanToTrello = async (ban) => {
+  if (!TRELLO_API_KEY || !TRELLO_API_TOKEN || !TRELLO_BANS_LIST_ID) {
+    return;
+  }
+
+  const cardName = `Ban: ${ban.username || "Unknown"} (${ban.type || "ban"})`;
+  const cardDesc = [
+    `Username: ${ban.username || "Unknown"}`,
+    `Alt Username: ${ban.altUsername || "N/A"}`,
+    `Reason: ${ban.reason || "No reason provided"}`,
+    `Type: ${ban.type || "Unknown"}`,
+    `Banned By: ${ban.bannedBy || "Unknown"}`,
+    `Appeal Status: ${ban.appealStatus || "N/A"}`,
+    `Group ID: ${ban.groupId || "N/A"}`,
+    `Banned At: ${ban.bannedAt || ban.createdAt || "Unknown"}`,
+    `Created At: ${ban.createdAt || "Unknown"}`
+  ].join("\n");
+
+  const params = new URLSearchParams({
+    key: TRELLO_API_KEY,
+    token: TRELLO_API_TOKEN,
+    idList: TRELLO_BANS_LIST_ID,
+    name: cardName,
+    desc: cardDesc,
+    pos: "top"
+  });
+
+  const response = await fetch(`https://api.trello.com/1/cards?${params.toString()}`, {
+    method: "POST"
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "");
+    throw new Error(`Trello card creation failed: ${response.status} ${errorText}`);
+  }
+
+  return response.json();
 };
 
 const loadModerationState = () => {
@@ -1035,13 +1077,14 @@ app.get("/api/admin/moderation", requireAdmin, (req, res) => {
   });
 });
 
-app.post("/api/admin/bans", requireAdmin, (req, res) => {
+app.post("/api/admin/bans", requireAdmin, async (req, res) => {
   const username = String((req.body && req.body.username) || "").trim();
   const altUsername = String((req.body && req.body.altUsername) || "").trim();
   const reason = String((req.body && req.body.reason) || "").trim();
   const typeInput = String((req.body && req.body.type) || "permanent").trim().toLowerCase();
   const bannedByInput = String((req.body && req.body.bannedBy) || "").trim();
   const appealStatus = String((req.body && req.body.appealStatus) || "").trim();
+  const groupId = String((req.body && req.body.groupId) || "").trim();
   const bannedAt = toIsoDate((req.body && req.body.bannedAt) || "");
 
   if (!username || !reason) {
@@ -1059,12 +1102,20 @@ app.post("/api/admin/bans", requireAdmin, (req, res) => {
     type,
     bannedBy,
     appealStatus: appealStatus || (type === "permanent" ? "Permanent Ban - Not Appealable" : "Appealable - Must Appeal to be Unbanned"),
+    groupId: groupId || null,
     bannedAt,
     createdAt: new Date().toISOString()
   };
 
   moderationState.bans.unshift(newBan);
   saveModerationState();
+
+  try {
+    await sendBanToTrello(newBan);
+  } catch (error) {
+    console.error("Failed to send ban to Trello:", error);
+  }
+
   return res.status(201).json({ success: true, ban: newBan });
 });
 

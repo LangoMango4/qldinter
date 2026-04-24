@@ -65,6 +65,39 @@ class AdminPanel {
     });
   }
 
+  async handleBanSubmit(event) {
+    event.preventDefault();
+    if (!this.isAdmin) return;
+
+    const payload = {
+      username: document.getElementById('ban-username')?.value.trim(),
+      altUsername: document.getElementById('ban-alt')?.value.trim(),
+      type: document.getElementById('ban-type')?.value,
+      reason: document.getElementById('ban-reason')?.value,
+      appealStatus: document.getElementById('ban-appeal')?.value.trim(),
+      groupId: document.getElementById('ban-group-id')?.value.trim()
+    };
+
+    try {
+      const response = await fetch(`${this.apiBase}/api/admin/bans`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add ban.');
+      }
+
+      this.setStatus('Ban added successfully.', 'success');
+      this.banForm.reset();
+      await this.loadBans();
+    } catch (error) {
+      this.setStatus('Failed to add ban. Check your admin access and try again.', 'error');
+    }
+  }
+
   toggleAdminArea(enabled) {
     if (this.adminArea) {
       this.adminArea.style.display = enabled ? 'block' : 'none';
@@ -175,7 +208,8 @@ class AdminPanel {
       altUsername: document.getElementById('ban-alt')?.value.trim(),
       type: document.getElementById('ban-type')?.value,
       reason: document.getElementById('ban-reason')?.value.trim(),
-      appealStatus: document.getElementById('ban-appeal')?.value.trim()
+      appealStatus: document.getElementById('ban-appeal')?.value.trim(),
+      groupId: document.getElementById('ban-group-id')?.value.trim()
     };
 
     try {
@@ -214,12 +248,13 @@ class AdminPanel {
         const title = this.escapeHtml(ban.username || 'Unknown User');
         const reason = this.escapeHtml(ban.reason || 'No reason');
         const meta = `${this.formatDate(ban.bannedAt || ban.createdAt)} • ${this.escapeHtml(ban.type || 'ban')}`;
+        const groupInfo = ban.groupId ? ` • Group: ${this.escapeHtml(ban.groupId)}` : '';
 
         return `
           <div class="admin-list-item">
             <div>
               <div><strong>${title}</strong></div>
-              <div class="admin-meta">${reason}</div>
+              <div class="admin-meta">${reason}${groupInfo}</div>
               <div class="admin-meta">${meta}</div>
             </div>
             <button class="admin-btn admin-btn-danger" type="button" data-remove-ban="${this.escapeHtml(ban.id)}">Remove</button>
