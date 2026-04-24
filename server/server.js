@@ -3,11 +3,6 @@ const { randomUUID } = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
-// Load environment variables from .env file if it exists
-if (fs.existsSync(path.join(__dirname, '.env'))) {
-  require('dotenv').config();
-}
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 const GROUP_ID = 35458162;
