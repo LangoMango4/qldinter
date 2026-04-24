@@ -3,6 +3,11 @@ const { randomUUID } = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
+// Load environment variables from .env file if it exists
+if (fs.existsSync(path.join(__dirname, '.env'))) {
+  require('dotenv').config();
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const GROUP_ID = 35458162;
@@ -119,9 +124,17 @@ const saveModerationState = () => {
 };
 
 const sendBanToTrello = async (ban) => {
+  console.log("Trello config check:");
+  console.log("- TRELLO_API_KEY:", !!TRELLO_API_KEY);
+  console.log("- TRELLO_API_TOKEN:", !!TRELLO_API_TOKEN);
+  console.log("- TRELLO_BANS_LIST_ID:", !!TRELLO_BANS_LIST_ID);
+
   if (!TRELLO_API_KEY || !TRELLO_API_TOKEN || !TRELLO_BANS_LIST_ID) {
+    console.log("Trello not configured, skipping ban notification");
     return;
   }
+
+  console.log("Sending ban to Trello:", ban.username);
 
   const cardName = `Ban: ${ban.username || "Unknown"} (${ban.type || "ban"})`;
   const cardDesc = [
@@ -1111,7 +1124,9 @@ app.post("/api/admin/bans", requireAdmin, async (req, res) => {
   saveModerationState();
 
   try {
+    console.log("Attempting to send ban to Trello for:", newBan.username);
     await sendBanToTrello(newBan);
+    console.log("Successfully sent ban to Trello");
   } catch (error) {
     console.error("Failed to send ban to Trello:", error);
   }
