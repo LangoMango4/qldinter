@@ -283,51 +283,42 @@ function promptServiceWorkerUpdate(registration) {
 }
 
 function ensureGlobalFooter() {
-  if (document.querySelector('.site-footer')) {
-    return;
-  }
+  const existingFooters = document.querySelectorAll('.site-footer');
+  existingFooters.forEach((footer) => footer.remove());
 
   const footerHtml = `
     <footer class="site-footer">
       <div class="footer-inner">
         <div class="footer-brand">
           <strong>Queensland Interactive</strong>
-          <p>Roblox community focused on realism, professionalism, and immersive Queensland-inspired experiences.</p>
-        </div>
-        <div class="footer-links">
-          <h4>More info</h4>
-          <a href="https://discord.gg/9jaAn54Ydx" target="_blank">Discord</a>
-          <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank">Roblox Community</a>
-          <a href="/legal/">Legal</a>
-          <a href="/licence.html">Licence</a>
-        </div>
-        <div class="footer-contact">
-          <h4>Contact</h4>
-          <a href="mailto:support@queenslandinteractive-rblx.com">support@queenslandinteractive-rblx.com</a>
-          <a href="mailto:copyright@queenslandinteractive-rblx.com">copyright@queenslandinteractive-rblx.com</a>
-        </div>
-        <div class="footer-social">
-          <h4>Social</h4>
-          <div class="social-icons">
-            <a class="social-icon" href="https://discord.gg/9jaAn54Ydx" target="_blank" aria-label="Discord">
+          <p>is a Queensland-inspired Roblox roleplay community focused on realistic, immersive, and enjoyable experiences. Explore Westlands, join a variety of teams, and create your own stories alongside a growing community.</p>
+          <div class="footer-icons">
+            <a href="https://discord.gg/9jaAn54Ydx" target="_blank" aria-label="Discord">
               <img src="/images_/discord-logo.png" alt="Discord">
             </a>
-            <a class="social-icon" href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" aria-label="Roblox">
+            <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" aria-label="Roblox">
               <img src="/images_/roblox-icon.png" alt="Roblox">
             </a>
           </div>
         </div>
-        <div class="footer-staff">
-          <h4>Staff only</h4>
-          <p><a href="/admin/">Admin panel</a></p>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <a href="/">Home</a>
+          <a href="/ourteam/">About Us</a>
+          <a href="/legal/">Legal</a>
+          <a href="/admin/">Admin</a>
         </div>
-        <div class="footer-ack">
-          <h4>Acknowledgement</h4>
-          <p>We acknowledge the First Nations peoples of Australia, the traditional custodians of the land, seas, skies and waterways on which we reside, work, travel and meet.</p>
-          <p>We pay our respect to First Nations elders past, present, and emerging, and support the Uluru Statement From The Heart. We acknowledge that the land, seas, skies and waterways of Australia were, are and always will be, that of the First Nations peoples.</p>
+        <div class="footer-contact">
+          <h4>Help</h4>
+          <a href="mailto:support@queenslandinteractive-rblx.com">Contact Us</a>
+          <a href="/legal/#terms-of-service">Terms of Service</a>
+          <a href="/faq/">FAQs</a>
         </div>
       </div>
-      <div class="footer-bottom">© 2026 Queensland Interactive</div>
+      <div class="footer-bottom">
+        <span>Copyright © 2020 – 2026 Queensland Interactive. All Rights Reserved.</span>
+        <span>Powered by Queensland Interactive. Credits @skibidi_fish</span>
+      </div>
     </footer>
   `;
 
@@ -469,7 +460,8 @@ function setupServiceWorkerUpdate() {
 
       if (registration.installing) {
         registration.installing.addEventListener('statechange', () => {
-          if (registration.installing.state === 'installed' && navigator.serviceWorker.controller) {
+          const installingWorker = registration.installing;
+          if (installingWorker && installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
             promptServiceWorkerUpdate(registration);
           }
         });

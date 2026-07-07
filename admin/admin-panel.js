@@ -176,20 +176,6 @@ class AdminPanel {
     }
   }
 
-  toggleAdminArea(enabled) {
-    if (this.adminArea) {
-      this.adminArea.style.display = enabled ? 'block' : 'none';
-    }
-    if (this.loginBtn) {
-      this.loginBtn.style.display = enabled ? 'none' : 'inline-flex';
-    }
-    if (this.logoutBtn) {
-      this.logoutBtn.style.display = enabled ? 'inline-flex' : 'none';
-    }
-    this.toggleLoginPage(!enabled);
-    this.toggleAdminPanel(enabled);
-  }
-
   formatDate(value) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return 'Unknown';

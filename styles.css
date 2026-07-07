@@ -15,6 +15,53 @@ body {
   font-family: "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
 
+main {
+  padding-top: 70px;
+}
+
+.page-shell {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 40px 0 80px;
+}
+
+.page-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: none;
+}
+
+.page-heading {
+  margin-bottom: 20px;
+}
+
+.page-heading h1,
+.page-heading h2 {
+  font-family: "Poppins", system-ui, sans-serif;
+  font-size: clamp(1.6rem, 2.2vw, 2.2rem);
+  color: #163388;
+  margin-bottom: 8px;
+}
+
+.page-heading p {
+  color: #4b5563;
+  line-height: 1.65;
+}
+
+.simple-list {
+  list-style: none;
+  display: grid;
+  gap: 10px;
+  padding: 0;
+}
+
+.simple-list li {
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 10px;
+}
 
 /* NAV */
 .navbar {
@@ -606,7 +653,19 @@ h2,
   font-size: 36px;
   margin-bottom: 14px;
 }
-
+.feature-icon-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  border-radius: 999px;
+  background: #e9f2ff;
+  color: #0a2b5a;
+  font-size: 36px;
+  margin-bottom: 14px;
+  margin: 0 auto;
+}
 .feature-item h3 {
   font-family: "Poppins", system-ui, sans-serif;
   font-size: 1rem;
@@ -620,6 +679,26 @@ h2,
   font-size: 0.95rem;
   line-height: 1.6;
 }
+
+.feature-ico-nobox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  width: 2px;
+  height: auto;
+  color: #0a2b5a;
+  font-size: 24px;
+  margin: 0 auto;
+}
+
+.copy-btn {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  width: auto;
+  margin-top: 10px;
+}
+
 
 @media (max-width: 900px) {
   .features-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1068,102 +1147,101 @@ h2,
 .site-footer {
   background: #163388;
   color: white;
-  padding: 70px 10% 30px;
+  padding: 100px 8% 48px;
 }
 
 .footer-inner {
   display: grid;
-  grid-template-columns: 1.8fr 1fr 1fr;
-  gap: 28px;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 60px;
   align-items: start;
+  margin-bottom: 28px;
 }
 
 .footer-brand strong {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   display: block;
   margin-bottom: 12px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
 }
 
 .footer-brand p {
   margin: 0;
-  line-height: 1.8;
+  line-height: 1.7;
   color: rgba(255, 255, 255, 0.85);
-  max-width: 480px;
+  font-size: 0.95rem;
 }
 
 .footer-icons {
   display: flex;
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 16px;
 }
 
 .footer-icons a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.14);
-  transition: background 0.2s ease, transform 0.2s ease;
+  background: rgba(255, 255, 255, 0.18);
+  transition: background 0.2s ease;
 }
 
 .footer-icons a:hover {
-  background: rgba(255, 255, 255, 0.24);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.28);
 }
 
 .footer-icons img {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   object-fit: contain;
   filter: brightness(0) invert(1);
 }
 
 .footer-links h4,
-.footer-help h4 {
-  margin-bottom: 14px;
-  font-size: 1rem;
+.footer-contact h4 {
+  margin-bottom: 12px;
+  font-size: 0.88rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .footer-links a,
-.footer-help a {
+.footer-contact a {
   display: block;
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
   transition: color 0.2s ease;
 }
 
 .footer-links a:hover,
-.footer-help a:hover {
-  color: #f3f4f8;
-}
-
-.footer-help p {
-  margin: 16px 0 0;
-  color: rgba(255, 255, 255, 0.83);
-  line-height: 1.75;
-  max-width: 320px;
+.footer-contact a:hover {
+  color: #ffffff;
 }
 
 .footer-bottom {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  margin-top: 0;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.7);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 24px;
   flex-wrap: wrap;
-  opacity: 0.9;
+  gap: 16px;
 }
 
 .footer-bottom span {
-  font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* MOBILE */

@@ -12,24 +12,24 @@
   <script defer src="../navigation.js"></script>
   <script defer src="./admin-panel.js"></script>
   <style>
-    .admin-page { padding-top: 80px; min-height: 100vh; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); }
-    .admin-container { max-width: 1100px; margin: 0 auto; padding: 50px 20px 70px; }
-    .admin-card { background: #fff; border-radius: 12px; padding: 28px; box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08); margin-bottom: 24px; }
-    .admin-title { margin: 0 0 14px; color: #1e90ff; }
-    .admin-subtitle { margin: 0 0 24px; color: #666; }
+    .admin-page { padding-top: 80px; min-height: 100vh; background: #f4f6f9; }
+    .admin-container { max-width: 1100px; margin: 0 auto; padding: 40px 20px 70px; }
+    .admin-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: none; }
+    .admin-title { margin: 0 0 10px; color: #163388; font-size: 1.25rem; }
+    .admin-subtitle { margin: 0 0 18px; color: #4b5563; }
     .admin-actions { display: flex; gap: 12px; flex-wrap: wrap; }
-    .admin-btn { border: none; border-radius: 8px; padding: 11px 16px; cursor: pointer; font-weight: 600; font-family: 'Poppins', sans-serif; }
-    .admin-btn-primary { background: #1e90ff; color: #fff; }
+    .admin-btn { border: none; border-radius: 999px; padding: 10px 16px; cursor: pointer; font-weight: 600; font-family: 'Poppins', sans-serif; }
+    .admin-btn-primary { background: #163388; color: #fff; }
     .admin-btn-danger { background: #dc3545; color: #fff; }
     .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .admin-field { margin-bottom: 14px; }
-    .admin-field label { display: block; margin-bottom: 6px; color: #333; font-weight: 600; }
-    .admin-field input, .admin-field textarea, .admin-field select { width: 100%; box-sizing: border-box; border: 2px solid #e0e0e0; border-radius: 8px; padding: 11px 12px; font-family: 'Poppins', sans-serif; }
+    .admin-field label { display: block; margin-bottom: 6px; color: #111827; font-weight: 600; }
+    .admin-field input, .admin-field textarea, .admin-field select { width: 100%; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px; font-family: 'Poppins', sans-serif; }
     .admin-field textarea { min-height: 110px; resize: vertical; }
     .admin-list { margin-top: 12px; display: grid; gap: 10px; }
-    .admin-list-item { padding: 12px 14px; border: 1px solid #e3e3e3; border-radius: 8px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
-    .admin-meta { color: #666; font-size: 0.9rem; }
-    .admin-status { border-left: 4px solid #1e90ff; background: #e8f3ff; color: #0a4a8a; border-radius: 8px; padding: 12px; margin-bottom: 14px; }
+    .admin-list-item { padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 10px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
+    .admin-meta { color: #6b7280; font-size: 0.95rem; }
+    .admin-status { border-left: 4px solid #163388; background: #eef4ff; color: #163388; border-radius: 10px; padding: 12px; margin-bottom: 14px; }
     .admin-error { border-left-color: #dc3545; background: #fdeaea; color: #8a1f2b; }
     .admin-success { border-left-color: #22a559; background: #e9f9ef; color: #146a38; }
     @media (max-width: 900px) { .admin-grid { grid-template-columns: 1fr; } }

@@ -9,6 +9,11 @@
   <link rel="manifest" href="../manifest.json">
   <link rel="stylesheet" href="../styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=waving_hand" />
+  <link rel="stylesheet" href="./styles.css">
+  
   <style>
     * {
       margin: 0;
@@ -19,93 +24,183 @@
     body {
       background: #f4f6f9;
       color: #111827;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Roboto', system-ui, -apple-system, 'Segoe UI', sans-serif;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1;
       display: grid;
       place-items: center;
-      padding: 20px;
+      padding: 60px 20px;
     }
 
-    .container {
+    .error-container {
       width: 100%;
-      max-width: 620px;
+      max-width: 1100px;
     }
 
-    .content {
+    .error-hero {
       background: #ffffff;
       border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 36px 28px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 32px;
+      text-align: center;
     }
 
     .error-code {
-      font-size: 44px;
+      font-size: 54px;
       font-weight: 700;
       color: #ef4444;
-      margin-bottom: 14px;
-      line-height: 1;
-      text-align: center;
+      margin-bottom: 12px;
     }
 
-    h1 {
-      font-size: 1.65rem;
-      font-weight: 700;
-      margin-bottom: 10px;
-      text-align: center;
-      color: #0f172a;
+    .error-hero h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2rem;
+      color: #163388;
+      margin-bottom: 8px;
     }
 
-    .subtitle {
-      font-size: 1rem;
+    .error-hero p {
       color: #4b5563;
-      margin-bottom: 22px;
+      font-size: 1rem;
       line-height: 1.6;
-      text-align: center;
     }
 
-    .divider {
-      width: 44px;
-      height: 2px;
-      background: #1e90ff;
-      margin: 18px auto 22px;
-      border-radius: 2px;
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
     }
 
-    .error-details {
-      background: #f9fafb;
+    .feature-card {
+      background: #f8fafc;
       border: 1px solid #e5e7eb;
-      border-radius: 10px;
-      padding: 16px;
-      margin: 20px 0;
-      text-align: left;
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .feature-card:hover {
+      border-color: #163388;
+      background: #eef4ff;
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .feature-icon .material-icons {
+      font-size: 40px;
+      color: #163388;
+    }
+
+    .feature-card h3 {
       font-size: 0.95rem;
-      color: #374151;
-    }
-
-    .error-details p {
-      margin: 8px 0;
-    }
-
-    .error-details strong {
       color: #111827;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .feature-card p {
+      font-size: 0.85rem;
+      color: #4b5563;
+      line-height: 1.5;
+    }
+
+    .details-section {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .details-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .details-header:hover {
+      color: #163388;
+    }
+
+    .details-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: #f0f0f0;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      font-size: 18px;
+    }
+
+    .details-section.open .details-toggle {
+      transform: rotate(180deg);
+      background: #163388;
+      color: white;
+    }
+
+    .details-content {
+      display: none;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .details-section.open .details-content {
+      display: block;
+    }
+
+    .detail-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 0.93rem;
+    }
+
+    .detail-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .detail-value {
+      color: #4b5563;
+      word-break: break-all;
     }
 
     .actions {
       display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-top: 18px;
+      gap: 12px;
+      margin-top: 20px;
       flex-wrap: wrap;
     }
 
     .btn {
       padding: 11px 20px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 0.95rem;
       font-weight: 600;
       text-decoration: none;
-      border: 1px solid;
+      border: none;
       cursor: pointer;
       transition: all 0.2s ease;
       font-family: 'Poppins', sans-serif;
@@ -114,61 +209,47 @@
     .btn-primary {
       background: #163388;
       color: white;
-      border-color: #163388;
     }
 
     .btn-primary:hover {
       background: #12285c;
-      border-color: #12285c;
+      transform: translateY(-2px);
     }
 
     .btn-secondary {
-      background: #ffffff;
+      background: #f0f0f0;
       color: #374151;
-      border-color: #d1d5db;
     }
 
     .btn-secondary:hover {
-      background: #f3f4f6;
-    }
-
-    .footer {
-      font-size: 0.85rem;
-      color: #6b7280;
-      margin-top: 20px;
-      text-align: center;
-    }
-
-    .quick-help {
-      color: #4b5563;
-      margin: 16px 0 8px;
-      font-size: 0.95rem;
-    }
-
-    .quick-list {
-      text-align: left;
-      color: #4b5563;
-      margin: 10px 0;
-      padding-left: 20px;
-      line-height: 1.6;
-      font-size: 0.93rem;
+      background: #e0e0e0;
+      transform: translateY(-2px);
     }
 
     @media (max-width: 600px) {
-      .content {
-        padding: 28px 18px;
+      main {
+        padding: 40px 16px;
+      }
+
+      .error-hero {
+        padding: 28px 16px;
       }
 
       .error-code {
-        font-size: 34px;
+        font-size: 42px;
       }
 
-      h1 {
-        font-size: 1.35rem;
+      .error-hero h1 {
+        font-size: 1.5rem;
       }
 
-      .subtitle {
-        font-size: 0.95rem;
+      .details-section {
+        padding: 16px;
+      }
+
+      .detail-item {
+        grid-template-columns: 1fr;
+        gap: 6px;
       }
 
       .actions {
@@ -182,39 +263,102 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="content">
-      <div class="error-code">Error</div>
-      <h1>Something went wrong</h1>
-      <div class="divider"></div>
-      <p class="subtitle">We couldn’t load this page right now.</p>
-      
-      <div class="error-details">
-        <p><strong>Error Type:</strong> <span id="error-type">Page Load Error</span></p>
-        <p><strong>Request URL:</strong> <span id="error-url" style="word-break: break-all;"></span></p>
-        <p><strong>Time:</strong> <span id="error-time"></span></p>
+  <main>
+    <div class="error-container">
+      <div class="error-hero">
+        <div class="feature-icon-error"><span class="material-icons">cloud_off</span></div>
+        <h1>Something went wrong</h1>
+        <p>We encountered an issue loading this page. Here's what you can do:</p>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon"><span class="material-icons">refresh</span></div>
+            <h3>Refresh Page</h3>
+            <p>Try reloading the page (F5 or Ctrl+R) to reload your connection.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><span class="material-icons">domain</span></div>
+            <h3>Check Connection</h3>
+            <p>Verify your internet connection is working properly.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><span class="material-icons">schedule</span></div>
+            <h3>Try Later</h3>
+            <p>Wait a moment and try again, the issue may be temporary.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><span class="material-icons">home</span></div>
+            <h3>Go Home</h3>
+            <p>Return to the homepage to explore other parts of the site.</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon"><span class="material-icons">data_object</span></div>
+            <h3>Clear Site Data</h3>
+            <p>Press Ctrl + F5 to perform a hard refresh and reload the latest version of this site.</p>
+          </div>
+        </div>
       </div>
 
-      <p class="quick-help">Try these quick steps:</p>
-      <ul class="quick-list">
-        <li>Refresh the page (F5 or Ctrl+R)</li>
-        <li>Check your internet connection</li>
-        <li>Try again in a moment</li>
-      </ul>
-
-      <div class="actions">
-        <button class="btn btn-primary" onclick="window.location.href='/'">Go to Home</button>
-        <button class="btn btn-secondary" onclick="location.reload()">Reload Page</button>
-      </div>
+<div class="details-section">
+  <div class="details-header" onclick="this.parentElement.classList.toggle('open')">
+    <span><strong>Technical Details</strong></span>
+    <div class="details-toggle">
+      <span class="material-icons">arrow_drop_down_circle</span>
     </div>
   </div>
 
+  <div class="details-content">
+    <div class="detail-item">
+      <span class="detail-label">Error Type:</span>
+      <span class="detail-value" id="error-type">Page Load Error</span>
+    </div>
+
+    <div class="detail-item">
+      <span class="detail-label">Page URL:</span>
+      <span class="detail-value" id="error-url">—</span>
+    </div>
+
+    <div class="detail-item">
+      <span class="detail-label">Time Accessed:</span>
+      <span class="detail-value" id="error-time">—</span>
+    </div>
+
+    <button class="btn btn-secondary" onclick="copyDetails()">
+      <div class="feature-ico-nobox"><span class="material-icons">file_copy</span></div>
+    </button>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn btn-primary" onclick="window.location.href='/'">
+    Go to Home
+  </button>
+  <button class="btn btn-secondary" onclick="location.reload()">
+    Reload Page
+  </button>
+</div>
+
+<script>
+function copyDetails() {
+  const details = `
+Error Type: ${document.getElementById('error-type').textContent}
+Page URL: ${document.getElementById('error-url').textContent}
+Time: ${document.getElementById('error-time').textContent}
+`.trim();
+
+  navigator.clipboard.writeText(details)
+    .then(() => {
+      alert("Technical details copied to clipboard. - Please send this to your support agent, if you continue to experience issues.");
+    })
+    .catch(() => {
+      alert("Failed to copy details.");
+    });
+}
+</script>
+
   <script>
-    // Display error details
     document.getElementById('error-url').textContent = window.location.href;
     document.getElementById('error-time').textContent = new Date().toLocaleString();
-    
-    // Get error from URL params if passed
     const params = new URLSearchParams(window.location.search);
     if (params.get('type')) {
       document.getElementById('error-type').textContent = decodeURIComponent(params.get('type'));
@@ -225,12 +369,10 @@
         if (sessionStorage.getItem('qi_error_webhook_sent') === 'true') {
           return;
         }
-
         const path = window.location.pathname;
         if (path === '/error/' || path === '/error/index.html') {
           return;
         }
-
         const payload = {
           title: '404 Error Page Viewed',
           page: window.location.href,
@@ -238,13 +380,11 @@
           userId: 'Unknown ID',
           details: `The 404 page was shown for ${window.location.href}`
         };
-
         const response = await fetch('/api/notify-404', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-
         if (response.ok) {
           sessionStorage.setItem('qi_error_webhook_sent', 'true');
         }
@@ -252,10 +392,8 @@
         console.error('Failed to send 404 webhook:', error);
       }
     }
-
     document.addEventListener('DOMContentLoaded', send404Webhook);
   </script>
   <script defer src="../navigation.js"></script>
 </body>
 </html>
-
