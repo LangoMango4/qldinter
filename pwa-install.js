@@ -18,7 +18,7 @@ function createInstallButton() {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background: linear-gradient(135deg, #1e90ff 0%, #0066cc 100%);
+    background: linear-gradient(135deg, #163388 0%, #12285c 100%);
     color: white;
     border: none;
     padding: 12px 24px;
@@ -27,7 +27,7 @@ function createInstallButton() {
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(30, 144, 255, 0.4);
+    box-shadow: 0 4px 15px rgba(22, 51, 136, 0.4);
     display: none;
     align-items: center;
     gap: 8px;
@@ -38,14 +38,14 @@ function createInstallButton() {
   
   button.addEventListener('mouseenter', () => {
     button.style.transform = 'translateY(-2px)';
-    button.style.boxShadow = '0 6px 20px rgba(30, 144, 255, 0.5)';
+    button.style.boxShadow = '0 6px 20px rgba(22, 51, 136, 0.5)';
   });
   
   button.addEventListener('mouseleave', () => {
     button.style.transform = 'translateY(0)';
-    button.style.boxShadow = '0 4px 15px rgba(30, 144, 255, 0.4)';
+    button.style.boxShadow = '0 4px 15px rgba(22, 51, 136, 0.4)';
   });
-  
+
   // Add animation
   const style = document.createElement('style');
   style.textContent = `

@@ -298,6 +298,7 @@ function ensureGlobalFooter() {
           <h4>More info</h4>
           <a href="https://discord.gg/9jaAn54Ydx" target="_blank">Discord</a>
           <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank">Roblox Community</a>
+          <a href="/legal/">Legal</a>
           <a href="/licence.html">Licence</a>
         </div>
         <div class="footer-contact">
@@ -541,32 +542,13 @@ function setupExternalLinkWarning() {
               <b style="display: block; margin-top: 10px;">Proceed at your own risk</b>
             </ul>
           </div>
-          <p id="external-link-url" style="color: #1e90ff; word-break: break-all; font-size: 0.85rem; margin: 0 0 24px 0; padding: 12px; background: #e8f3ff; border-radius: 8px; font-family: monospace;"></p>
+          <p id="external-link-url" style="color: #1e90ff; font-size: 0.95rem; margin: 0 0 8px 0; padding: 12px; background: #e8f3ff; border-radius: 8px; font-family: monospace;"></p>
+          <p id="external-link-domain" style="margin: 0 0 24px 0; font-size: 0.95rem; font-weight: 700; color: #b91c1c; text-align: center;"></p>
           <div style="display: flex; gap: 12px; justify-content: flex-end;">
-            <button id="external-link-cancel" style="
-              padding: 11px 28px;
-              border: 2px solid #d1d5db;
-              background: white;
-              color: #374151;
-              border-radius: 8px;
-              cursor: pointer;
-              font-weight: 600;
-              font-family: 'Poppins', sans-serif;
-              transition: all 0.2s ease;
-            " onmouseover="this.style.borderColor='#9ca3af'; this.style.background='#f9fafb'" onmouseout="this.style.borderColor='#d1d5db'; this.style.background='white'">
+            <button id="external-link-cancel" class="external-link-button cancel-button" type="button">
               Cancel
             </button>
-            <button id="external-link-proceed" style="
-              padding: 11px 28px;
-              background: #f59e0b;
-              color: white;
-              border: none;
-              border-radius: 8px;
-              cursor: pointer;
-              font-weight: 700;
-              font-family: 'Poppins', sans-serif;
-              transition: all 0.2s ease;
-            " onmouseover="this.style.background='#d97706'" onmouseout="this.style.background='#f59e0b'">
+            <button id="external-link-proceed" class="external-link-button proceed-button" type="button">
               <strong>Continue</strong>
             </button>
           </div>
@@ -575,7 +557,7 @@ function setupExternalLinkWarning() {
     `;
     document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-    // Add modal animations
+    // Add modal animations and button styles
     const style = document.createElement('style');
     style.textContent = `
       @keyframes slideUp {
@@ -587,6 +569,36 @@ function setupExternalLinkWarning() {
           opacity: 1;
           transform: translateY(0);
         }
+      }
+
+      .external-link-button {
+        padding: 11px 28px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.2s ease;
+      }
+
+      .cancel-button {
+        border: 2px solid #d1d5db;
+        background: white;
+        color: #374151;
+      }
+
+      .cancel-button:hover {
+        border-color: #9ca3af;
+        background: #f9fafb;
+      }
+
+      .proceed-button {
+        background: #f59e0b;
+        color: white;
+        border: none;
+      }
+
+      .proceed-button:hover {
+        background: #d97706;
       }
     `;
     document.head.appendChild(style);
@@ -628,6 +640,13 @@ function setupExternalLinkWarning() {
       const proceedBtn = document.getElementById('external-link-proceed');
 
       urlDisplay.textContent = href;
+      const domainDisplay = document.getElementById('external-link-domain');
+      try {
+        const url = new URL(href);
+        domainDisplay.textContent = `Destination: ${url.hostname}${url.pathname !== '/' ? url.pathname : ''}`;
+      } catch (err) {
+        domainDisplay.textContent = `Destination: ${href}`;
+      }
       modal.style.display = 'flex';
 
       // Cancel handler

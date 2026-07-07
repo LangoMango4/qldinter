@@ -1,13 +1,13 @@
 window.SITE_CONFIG = {
   // MAINTENANCE MODE
   // Toggle maintenance: set to true to enable, false to disable
-  maintenance: true,
+  maintenance: false,
   
   // Set when maintenance ends (ISO 8601 format)
   // Format: "YYYY-MM-DDTHH:MM:SSZ" (UTC time)
   // Example: "2026-02-11T14:30:00Z" = Feb 11, 2026 at 2:30 PM UTC
   // Or use: new Date().setHours(new Date().getHours() + 2) to add hours from now
-  maintenanceEnds: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),,
+  maintenanceEnds: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   
   // Roblox API proxy base URL
   // Set this to your deployed server URL (e.g., "https://your-server.railway.app")
