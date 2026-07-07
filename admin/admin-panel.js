@@ -9,6 +9,9 @@ class AdminPanel {
     this.webhookTestBtn = document.getElementById('test-webhook-btn');
     this.webhookTestStatus = document.getElementById('webhook-test-status');
     this.trelloLink = document.getElementById('admin-trello-link');
+    this.banTargetRadios = Array.from(document.querySelectorAll('input[name="ban-target-type"]'));
+    this.banGroupField = document.getElementById('ban-group-field');
+    this.banUserFields = Array.from(document.querySelectorAll('.ban-user-field'));
     this.isAdmin = false;
     this.lastWebhookTest = 0;
     this.apiBase = this.resolveApiBase();
@@ -35,6 +38,10 @@ class AdminPanel {
 
     this.banForm?.addEventListener('submit', (event) => this.handleBanSubmit(event));
 
+    this.banTargetRadios.forEach((radio) => {
+      radio.addEventListener('change', () => this.updateBanTargetFields());
+    });
+
     this.webhookTestBtn?.addEventListener('click', () => this.testWebhook());
 
     const banReasonSelect = document.getElementById('ban-reason');
@@ -49,6 +56,8 @@ class AdminPanel {
         }
       });
     }
+
+    this.updateBanTargetFields();
   }
 
   resolveApiBase() {
@@ -78,6 +87,29 @@ class AdminPanel {
     });
   }
 
+  updateBanTargetFields() {
+    const selectedType = this.banTargetRadios.find((radio) => radio.checked)?.value || 'user';
+    const isGroupBan = selectedType === 'group';
+    if (this.banGroupField) {
+      this.banGroupField.style.display = isGroupBan ? 'block' : 'none';
+    }
+    this.banUserFields.forEach((field) => {
+      field.style.display = isGroupBan ? 'none' : 'block';
+    });
+  }
+
+  toggleAdminArea(enabled) {
+    if (this.adminArea) {
+      this.adminArea.style.display = enabled ? 'block' : 'none';
+    }
+    if (this.loginBtn) {
+      this.loginBtn.style.display = enabled ? 'none' : 'inline-flex';
+    }
+    if (this.logoutBtn) {
+      this.logoutBtn.style.display = enabled ? 'inline-flex' : 'none';
+    }
+  }
+
   async handleBanSubmit(event) {
     event.preventDefault();
     if (!this.isAdmin) return;
@@ -93,13 +125,29 @@ class AdminPanel {
     const otherReasonInput = document.getElementById('ban-other-reason');
     const otherReason = otherReasonInput?.value.trim();
     const reason = selectedReason === 'Other' && otherReason ? `Other: ${otherReason}` : selectedReason;
+    const targetType = document.querySelector('input[name="ban-target-type"]:checked')?.value || 'user';
+    const username = document.getElementById('ban-username')?.value.trim();
+    const altUsername = document.getElementById('ban-alt')?.value.trim();
+    const groupId = document.getElementById('ban-group-id')?.value.trim();
+
+    if (targetType === 'group') {
+      if (!groupId) {
+        this.setStatus('Please enter a Roblox Group ID for the group ban.', 'error');
+        return;
+      }
+    } else {
+      if (!username) {
+        this.setStatus('Please enter a username for the user ban.', 'error');
+        return;
+      }
+    }
 
     const payload = {
-      username: document.getElementById('ban-username')?.value.trim(),
-      altUsername: document.getElementById('ban-alt')?.value.trim(),
+      username: targetType === 'user' ? username : '',
+      altUsername: targetType === 'user' ? altUsername : '',
       type: document.getElementById('ban-type')?.value,
       reason,
-      groupId: document.getElementById('ban-group-id')?.value.trim()
+      groupId: targetType === 'group' ? groupId : ''
     };
 
     try {
@@ -116,14 +164,12 @@ class AdminPanel {
 
       this.setStatus('Ban added successfully.', 'success');
       this.banForm.reset();
-      
-      // Hide custom reason input after reset
-      const otherReasonInput = document.getElementById('ban-other-reason');
+      this.updateBanTargetFields();
       if (otherReasonInput) {
         otherReasonInput.style.display = 'none';
         otherReasonInput.value = '';
       }
-      
+
       await this.loadBans();
     } catch (error) {
       this.setStatus('Failed to add ban. Check your admin access and try again.', 'error');
@@ -140,6 +186,8 @@ class AdminPanel {
     if (this.logoutBtn) {
       this.logoutBtn.style.display = enabled ? 'inline-flex' : 'none';
     }
+    this.toggleLoginPage(!enabled);
+    this.toggleAdminPanel(enabled);
   }
 
   formatDate(value) {
@@ -216,18 +264,18 @@ class AdminPanel {
         return;
       }
 
-      const payload = await response.json();
+      const payload = await response.json().catch(() => ({}));
       this.isAdmin = true;
-      this.setStatus(`Welcome, ${payload.user.username}. Admin access active.`, 'success');
+      this.setStatus(`Welcome, ${payload.user?.username || 'Admin'}. Admin access active.`, 'success');
       this.toggleForms(true);
       this.toggleAdminArea(true);
       this.toggleTrelloLink(true);
     } catch (error) {
       this.isAdmin = false;
-      this.setStatus('Please retry otherwise contact your IT Administrator', 'error');
       this.toggleForms(false);
       this.toggleAdminArea(false);
       this.toggleTrelloLink(false);
+      this.setStatus('Please retry otherwise contact your IT Administrator', 'error');
     }
   }
 

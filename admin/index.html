@@ -65,8 +65,16 @@
           <section class="admin-card">
             <h2 class="admin-title">Add Ban</h2>
             <form id="ban-form">
-              <div class="admin-field"><label for="ban-username">Username</label><input id="ban-username" required></div>
-              <div class="admin-field"><label for="ban-alt">Alt Username (optional)</label><input id="ban-alt"></div>
+              <div class="admin-field">
+                <label>Ban target</label>
+                <div class="admin-radio-group">
+                  <label><input type="radio" name="ban-target-type" value="user" checked> User ban</label>
+                  <label><input type="radio" name="ban-target-type" value="group"> Group ban</label>
+                </div>
+              </div>
+              <div class="ban-user-field admin-field"><label for="ban-username">Username</label><input id="ban-username"></div>
+              <div class="ban-user-field admin-field"><label for="ban-alt">Alt Username (optional)</label><input id="ban-alt"></div>
+              <div id="ban-group-field" class="admin-field" style="display:none;"><label for="ban-group-id">Roblox Group ID</label><input id="ban-group-id" type="number"></div>
               <div class="admin-field"><label for="ban-type">Type</label><select id="ban-type"><option value="permanent">Permanent</option><option value="temporary">Temporary</option><option value="under-review">Under Review</option></select></div>
               <div class="admin-field">
                 <label for="ban-reason">Reason</label>
@@ -90,7 +98,6 @@
                 </select>
                 <input id="ban-other-reason" type="text" placeholder="Specify other reason (optional)" style="margin-top: 8px; display: none; width: 100%;">
               </div>
-              <div class="admin-field"><label for="ban-group-id">Roblox Group ID (optional, for group bans)</label><input id="ban-group-id" type="number"></div>
               <button class="admin-btn admin-btn-primary" type="submit">Add Ban</button>
             </form>
           </section>

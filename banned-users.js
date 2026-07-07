@@ -57,39 +57,92 @@ class BannedUsersPage {
       return;
     }
 
-    this.listElement.innerHTML = bans.map((ban) => {
-      const type = String(ban.type || 'permanent').toLowerCase();
-      const normalizedType = ['permanent', 'temporary', 'under-review'].includes(type) ? type : 'permanent';
-      const username = this.escapeHtml(ban.username || 'Unknown User');
-      const altUsername = this.escapeHtml(ban.altUsername || '');
-      const bannedBy = this.escapeHtml(ban.bannedBy || 'SYSTEM');
-      const appealStatus = this.escapeHtml(ban.appealStatus || 'Not specified');
-      const bannedAt = this.formatDate(ban.bannedAt || ban.createdAt);
-      const typeLabel = this.escapeHtml(this.formatType(normalizedType));
+    const userBans = bans.filter((ban) => !ban.groupId);
+    const groupBans = bans.filter((ban) => ban.groupId);
 
-      return `
-        <div class="ban-item ${normalizedType}">
-          <div class="ban-header">
-            <div>
-              <div class="ban-username">${username}</div>
-              ${altUsername ? `<div class="ban-username" style="font-size:0.95rem; font-weight:500; color:#555; margin-top:4px;">Alt: ${altUsername}</div>` : ''}
-            </div>
-            <span class="ban-badge ${normalizedType}">${typeLabel}</span>
-          </div>
-          <div class="ban-meta">
-            <div class="ban-meta-item">
-              <span>Banned: ${this.escapeHtml(bannedAt)}</span>
-            </div>
-            <div class="ban-meta-item">
-              <span>Banned By: ${bannedBy}</span>
-            </div>
-            <div class="ban-meta-item">
-              <span>Appeal Status: ${appealStatus}</span>
-            </div>
-          </div>
+    let output = '';
+
+    if (userBans.length > 0) {
+      output += `
+        <div class="banned-list-section">
+          <h2>Current Banned Users</h2>
+          ${userBans.map((ban) => this.renderBanEntry(ban)).join('')}
         </div>
       `;
-    }).join('');
+    }
+
+    if (groupBans.length > 0) {
+      output += `
+        <div class="banned-list-section group-bans-section">
+          <h2>Current Group Bans</h2>
+          ${groupBans.map((ban) => this.renderGroupBanEntry(ban)).join('')}
+        </div>
+      `;
+    }
+
+    if (!output) {
+      this.renderNoBans();
+      return;
+    }
+
+    this.listElement.innerHTML = output;
+  }
+
+  renderBanEntry(ban) {
+    const type = String(ban.type || 'permanent').toLowerCase();
+    const normalizedType = ['permanent', 'temporary', 'under-review'].includes(type) ? type : 'permanent';
+    const username = this.escapeHtml(ban.username || 'Unknown User');
+    const altUsername = this.escapeHtml(ban.altUsername || '');
+    const bannedBy = this.escapeHtml(ban.bannedBy || 'SYSTEM');
+    const appealStatus = this.escapeHtml(ban.appealStatus || 'Not specified');
+    const bannedAt = this.formatDate(ban.bannedAt || ban.createdAt);
+    const typeLabel = this.escapeHtml(this.formatType(normalizedType));
+
+    return `
+      <div class="ban-item ${normalizedType}">
+        <div class="ban-header">
+          <div>
+            <div class="ban-username">${username}</div>
+            ${altUsername ? `<div class="ban-username" style="font-size:0.95rem; font-weight:500; color:#555; margin-top:4px;">Alt: ${altUsername}</div>` : ''}
+          </div>
+          <span class="ban-badge ${normalizedType}">${typeLabel}</span>
+        </div>
+        <div class="ban-meta">
+          <div class="ban-meta-item"><span>Banned: ${bannedAt}</span></div>
+          <div class="ban-meta-item"><span>Banned By: ${bannedBy}</span></div>
+          <div class="ban-meta-item"><span>Appeal Status: ${appealStatus}</span></div>
+        </div>
+      </div>
+    `;
+  }
+
+  renderGroupBanEntry(ban) {
+    const type = String(ban.type || 'permanent').toLowerCase();
+    const normalizedType = ['permanent', 'temporary', 'under-review'].includes(type) ? type : 'permanent';
+    const groupId = this.escapeHtml(String(ban.groupId || 'Unknown Group'));
+    const bannedBy = this.escapeHtml(ban.bannedBy || 'SYSTEM');
+    const appealStatus = this.escapeHtml(ban.appealStatus || 'Not specified');
+    const bannedAt = this.formatDate(ban.bannedAt || ban.createdAt);
+    const reason = this.escapeHtml(ban.reason || 'No reason');
+    const typeLabel = this.escapeHtml(this.formatType(normalizedType));
+
+    return `
+      <div class="ban-item ${normalizedType}">
+        <div class="ban-header">
+          <div>
+            <div class="ban-username">Roblox Group ${groupId}</div>
+            <div class="ban-username" style="font-size:0.95rem; font-weight:500; color:#555; margin-top:4px;">Group ban</div>
+          </div>
+          <span class="ban-badge ${normalizedType}">${typeLabel}</span>
+        </div>
+        <div class="ban-meta">
+          <div class="ban-meta-item"><span>Banned: ${bannedAt}</span></div>
+          <div class="ban-meta-item"><span>Reason: ${reason}</span></div>
+          <div class="ban-meta-item"><span>Banned By: ${bannedBy}</span></div>
+          <div class="ban-meta-item"><span>Appeal Status: ${appealStatus}</span></div>
+        </div>
+      </div>
+    `;
   }
 
   async loadBans() {
