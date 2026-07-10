@@ -5,16 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1e90ff">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>Feedback & Bug Reports - Queensland Interactive</title>
-  <link rel="icon" href="./favicon.png">
-  <link rel="apple-touch-icon" href="./favicon.png">
-  <link rel="manifest" href="./manifest.json">
+  <title>Feedback & Reports - Queensland Interactive</title>
+  <link rel="icon" href="../../favicon.png">
+  <link rel="apple-touch-icon" href="../../favicon.png">
+  <link rel="manifest" href="../../manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="../../styles.css">
   
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=waving_hand" />
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="../../styles.css">
 
   <!-- Error handling -->
   <script>
@@ -37,17 +38,110 @@
     });
   </script>
   
-  <script defer src="./navigation.js"></script>
+  <script defer src="../../navigation.js"></script>
 
   <style>
+    /* Welcome Hero Section */
+    .welcome-hero {
+      padding-top: 100px;
+      min-height: 60vh;
+      background: linear-gradient(135deg, #1e90ff 0%, #0066cc 50%, #004399 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .welcome-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -5%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: float 8s ease-in-out infinite reverse;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(20px); }
+    }
+
+    .welcome-content {
+      position: relative;
+      z-index: 1;
+      max-width: 700px;
+      padding: 0 20px;
+      animation: slideDown 0.8s ease-out;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .welcome-hero h1 {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .welcome-hero .emoji {
+      font-size: 4rem;
+      display: block;
+      margin-bottom: 15px;
+    }
+
+    .welcome-hero p {
+      font-size: 1.3rem;
+      line-height: 1.8;
+      margin-bottom: 15px;
+      text-shadow: 0 1px 5px rgba(0, 0, 0, 0.15);
+      opacity: 0.95;
+    }
+
+    .welcome-highlight {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      padding: 15px 20px;
+      margin-top: 20px;
+      border-left: 4px solid white;
+      font-weight: 600;
+    }
+
+    /* Enhanced feedback page */
     .feedback-page {
-      padding-top: 80px;
+      padding-top: 0;
       min-height: 100vh;
       background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     }
 
     .feedback-container {
-      max-width: 1200px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 60px 20px;
     }
@@ -57,19 +151,11 @@
       margin-bottom: 50px;
     }
 
-    .feedback-header h1 {
-      font-size: 2.5rem;
+    .feedback-header h2 {
+      font-size: 2.2rem;
       color: #1e90ff;
       margin-bottom: 15px;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
-    }
-
-    .feedback-header .icon {
-      font-size: 3rem;
     }
 
     .feedback-header p {
@@ -83,6 +169,7 @@
       padding: 40px;
       border-radius: 12px;
       box-shadow: 0 2px 20px rgba(0, 0, 0, 0.08);
+      margin-top: 40px;
     }
 
     .feedback-type-selector {
@@ -248,11 +335,113 @@
       margin: 0;
     }
 
+    /* Enhanced welcome features section */
+    .welcome-section {
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #f0f7ff 0%, #e8f0f8 100%);
+      margin-bottom: 40px;
+    }
+
+    .welcome-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .welcome-title {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .welcome-title h2 {
+      font-size: 2.2rem;
+      color: #1e90ff;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .welcome-title p {
+      color: #666;
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      margin-bottom: 40px;
+    }
+
+    .benefit-card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      transition: all 0.3s ease;
+      border-top: 4px solid #1e90ff;
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(30, 144, 255, 0.15);
+    }
+
+    .benefit-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .benefit-card h3 {
+      color: #1e90ff;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .benefit-card p {
+      color: #666;
+      line-height: 1.6;
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    .impact-statement {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      border-left: 4px solid #1e90ff;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .impact-statement h3 {
+      color: #1e90ff;
+      font-size: 1.3rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .impact-statement p {
+      color: #666;
+      font-size: 1.05rem;
+      line-height: 1.7;
+      margin: 0;
+    }
+
     @media (max-width: 768px) {
-      .feedback-header h1 {
-        font-size: 2rem;
-        flex-direction: column;
-        gap: 10px;
+      .welcome-hero h1 {
+        font-size: 2.2rem;
+      }
+
+      .welcome-hero p {
+        font-size: 1.1rem;
+      }
+
+      .feedback-header h2 {
+        font-size: 1.8rem;
       }
 
       .feedback-form-container {
@@ -266,6 +455,11 @@
       .type-option {
         padding: 20px;
       }
+
+      .benefits-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
     }
   </style>
 </head>
@@ -274,7 +468,7 @@
 <!-- NAV -->
 <nav class="navbar">
   <a href="/" class="logo">
-    <img src="./mainico.png" alt="QI Logo" class="logo-img">
+    <img src="../../mainico.png" alt="QI Logo" class="logo-img">
     <span>Queensland Interactive</span>
   </a>
   
@@ -290,7 +484,7 @@
     <li><a href="/ourteam/">Team</a></li>
     <li><a href="/faq/">FAQ</a></li>
     <li><a href="/operations/">Operations</a></li>
-    <li><a href="/feedback.html">Feedback</a></li>
+    <li><a href="/reports/feedback/">Feedback</a></li>
     <li><a href="/banned-users">Banned Users</a></li>
     <li><a href="/tos">TOS</a></li>
     <li><a href="/licence.html">Licence</a></li>
@@ -298,43 +492,100 @@
   </ul>
 </nav>
 
+<!-- Welcome Hero Section -->
+<div class="welcome-hero">
+  <div class="welcome-content">
+    <span class="emoji">👋</span>
+    <h1>Your Voice Matters!</h1>
+    <p>We genuinely value your feedback and want to hear from you. Whether you've found a bug or have an amazing idea to share, this is the place to tell us everything.</p>
+    <div class="welcome-highlight">
+      ✨ Every piece of feedback helps us create a better experience for the entire community
+    </div>
+  </div>
+</div>
+
+<!-- Why Your Feedback Matters -->
+<div class="welcome-section">
+  <div class="welcome-inner">
+    <div class="welcome-title">
+      <h2>Why We Value Your Input</h2>
+      <p>Your feedback drives our improvements and helps shape the future of Queensland Interactive</p>
+    </div>
+
+    <div class="benefits-grid">
+      <div class="benefit-card">
+        <span class="material-icons benefit-icon">lightbulb</span>
+        <h3>We Listen</h3>
+        <p>Every message you send goes directly to our dedicated team. We read, review, and take action on your suggestions.</p>
+      </div>
+
+      <div class="benefit-card">
+        <span class="material-icons benefit-icon">build</span>
+        <h3>We Improve</h3>
+        <p>Your bug reports help us fix issues faster. Your ideas inspire new features that benefit everyone.</p>
+      </div>
+
+      <div class="benefit-card">
+        <span class="material-icons benefit-icon">diversity_1</span>
+        <h3>Community Driven</h3>
+        <p>Queensland Interactive is shaped by our community. Your voice helps us stay true to what makes us special.</p>
+      </div>
+
+      <div class="benefit-card">
+        <span class="material-icons benefit-icon">trending_up</span>
+        <h3>Real Impact</h3>
+        <p>See your feedback come to life! Many of our best features started as community suggestions.</p>
+      </div>
+
+      <div class="benefit-card">
+        <span class="material-icons benefit-icon">security</span>
+        <h3>Safe & Secure</h3>
+        <p>Share your thoughts freely. Your Roblox username helps us track discussions, but your feedback is always valued.</p>
+      </div>
+
+      <div class="benefit-card">
+        <span class="material-icons benefit-icon">star</span>
+        <h3>Recognition</h3>
+        <p>Great ideas don't go unnoticed! We appreciate and recognize valuable contributions to our community.</p>
+      </div>
+    </div>
+
+    <div class="impact-statement">
+      <h3>💬 Be Honest, Be Direct</h3>
+      <p>Don't hold back! We want your honest, frank feedback—in any language. Tell us what works, what doesn't, and what you'd love to see. The more specific and detailed you are, the better we can help.</p>
+    </div>
+  </div>
+</div>
+
 <div class="feedback-page">
   <div class="feedback-container">
     <div class="feedback-header">
-        <div class="feature-icon-error"><span class="material-icons">forum</span></div>
-      <h1>
-        Feedback & Bug Reports
-      </h1>
+      <h2>Share Your Feedback</h2>
       <p>
-        Help us improve Queensland Interactive! Share your feedback, report bugs, or suggest new features.
-        Your input helps us create a better experience for everyone.
+        Fill out the form below to report bugs, suggest features, or share your thoughts about Queensland Interactive.
       </p>
     </div>
 
-<div class="features-grid">
-  <div class="feature-card">
-    <div class="feature-icon"><span class="material-icons">bug_report</span></div>
-    <h3>Bug reports</h3>
-    <p>Experienced a bug? Report it below, please make sure to add as much detail for your bug to be resolved. Inc; Steps to for bug to happen, error logs, photos, etc.</p>
-  </div>
+    <div class="feedback-form-container">
+      <div class="success-message" id="success-message">
+        ✨ Thank you! Your feedback has been submitted successfully. We really appreciate it!
+      </div>
+      
+      <div class="error-message" id="error-message">
+        Something went wrong. Please try again later.
+      </div>
 
-  <div class="feature-card">
-    <div class="feature-icon"><span class="material-icons">feedback</span></div>
-    <h3>Feedback</h3>
-    <p>Experienced a nice act from a member of Staff or Emergency Services? Let us know! Make sure to include what they did too! Or you can use this for suggestion, ideas and much more!</p>
-  </div>
-  
-</div> <!-- Missing closing tag -->
-<small>*No downloadable files are supported please use links instead.</small>
       <form id="feedback-form">
         <div class="feedback-type-selector">
           <div class="type-option" data-type="bug">
+            <span class="material-icons icon">bug_report</span>
             <h3>Bug Report</h3>
-            <p>Report a technical issue</p>
+            <p>Found something broken?</p>
           </div>
           <div class="type-option" data-type="feedback">
+            <span class="material-icons icon">lightbulb</span>
             <h3>Feedback</h3>
-            <p>Share suggestions or ideas</p>
+            <p>Share ideas & suggestions</p>
           </div>
         </div>
 
@@ -378,9 +629,9 @@
             id="description" 
             name="description" 
             required 
-            placeholder="Provide detailed information...&#10;&#10;For bugs: What happened? What did you expect? Steps to reproduce?&#10;For feedback: What would you like to see improved or added?&#10;&#10;Note: These are sent to administrators to review, any inappropriate content will result in moderation action."
+            placeholder="Provide detailed information...&#10;&#10;For bugs: What happened? What did you expect? Steps to reproduce?&#10;For feedback: What would you like to see improved or added?&#10;&#10;Note: All language is accepted - be honest and direct!"
           ></textarea>
-          <small>The more details you provide, the better we can help!</small>
+          <small>The more details you provide, the better we can help! Use any language needed to express your concerns.</small>
         </div>
 
         <div class="form-group">
@@ -400,22 +651,22 @@
       </form>
 
       <div class="info-box">
-        <h3>What happens next?</h3>
+        <h3>📬 What Happens Next?</h3>
         <p>
           Your submission will be sent directly to our team via Discord. 
           We review all feedback and bug reports regularly. For urgent issues or if you need a response, 
           please reach out to us directly on our <a href="https://discord.gg/9jaAn54Ydx" target="_blank" style="color: #1e90ff; font-weight: 600;">Discord server</a>.
         </p>
         <p style="margin-top: 12px; font-size: 0.9rem; color: #888;">
-          <strong>Note:</strong> Be honest and direct in your feedback or describe the bug in as much detail as possible.
+          <strong>Note:</strong> Be honest and direct in your feedback. We appreciate frank language when describing issues or concerns.
         </p>
       </div>
     </div>
   </div>
 </div>
 
-<script src="./maintenance.js"></script>
-<script src="./config.js"></script>
+<script src="../../maintenance.js"></script>
+<script src="../../config.js"></script>
 
 <script>
   // Type selector
@@ -500,4 +751,3 @@
 
 </body>
 </html>
-
