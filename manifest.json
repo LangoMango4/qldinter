@@ -10,25 +10,25 @@
   "background_color": "#ffffff",
   "icons": [
     {
-      "src": "favicon.png",
+      "src": "qldinter200x200png (1).png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "favicon.png",
+      "src": "qldinter200x200png (1).png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "favicon.png",
+      "src": "qldinter200x200png (1).png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "favicon.png",
+      "src": "qldinter200x200png (1).png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
