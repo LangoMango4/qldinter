@@ -206,6 +206,7 @@ main {
   object-fit: cover;
 }
 
+
 .user-avatar:hover {
   border-color: #163388;
   transform: scale(1.05);
@@ -1286,23 +1287,24 @@ h2,
     display: flex !important;
   }
   
-  .navbar ul {
-    position: fixed;
-    left: -100%;
-    top: 60px;
-    flex-direction: column;
-    background: rgba(0, 0, 0, 0.98);
-    backdrop-filter: blur(20px);
-    width: 100%;
-    height: calc(100vh - 60px);
-    text-align: center;
-    transition: left 0.3s ease;
-    padding: 40px 0;
-    gap: 0 !important;
-    z-index: 99;
-    margin: 0;
-    list-style: none;
-  }
+.navbar ul {
+  position: fixed;
+  left: -100%;
+  top: 70px;
+  flex-direction: column;
+  background: rgba(0, 0, 0, 0.6); /* Reduced opacity from 0.98 to 0.7 */
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(20px); /* Added for Safari support */
+  width: 25%;
+  height: calc(100vh - 60px);
+  text-align: center;
+  transition: left 0.3s ease;
+  padding: 40px 0;
+  gap: 0 !important;
+  z-index: 99;
+  margin: 0;
+  list-style: none;
+}
   
   .navbar ul.active {
     left: 0;

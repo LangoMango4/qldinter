@@ -50,6 +50,13 @@
       "description": "Frequently asked questions",
       "url": "/faq/",
       "icons": [{ "src": "favicon.png", "sizes": "192x192" }]
+    },
+      {
+      "name": "QLiTE Login",
+      "short_name": "QLiTE",
+      "description": "QPS DATABASE",
+      "url": "/login/",
+      "icons": [{ "src": "favicon.png", "sizes": "192x192" }]
     }
   ]
 }
