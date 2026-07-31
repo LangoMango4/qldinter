@@ -152,11 +152,19 @@ button:hover {
   filter: grayscale(100%); /* Turns the image completely grey */
   opacity: 0.4;            /* Sets transparency (values from 0.0 to 1.0) */
 }
+.top-left-btn {
+  position: fixed;   /* Keeps the button in place when scrolling */
+  top: 15px;         /* Distance from the top edge */
+  left: 15px;        /* Distance from the left edge */
+  z-index: 9999;     /* Ensures it stays on top of other content */
+}
 </style>
 </head>
 
 <body>
-
+<a href="/" class="top-left-btn">
+  <button type="button">Close QLiTE</button>
+</a>
 <div class="ipad-container">
     
     <img class="background-image" src="/images_/ipad.png" width="1000" height="700" alt="Background">
