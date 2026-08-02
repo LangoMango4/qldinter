@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', function() {
   const hamburger = document.getElementById('hamburger');
   const navMenu = document.getElementById('nav-menu');
   
+  const navTrigger = document.getElementById('nav-trigger');
+  const dropdownLinks = document.getElementById('dropdown-links');
+
   if (hamburger && navMenu) {
     hamburger.addEventListener('click', function() {
       hamburger.classList.toggle('active');
@@ -30,11 +33,42 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('click', function(event) {
       const isClickInsideNav = navMenu.contains(event.target);
       const isClickOnHamburger = hamburger.contains(event.target);
+      const isClickOnTrigger = navTrigger && navTrigger.contains(event.target);
       
-      if (!isClickInsideNav && !isClickOnHamburger && navMenu.classList.contains('active')) {
+      if (!isClickInsideNav && !isClickOnHamburger && !isClickOnTrigger && navMenu.classList.contains('active')) {
         hamburger.classList.remove('active');
         navMenu.classList.remove('active');
         document.body.style.overflow = '';
+      }
+    });
+  }
+
+  const menuDropdown = document.querySelector('.menu-dropdown');
+  const navbar = document.querySelector('.navbar');
+
+  const updateNavbarTransparency = () => {
+    if (!navbar) return;
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  };
+
+  updateNavbarTransparency();
+  window.addEventListener('scroll', updateNavbarTransparency, { passive: true });
+
+  if (navTrigger && dropdownLinks) {
+    navTrigger.addEventListener('click', function(event) {
+      event.stopPropagation();
+      const isOpen = dropdownLinks.classList.toggle('is-active');
+      navTrigger.classList.toggle('open', isOpen);
+      navTrigger.setAttribute('aria-expanded', String(isOpen));
+      navTrigger.setAttribute('aria-haspopup', String(isOpen));
+    });
+
+    document.addEventListener('click', function(event) {
+      if (!dropdownLinks.contains(event.target) && !navTrigger.contains(event.target)) {
+        dropdownLinks.classList.remove('is-active');
+        navTrigger.classList.remove('open');
+        navTrigger.setAttribute('aria-expanded', 'false');
+        navTrigger.setAttribute('aria-haspopup', 'false');
       }
     });
   }
@@ -84,10 +118,10 @@ function resolveApiBase() {
 function displayUserProfile(user) {
   const userProfile = document.getElementById('user-profile');
   const userAvatar = document.getElementById('user-avatar');
-  const floatingProfile = ensureFloatingUserProfile();
-  const floatingAvatar = floatingProfile.querySelector('img');
+  const userMenu = document.getElementById('user-menu');
+  const logoutBtn = document.getElementById('logout-btn');
 
-  if (!user || !floatingAvatar) {
+  if (!user) {
     return;
   }
 
@@ -100,53 +134,65 @@ function displayUserProfile(user) {
     if (!avatar) return;
     avatar.src = avatarUrl;
     avatar.alt = `${user.username}'s avatar`;
-    avatar.title = `Logged in as ${user.username}`;
+    avatar.title = `Signed in as ${user.username}`;
     avatar.style.cursor = 'pointer';
-    avatar.onclick = function() {
-      window.location.href = '/admin/';
-    };
   };
 
   configureAvatar(userAvatar);
-  configureAvatar(floatingAvatar);
 
   if (userProfile) {
     userProfile.style.display = 'flex';
+    userProfile.classList.remove('active');
+    userProfile.setAttribute('aria-expanded', 'false');
+
+    userProfile.addEventListener('click', function(event) {
+      event.stopPropagation();
+      const isActive = userProfile.classList.toggle('active');
+      userProfile.setAttribute('aria-expanded', String(isActive));
+    });
   }
 
-  floatingProfile.dataset.tooltip = `Signed in as ${user.username}. Click to open admin panel.`;
-  floatingProfile.style.display = 'flex';
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async function(event) {
+      event.stopPropagation();
+      await logoutUser();
+    });
+  }
+
+  if (userMenu) {
+    userMenu.addEventListener('click', function(event) {
+      event.stopPropagation();
+    });
+  }
+
+  document.addEventListener('click', function() {
+    if (userProfile && userProfile.classList.contains('active')) {
+      userProfile.classList.remove('active');
+      userProfile.setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+async function logoutUser() {
+  try {
+    await fetch(`${resolveApiBase()}/api/auth/logout`, {
+      method: 'POST',
+      credentials: 'include'
+    });
+  } catch (error) {
+    console.error('Failed to log out:', error);
+  } finally {
+    hideUserProfile();
+    window.location.reload();
+  }
 }
 
 function hideUserProfile() {
   const userProfile = document.getElementById('user-profile');
-  const floatingProfile = document.getElementById('user-profile-floating');
 
   if (userProfile) {
     userProfile.style.display = 'none';
   }
-  if (floatingProfile) {
-    floatingProfile.style.display = 'none';
-  }
-}
-
-function ensureFloatingUserProfile() {
-  let floatingProfile = document.getElementById('user-profile-floating');
-  if (!floatingProfile) {
-    floatingProfile = document.createElement('div');
-    floatingProfile.id = 'user-profile-floating';
-    floatingProfile.className = 'user-profile user-profile-floating';
-    floatingProfile.style.display = 'none';
-
-    const floatingAvatar = document.createElement('img');
-    floatingAvatar.id = 'user-avatar-floating';
-    floatingAvatar.className = 'user-avatar';
-    floatingAvatar.alt = 'User Avatar';
-
-    floatingProfile.appendChild(floatingAvatar);
-    document.body.appendChild(floatingProfile);
-  }
-  return floatingProfile;
 }
 
 function injectUpdateBannerStyles() {

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QLiTE Dashboard</title>
+  <link rel="icon" href="/favicon.png">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at top left, rgba(30, 144, 255, 0.18), transparent 38%),
+                  radial-gradient(circle at bottom right, rgba(22, 51, 136, 0.22), transparent 30%),
+                  #08121f;
+      color: #e2e8f0;
+      font-family: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    }
+    .dashboard-shell {
+      width: min(1400px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 64px;
+    }
+    .dashboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 32px;
+    }
+    .dashboard-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .dashboard-brand img {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      object-fit: contain;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .dashboard-brand h1 {
+      margin: 0;
+      font-size: clamp(2rem, 2.8vw, 2.7rem);
+      color: white;
+      letter-spacing: -0.03em;
+    }
+    .dashboard-brand p {
+      margin: 4px 0 0;
+      color: #9ca3af;
+      font-size: 0.95rem;
+    }
+    .dashboard-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .dashboard-button {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 20px;
+      background: #1e40af;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .dashboard-button:hover {
+      transform: translateY(-1px);
+      background: #2563eb;
+    }
+    .dashboard-grid {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: 1.55fr 1fr;
+    }
+    .dashboard-card {
+      background: rgba(10, 20, 38, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 24px;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+      padding: 26px;
+      backdrop-filter: blur(18px);
+    }
+    .dashboard-subtitle {
+      color: #94a3b8;
+      margin: 0 0 18px;
+    }
+    .dashboard-section {
+      display: grid;
+      gap: 18px;
+    }
+    .search-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .search-input {
+      flex: 1 1 320px;
+      min-width: 200px;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.06);
+      color: white;
+      outline: none;
+      font-size: 1rem;
+    }
+    .search-input::placeholder {
+      color: #94a3b8;
+    }
+    .pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: #111a2b;
+      color: #cbd5e1;
+      font-size: 0.92rem;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 0 0 12px;
+      color: white;
+      font-size: 1.15rem;
+    }
+    .panel-title span {
+      color: #94a3b8;
+      font-size: 0.95rem;
+    }
+    .search-results,
+    .details-list {
+      display: grid;
+      gap: 14px;
+    }
+    .result-card,
+    .detail-card {
+      background: rgba(15, 24, 48, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      border-radius: 18px;
+      padding: 18px;
+    }
+    .result-card:hover,
+    .detail-card:hover {
+      border-color: rgba(66, 153, 225, 0.28);
+      transform: translateY(-1px);
+    }
+    .result-card {
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .result-card-title,
+    .detail-card-title {
+      font-size: 1rem;
+      margin: 0 0 8px;
+      color: white;
+    }
+    .result-card-text,
+    .detail-card-text {
+      margin: 0;
+      color: #cbd5e1;
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      background: rgba(59, 130, 246, 0.15);
+      color: #93c5fd;
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+    .detail-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .info-group {
+      display: grid;
+      gap: 10px;
+    }
+    .info-label {
+      color: #94a3b8;
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .info-value {
+      color: white;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .alert-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #111b2c;
+      color: #c7d2fe;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+    .alert-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .alert-row .alert-chip[data-type="high"] {
+      background: #7f1d1d;
+      color: #fecaca;
+      border-color: rgba(248, 113, 113, 0.2);
+    }
+    .alert-row .alert-chip[data-type="medium"] {
+      background: #78350f;
+      color: #fed7aa;
+      border-color: rgba(253, 186, 116, 0.2);
+    }
+    .alert-row .alert-chip[data-type="low"] {
+      background: #134e4a;
+      color: #a7f3d0;
+      border-color: rgba(52, 211, 153, 0.2);
+    }
+    .detail-image {
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+      display: grid;
+      place-items: center;
+      color: #94a3b8;
+      font-size: 0.95rem;
+      border: 1px solid rgba(148, 163, 184, 0.12);
+    }
+    .detail-image img {
+      max-width: 100%;
+      border-radius: 16px;
+      object-fit: cover;
+    }
+    @media (max-width: 1080px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+      .detail-columns {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 680px) {
+      .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .dashboard-actions {
+        width: 100%;
+      }
+      .search-bar {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-shell">
+    <header class="dashboard-header">
+      <div class="dashboard-brand">
+        <img src="/images_/qps.png" alt="QLiTE Logo">
+        <div>
+          <h1>QLiTE Dashboard</h1>
+          <p>Intelligence & investigative overview for Queensland Police Service.</p>
+        </div>
+      </div>
+      <div class="dashboard-actions">
+        <button class="dashboard-button" onclick="goHome()">Back to QLiTE Login</button>
+        <button class="dashboard-button" onclick="signOut()">Sign out</button>
+      </div>
+    </header>
+
+    <div class="dashboard-grid">
+      <section class="dashboard-card">
+        <div class="dashboard-section">
+          <div class="panel-title">
+            <div>
+              <strong>Person search</strong>
+              <span>Search QPS records and quick match results</span>
+            </div>
+          </div>
+
+          <div class="search-bar">
+            <input class="search-input" type="search" placeholder="Search by name, alias, vehicle or location">
+            <button class="dashboard-button" style="min-width: 145px;">Search</button>
+          </div>
+
+          <div class="search-results">
+            <div class="result-card">
+              <p class="result-card-title">No recent searches</p>
+              <p class="result-card-text">This area will display search results once you search for a person, vehicle, location, or organisation.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="dashboard-card">
+        <div class="dashboard-section">
+          <div class="panel-title">
+            <div>
+              <strong>Selected person</strong>
+              <span>Active alerts, details & domestic violence flags</span>
+            </div>
+          </div>
+
+          <div class="detail-image">
+            <span style="color:#94a3b8; font-size:0.95rem; text-align:center; max-width: 220px;">No person is selected yet. Search for a record to populate this panel.</span>
+          </div>
+
+          <div class="detail-columns">
+            <div class="info-group">
+              <p class="info-label">Name</p>
+              <p class="info-value">—</p>
+            </div>
+            <div class="info-group">
+              <p class="info-label">DOB</p>
+              <p class="info-value">—</p>
+            </div>
+            <div class="info-group">
+              <p class="info-label">Age</p>
+              <p class="info-value">—</p>
+            </div>
+            <div class="info-group">
+              <p class="info-label">Location</p>
+              <p class="info-value">—</p>
+            </div>
+          </div>
+
+          <div class="panel-title" style="margin-top: 18px;">
+            <strong>Alerts</strong>
+            <span>Latest safety and domestic reports</span>
+          </div>
+          <div class="alert-row">
+            <span class="alert-chip" data-type="high">PAIP — 10 days ago</span>
+            <span class="alert-chip" data-type="medium">Domestic Violence report — 2 days ago</span>
+            <span class="alert-chip" data-type="low">Document for service — 2 days ago</span>
+          </div>
+
+          <div class="details-list">
+            <div class="detail-card">
+              <p class="detail-card-title">Current order</p>
+              <p class="detail-card-text">Respondent for Aggressive Behaviour order with FOELWER, Mary Marcus — 10/03/2025.</p>
+            </div>
+            <div class="detail-card">
+              <p class="detail-card-title">Incident highlights</p>
+              <p class="detail-card-text">No e-Contacts recorded. Mother reports high-risk domestic violence indicators and recent traffic avoidance.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    async function checkAuth() {
+      const isPasswordLoggedIn = sessionStorage.getItem('mdtLoggedIn') === 'true';
+      if (isPasswordLoggedIn) {
+        return true;
+      }
+
+      try {
+        const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
+        return response.ok;
+      } catch (error) {
+        return false;
+      }
+    }
+
+    async function initialize() {
+      const authenticated = await checkAuth();
+      if (!authenticated) {
+        window.location.href = 'index.html';
+        return;
+      }
+    }
+
+    function goHome() {
+      window.location.href = 'index.html';
+    }
+
+    function signOut() {
+      sessionStorage.removeItem('mdtLoggedIn');
+      window.location.href = 'index.html';
+    }
+
+    initialize();
+  </script>
+</body>
+</html>

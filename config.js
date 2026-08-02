@@ -20,6 +20,7 @@ window.SITE_CONFIG = {
   
   // Cloudflare Turnstile
   // Get your site key from: https://dash.cloudflare.com/?to=/:account/turnstile
+  // Railway secret name for the server-side secret is: CAPTCHA_SECRET_ARG
   // Set to empty string "" to disable Turnstile (will skip captcha verification)
   // Note: If Turnstile is unavailable or fails to load, users can skip after 3 seconds
   turnstileSiteKey: "", // Replace with your actual site key or leave empty to disable

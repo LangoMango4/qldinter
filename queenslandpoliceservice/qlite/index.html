@@ -176,17 +176,18 @@ button:hover {
 
             <h1>QLiTE</h1>
 
-            <div class="input-group">
-                <input id="username" type="text" placeholder="Username">
-            </div>
-            <div class="input-group">
-                <input id="password" type="password" placeholder="Password">
-            </div>
-<p style="color: #8e8e93; transform: rotate(-25deg); font-size: 40PX; margin-top: 250px; opacity: 0.1; position: fixed; z-index: -1;"> COPYRIGHT QUEENSLAND INTERACTIVE </p>
-            <button onclick="login()">Log In</button>
-             <p style="color: #8e8e93; font-size: 11px; margin-top: 10px;">OR</p>
-              <button onclick="error()">Sign In With Discord</button>
-            <div id="error">Incorrect username or password.</div>
+            <form id="login-form" onsubmit="event.preventDefault(); login();" style="width:100%;">
+              <div class="input-group">
+                  <input id="username" type="text" placeholder="Username">
+              </div>
+              <div class="input-group">
+                  <input id="password" type="password" placeholder="Password">
+              </div>
+              <button type="submit">Log In</button>
+            </form>
+            <p style="color: #8e8e93; font-size: 11px; margin-top: 10px;">OR</p>
+            <button onclick="loginWithDiscord()">Sign In With Discord</button>
+            <div id="error" style="display:none;">Incorrect username or password.</div>
 
             <div class="footer-text">
                 <p>Contact Service Desk @ <a href="mailto:support@queenslandinteractive-rblx.com">support@queenslandinteractive-rblx.com</a></p>

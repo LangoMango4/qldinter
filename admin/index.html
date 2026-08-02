@@ -12,11 +12,11 @@
   <script defer src="../navigation.js"></script>
   <script defer src="./admin-panel.js"></script>
   <style>
-    .admin-page { padding-top: 80px; min-height: 100vh; background: #f4f6f9; }
-    .admin-container { max-width: 1100px; margin: 0 auto; padding: 40px 20px 70px; }
-    .admin-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 24px; margin-bottom: 20px; box-shadow: none; }
-    .admin-title { margin: 0 0 10px; color: #163388; font-size: 1.25rem; }
-    .admin-subtitle { margin: 0 0 18px; color: #4b5563; }
+    .admin-page { padding-top: 90px; min-height: 100vh; background: #f1f5f9; }
+    .admin-container { max-width: 1080px; margin: 0 auto; padding: 44px 20px 80px; }
+    .admin-card { background: #ffffff; border: 1px solid #dbeafe; border-radius: 24px; padding: 28px; margin-bottom: 24px; box-shadow: 0 30px 60px rgba(15, 23, 42, 0.08); }
+    .admin-title { margin: 0 0 10px; color: #0f172a; font-size: 1.6rem; letter-spacing: -0.02em; }
+    .admin-subtitle { margin: 0 0 18px; color: #475569; font-size: 1rem; line-height: 1.6; }
     .admin-actions { display: flex; gap: 12px; flex-wrap: wrap; }
     .admin-btn { border: none; border-radius: 999px; padding: 10px 16px; cursor: pointer; font-weight: 600; font-family: 'Poppins', sans-serif; }
     .admin-btn-primary { background: #163388; color: #fff; }
@@ -24,8 +24,8 @@
     .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .admin-field { margin-bottom: 14px; }
     .admin-field label { display: block; margin-bottom: 6px; color: #111827; font-weight: 600; }
-    .admin-field input, .admin-field textarea, .admin-field select { width: 100%; box-sizing: border-box; border: 1px solid #d1d5db; border-radius: 10px; padding: 10px 12px; font-family: 'Poppins', sans-serif; }
-    .admin-field textarea { min-height: 110px; resize: vertical; }
+    .admin-field input, .admin-field textarea, .admin-field select { width: 100%; box-sizing: border-box; border: 1px solid #e2e8f0; border-radius: 14px; padding: 14px 16px; font-family: 'Poppins', sans-serif; background: #f8fafc; color: #0f172a; }
+    .admin-field textarea { min-height: 130px; resize: vertical; }
     .admin-list { margin-top: 12px; display: grid; gap: 10px; }
     .admin-list-item { padding: 12px 14px; border: 1px solid #e5e7eb; border-radius: 10px; display: flex; justify-content: space-between; gap: 12px; align-items: center; }
     .admin-meta { color: #6b7280; font-size: 0.95rem; }
@@ -45,20 +45,31 @@
     <ul id="nav-menu">
       <li><a href="/">Home</a></li>
       <li><a id="admin-trello-link" class="cta" href="https://trello.com/b/9SbBqljD/westlands-gameban-mangement" target="_blank" style="display:none;">Game Trello</a></li>
+      <li class="nav-profile-item">
+        <div id="user-profile" class="user-profile" aria-haspopup="true" aria-expanded="false" style="display: none;">
+          <img id="user-avatar" class="user-avatar" alt="User avatar" src="" />
+          <div id="user-menu" class="user-menu">
+            <a href="/admin/">Admin Panel</a>
+            <button id="logout-btn" type="button">Logout</button>
+          </div>
+        </div>
+      </li>
     </ul>
   </nav>
 
-  <main class="admin-page">
+  <main class="admin-page page-shell">
     <div class="admin-container">
-      <div class="admin-card">
-        <h1 class="admin-title">Admin Panel</h1>
-        <p class="admin-subtitle">Manage bans, and other cool stuff here! - Strictly admins only!</p>
+      <section class="page-card admin-card">
+        <div class="page-heading">
+          <h1>Admin Panel</h1>
+          <p>Only authorised administrators or moderators can access this panel. Any attempted access by unauthorised users will be logged.</p>
+        </div>
         <div id="admin-status" class="admin-status">Checking admin access...</div>
         <div class="admin-actions">
           <button id="admin-login" class="admin-btn admin-btn-primary" type="button">Login with Discord</button>
           <button id="admin-logout" class="admin-btn admin-btn-danger" type="button" style="display: none;">Logout</button>
         </div>
-      </div>
+      </section>
 
       <div id="admin-access-area" style="display: none;">
         <div class="admin-grid">
@@ -108,7 +119,41 @@
             <button id="test-webhook-btn" class="admin-btn admin-btn-primary" type="button">Test Service Alert Webhook</button>
             <div id="webhook-test-status" style="margin-top: 12px;"></div>
           </section>
+
+          <section class="admin-card">
+            <h2 class="admin-title">Add Review</h2>
+            <form id="review-form">
+              <div class="admin-field">
+                <label for="review-username">Reviewer username</label>
+                <input id="review-username" placeholder="Enter reviewer username" required>
+              </div>
+              <div class="admin-field">
+                <label for="review-title">Review title</label>
+                <input id="review-title" required>
+              </div>
+              <div class="admin-field">
+                <label for="review-text">Review text</label>
+                <textarea id="review-text" required></textarea>
+              </div>
+              <div class="admin-field">
+                <label for="review-rating">Rating</label>
+                <select id="review-rating">
+                  <option value="5">★★★★★ 5 stars</option>
+                  <option value="4">★★★★☆ 4 stars</option>
+                  <option value="3">★★★☆☆ 3 stars</option>
+                  <option value="2">★★☆☆☆ 2 stars</option>
+                  <option value="1">★☆☆☆☆ 1 star</option>
+                </select>
+              </div>
+              <button class="admin-btn admin-btn-primary" type="submit">Publish Review</button>
+            </form>
+          </section>
         </div>
+
+        <section class="admin-card">
+          <h2 class="admin-title">Saved Reviews</h2>
+          <div id="review-list" class="admin-list"></div>
+        </section>
 
         <section class="admin-card">
           <h2 class="admin-title">Current Bans</h2>

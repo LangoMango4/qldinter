@@ -5,6 +5,8 @@ class AdminPanel {
     this.logoutBtn = document.getElementById('admin-logout');
     this.banForm = document.getElementById('ban-form');
     this.banList = document.getElementById('ban-list');
+    this.reviewForm = document.getElementById('review-form');
+    this.reviewList = document.getElementById('review-list');
     this.adminArea = document.getElementById('admin-access-area');
     this.webhookTestBtn = document.getElementById('test-webhook-btn');
     this.webhookTestStatus = document.getElementById('webhook-test-status');
@@ -43,6 +45,7 @@ class AdminPanel {
     });
 
     this.webhookTestBtn?.addEventListener('click', () => this.testWebhook());
+    this.reviewForm?.addEventListener('submit', (event) => this.handleReviewSubmit(event));
 
     const banReasonSelect = document.getElementById('ban-reason');
     const otherReasonInput = document.getElementById('ban-other-reason');
@@ -81,9 +84,11 @@ class AdminPanel {
   }
 
   toggleForms(enabled) {
-    if (!this.banForm) return;
-    Array.from(this.banForm.elements).forEach((field) => {
-      field.disabled = !enabled;
+    [this.banForm, this.reviewForm].forEach((form) => {
+      if (!form) return;
+      Array.from(form.elements).forEach((field) => {
+        field.disabled = !enabled;
+      });
     });
   }
 
@@ -176,6 +181,105 @@ class AdminPanel {
     }
   }
 
+  async handleReviewSubmit(event) {
+    event.preventDefault();
+    if (!this.isAdmin) return;
+
+    const reviewerName = document.getElementById('review-username')?.value.trim() || '';
+    const title = document.getElementById('review-title')?.value.trim() || '';
+    const text = document.getElementById('review-text')?.value.trim() || '';
+    const rating = Number(document.getElementById('review-rating')?.value) || 5;
+
+    if (!reviewerName || !title || !text) {
+      this.setStatus('Reviewer username, title, and text are required.', 'error');
+      return;
+    }
+
+    try {
+      const response = await fetch(`${this.apiBase}/api/admin/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ reviewerName, title, text, rating })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to add review.');
+      }
+
+      this.setStatus('Review published successfully.', 'success');
+      if (this.reviewForm) {
+        this.reviewForm.reset();
+      }
+      await this.loadReviews();
+    } catch (error) {
+      this.setStatus('Failed to publish review. Check your admin access and try again.', 'error');
+    }
+  }
+
+  async loadReviews() {
+    try {
+      const response = await fetch(`${this.apiBase}/api/reviews`, { cache: 'no-store' });
+      const payload = await response.json().catch(() => ({}));
+      const reviews = Array.isArray(payload.reviews) ? payload.reviews : [];
+
+      if (!this.reviewList) return;
+      if (reviews.length === 0) {
+        this.reviewList.innerHTML = '<div class="admin-meta">No reviews have been submitted yet.</div>';
+        return;
+      }
+
+      this.reviewList.innerHTML = reviews.map((review) => {
+        const title = this.escapeHtml(review.title || 'Untitled');
+        const text = this.escapeHtml(review.text || '');
+        const reviewer = this.escapeHtml(review.reviewer?.username || 'Admin');
+        const rating = Number(review.rating) || 5;
+        const stars = '★'.repeat(Math.max(1, Math.min(5, rating))) + '☆'.repeat(5 - Math.max(1, Math.min(5, rating)));
+        const meta = `${this.formatDate(review.createdAt)} • ${stars}`;
+
+        return `
+          <div class="admin-list-item">
+            <div>
+              <div><strong>${title}</strong></div>
+              <div class="admin-meta">${text}</div>
+              <div class="admin-meta">${meta}</div>
+              <div class="admin-meta">Reviewer: ${reviewer}</div>
+            </div>
+            <button class="admin-btn admin-btn-danger" type="button" data-remove-review="${this.escapeHtml(review.id)}">Remove</button>
+          </div>
+        `;
+      }).join('');
+
+      this.reviewList.querySelectorAll('[data-remove-review]').forEach((button) => {
+        button.addEventListener('click', () => this.removeReview(button.getAttribute('data-remove-review')));
+      });
+    } catch (error) {
+      if (this.reviewList) {
+        this.reviewList.innerHTML = '<div class="admin-meta">Failed to load reviews.</div>';
+      }
+    }
+  }
+
+  async removeReview(reviewId) {
+    if (!reviewId || !this.isAdmin) return;
+
+    try {
+      const response = await fetch(`${this.apiBase}/api/admin/reviews/${encodeURIComponent(reviewId)}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to remove review.');
+      }
+
+      this.setStatus('Review removed successfully.', 'success');
+      await this.loadReviews();
+    } catch (error) {
+      this.setStatus('Failed to remove review. Check your admin access and try again.', 'error');
+    }
+  }
+
   formatDate(value) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return 'Unknown';
@@ -198,6 +302,7 @@ class AdminPanel {
     await this.refreshAuth();
     if (this.isAdmin) {
       await this.loadBans();
+      await this.loadReviews();
     }
   }
 

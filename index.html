@@ -73,9 +73,37 @@
           });
       });
     }
+
+    const gateStateKey = 'qi_site_gate_passed';
+
+    function hideSiteGate() {
+      const overlay = document.getElementById('site-gate-overlay');
+      if (overlay) {
+        overlay.style.display = 'none';
+      }
+    }
+
+    function unlockSite() {
+      window.localStorage.setItem(gateStateKey, 'true');
+      hideSiteGate();
+    }
+
+    window.onArgusCaptchaVerified = function(token) {
+      if (!token) {
+        return;
+      }
+      unlockSite();
+    };
+
+    window.addEventListener('load', () => {
+      if (window.localStorage.getItem(gateStateKey) === 'true') {
+        hideSiteGate();
+      }
+    });
   </script>
 
   <script src="./config.js"></script>
+  <script src="https://latch.argusgroup.co.uk/v1/captcha/api.js" async defer></script>
   <script defer src="./animations.js"></script>
   <script defer src="./hero-slider.js"></script>
   <script defer src="./roblox-data.js"></script>
@@ -83,7 +111,8 @@
   <script defer src="./navigation.js"></script>
 
 </head>
-<body>
+<body class="homepage">
+
 
 <!-- NOTIFICATION DISABLED - DISPLAY ISSUES -->
 <!-- Uncomment to enable: -->
@@ -329,14 +358,14 @@
   }
 }
 </style>
-<div class="security-alert">
+<!-- <div class="security-alert">
      <div class="feature-ico-noicon"><span class="material-icons">warning</span></div>
-    WE ARE CURRENTLY DEALING WITH AN ACTIVE SECURITY THREAT. PLEASE ALERT US IF YOU SEE ANYTHING SUSPICIOUS
-</div>
+   PLEASE ALERT US IF YOU SEE ANYTHING SUSPICIOUS OR OUT OF PLACE.  
+</div> -->
 <!-- NAV -->
 <nav class="navbar">
   <!-- Logo section -->
-  <a href="/" class="logo">
+  <a href="/" class="logo-nav">
     <img src="images_/qldinter1 (1).png" alt="QI Logo" class="logo-img1">
   </a>
   
@@ -349,17 +378,38 @@
   
   <!-- Navigation Links -->
   <ul id="nav-menu">
-    <li><a href="#about">About</a></li>
-    <li><a href="#sections">Community</a></li>
-    <li><a href="/ourteam/">Team</a></li>
-    <li><a href="/faq/">Help</a></li>
-    <li><a href="/operations/">Status</a></li>
-    <li><a href="/legal/privacy-policy.html">Legal</a></li>
-    <li><a href="/tos">TOS</a></li>
-    <li><a href="/licence.html">Licence</a></li>
-    <li><a href="queenslandpoliceservice/qlite/">QPS Only: QLiTE</a></li>
+    <li class="header-nav-item header-nav-item-level0 js-header-nav-item-level0 dropdown js-dropdown menu-dropdown" data-dropdown-type="simple" data-css-variables-color-scheme-id="darkPrimary">
+      <button id="nav-trigger" class="nav-trigger" aria-haspopup="true" aria-expanded="false" type="button">
+        <span class="nav-trigger-label">Menu</span>
+        <svg class="icon-down-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 924 545" aria-hidden="true">
+          <path fill="currentColor" d="M0 82L82 0l381 383L844 2l80 82-461 461-80-82L0 82z" />
+        </svg>
+      </button>
+      <div class="header-dropdown-wrapper js-header-dropdown-wrapper" id="dropdown-links">
+        <div class="dropdown-item-level1"><a href="#about">About</a></div>
+        <div class="dropdown-item-level1"><a href="#sections">Community</a></div>
+        <div class="dropdown-item-level1"><a href="/ourteam/">Team</a></div>
+        <div class="dropdown-item-level1"><a href="/faq/">Help</a></div>
+        <div class="dropdown-item-level1"><a href="/operations/">Status</a></div>
+        <div class="dropdown-item-level1"><a href="/tos">TOS</a></div>
+        <div class="dropdown-item-level1"><a href="/licence.html">Licence</a></div>
+        <div class="dropdown-item-level1"><a href="/legal/">Legal</a></div>
+        <div class="dropdown-item-level1"><a href="queenslandpoliceservice/qlite/">QPS Only: QLiTE</a></div>
+      </div>
+    </li>
     <!-- Highlighted Call-To-Action Link -->
-    <li><a class="cta" href="https://discord.gg/9jaAn54Ydx" target="_blank">Discord</a></li>
+    <li class="nav-cta">
+      <a href="https://discord.gg/9jaAn54Ydx" target="_blank" class="cta-button">Join Discord</a>
+    </li>
+    <li class="nav-profile-item">
+      <div id="user-profile" class="user-profile" aria-haspopup="true" aria-expanded="false" style="display: none;">
+        <img id="user-avatar" class="user-avatar" alt="User avatar" src="" />
+        <div id="user-menu" class="user-menu">
+          <a href="/admin/">Admin Panel</a>
+          <button id="logout-btn" type="button">Logout</button>
+        </div>
+      </div>
+    </li>
   </ul>
 </nav>
 
@@ -382,7 +432,7 @@
     <div>
       <h1>Step Into & Discover<br>YOUR World of Roleplay</h1>
       <p class="hero-subtitle"><span id="typed"></span><span class="typed-cursor">|</span></p>
-      <div style="margin-top:20px;text-align:middle;"><a href="/enrol/index.html" class="hero-btn">Discover Now!</a></div>
+      <div style="margin-top:20px;text-align:middle;"><a href="#sections" class="hero-btn">Discover Now!</a></div>
     </div>
   </div>
 </section>
@@ -566,7 +616,25 @@
   <p>
     Join Queensland Interactive today and become part of a thriving Roblox roleplay community.
   </p>
-<p>https://discord.gg/9jaAn54Ydx</p>
+  <p>https://discord.gg/9jaAn54Ydx</p>
+</section>
+
+<section id="reviews" class="reviews reveal">
+  <div class="reviews-inner">
+    <div class="reviews-header">
+      <div class="reviews-header-title">
+        <h2>What players are saying</h2>
+        <p class="reviews-subtitle">*Based on actual player feedback</p>
+      </div>
+    </div>
+    <div class="review-slider" aria-live="polite">
+      <div class="review-slide" id="review-slide">
+        <div class="review-rating">★★★★★</div>
+        <blockquote class="review-text">Loading reviews…</blockquote>
+        <div class="review-meta">Latest community feedback will appear here.</div>
+      </div>
+    </div>
+  </div>
 </section>
 
 <footer class="site-footer reveal">
@@ -636,6 +704,65 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   tick();
+  let reviewItems = [];
+  let currentReviewIndex = 0;
+
+  const escapeHtml = (value) => String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+  const renderReviewSlide = (review) => {
+    const reviewSlide = document.getElementById('review-slide');
+    if (!reviewSlide) return;
+    const rating = Number(review.rating) || 5;
+    const stars = '★'.repeat(Math.max(1, Math.min(5, rating))) + '☆'.repeat(5 - Math.max(1, Math.min(5, rating)));
+    const text = escapeHtml(review.text || 'No review text available.');
+    const title = escapeHtml(review.title || 'Community review');
+    const author = escapeHtml(review.reviewer?.username || 'Anonymous');
+    reviewSlide.innerHTML = `
+      <div class="review-rating">${stars}</div>
+      <blockquote class="review-text">${text}</blockquote>
+      <div class="review-meta">${title} • ${author}</div>
+    `;
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const response = await fetch('/api/reviews', { cache: 'no-store' });
+      if (!response.ok) {
+        throw new Error('Failed to load reviews');
+      }
+      const payload = await response.json();
+      const reviews = Array.isArray(payload.reviews) ? payload.reviews : [];
+      if (reviews.length === 0) {
+        renderReviewSlide({
+          rating: 5,
+          text: 'No published reviews yet. Check back soon for community feedback!',
+          title: 'Community Updates',
+          reviewer: { username: 'Queensland Interactive' }
+        });
+        return;
+      }
+      this.reviewItems = reviews;
+      renderReviewSlide(this.reviewItems[this.currentReviewIndex]);
+      setInterval(() => {
+        this.currentReviewIndex = (this.currentReviewIndex + 1) % this.reviewItems.length;
+        renderReviewSlide(this.reviewItems[this.currentReviewIndex]);
+      }, 7000);
+    } catch (error) {
+      renderReviewSlide({
+        rating: 5,
+        text: 'Unable to fetch reviews at this time. Please try again later.',
+        title: 'Community Reviews',
+        reviewer: { username: 'System' }
+      });
+    }
+  };
+
+  fetchReviews();
 
   const newsButton = document.querySelector('.news-expand-btn');
   const newsCard = document.querySelector('.news-card');

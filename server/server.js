@@ -43,7 +43,8 @@ const oauthStates = new Map();
 const discordSessions = new Map();
 let moderationState = {
   bans: [],
-  notifications: []
+  notifications: [],
+  reviews: []
 };
 
 const ensureDataDirectory = () => {
@@ -110,7 +111,8 @@ const createDefaultModerationState = () => ({
       createdAt: "2026-02-03T19:48:00.000Z"
     }
   ],
-  notifications: []
+  notifications: [],
+  reviews: []
 });
 
 const saveModerationState = () => {
@@ -172,7 +174,8 @@ const loadModerationState = () => {
     const parsed = JSON.parse(raw);
     moderationState = {
       bans: Array.isArray(parsed.bans) ? parsed.bans : [],
-      notifications: Array.isArray(parsed.notifications) ? parsed.notifications : []
+      notifications: Array.isArray(parsed.notifications) ? parsed.notifications : [],
+      reviews: Array.isArray(parsed.reviews) ? parsed.reviews : []
     };
   } catch (error) {
     moderationState = createDefaultModerationState();
@@ -1064,6 +1067,59 @@ app.get("/api/bans", (req, res) => {
   return res.json({ bans });
 });
 
+app.get("/api/reviews", (req, res) => {
+  const reviews = [...moderationState.reviews].sort((a, b) => {
+    return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+  });
+
+  return res.json({ reviews });
+});
+
+app.post("/api/admin/reviews", requireAdmin, (req, res) => {
+  const reviewerName = String((req.body && req.body.reviewerName) || "").trim();
+  const title = String((req.body && req.body.title) || "").trim();
+  const text = String((req.body && req.body.text) || "").trim();
+  const ratingInput = Number(req.body && req.body.rating);
+  const rating = Number.isInteger(ratingInput) && ratingInput >= 1 && ratingInput <= 5 ? ratingInput : 5;
+
+  if (!reviewerName || !title || !text) {
+    return res.status(400).json({ error: "reviewerName, title and text are required." });
+  }
+
+  const newReview = {
+    id: `review-${randomUUID()}`,
+    title,
+    text,
+    rating,
+    reviewer: {
+      id: req.adminUser.id,
+      username: reviewerName || req.adminUser.username || "Admin",
+      avatar: req.adminUser.avatar || ""
+    },
+    createdAt: new Date().toISOString()
+  };
+
+  moderationState.reviews.unshift(newReview);
+  saveModerationState();
+  return res.status(201).json({ success: true, review: newReview });
+});
+
+app.delete("/api/admin/reviews/:reviewId", requireAdmin, (req, res) => {
+  const reviewId = String((req.params && req.params.reviewId) || "").trim();
+  if (!reviewId) {
+    return res.status(400).json({ error: "reviewId is required." });
+  }
+
+  const nextReviews = moderationState.reviews.filter((review) => review.id !== reviewId);
+  if (nextReviews.length === moderationState.reviews.length) {
+    return res.status(404).json({ error: "Review not found." });
+  }
+
+  moderationState.reviews = nextReviews;
+  saveModerationState();
+  return res.json({ success: true, removedId: reviewId });
+});
+
 app.get("/api/admin/me", requireAdmin, (req, res) => {
   return res.json({
     authenticated: true,
@@ -1147,6 +1203,41 @@ app.post("/api/auth/logout", (req, res) => {
 
   clearSessionCookie(res);
   return res.json({ success: true, authenticated: false });
+});
+
+app.post("/api/verify-turnstile", async (req, res) => {
+  const token = String((req.body && req.body.token) || "").trim();
+
+  if (!CAPTCHA_SECRET) {
+    return res.status(400).json({ success: false, error: "Captcha is not configured." });
+  }
+
+  if (!token) {
+    return res.status(400).json({ success: false, error: "Captcha token is required." });
+  }
+
+  try {
+    const verifyResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: new URLSearchParams({
+        secret: CAPTCHA_SECRET,
+        response: token
+      })
+    });
+
+    const verifyData = await verifyResponse.json();
+    if (!verifyResponse.ok || !verifyData.success) {
+      return res.status(400).json({ success: false, error: 'Captcha verification failed.', details: verifyData });
+    }
+
+    return res.json({ success: true });
+  } catch (error) {
+    console.error('Captcha verification request failed:', error);
+    return res.status(500).json({ success: false, error: 'Captcha verification service error.' });
+  }
 });
 
 app.post("/api/bot-auth/challenge", (req, res) => {
