@@ -1,6 +1,6 @@
 const GROUP_ID = 35458162;
 const GROUP_URL = "https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about";
-const PROXY_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.robloxProxyBase) || "";
+const PROXY_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.API_SERVER_URL) || "";
 const TEAM_BIOS = (window.SITE_CONFIG && window.SITE_CONFIG.teamBios) || {};
 
 const buildProxyUrl = (path) => {
@@ -110,7 +110,7 @@ const loadTeamMembers = async () => {
       img.alt = member.name || 'Team member';
       img.onerror = () => {
         img.onerror = null;
-        img.src = '/mainico.png';
+        img.src = '/assets/images/mainico.png';
       };
 
       const info = document.createElement("div");

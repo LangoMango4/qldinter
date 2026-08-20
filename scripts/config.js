@@ -10,17 +10,13 @@ window.SITE_CONFIG = {
   maintenanceEnds: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   
   // Roblox API proxy base URL
-  // Set this to your deployed server URL (e.g., "https://your-server.railway.app")
-  // Leave as empty string "" to disable API features (stats will show "Unavailable")
-  robloxProxyBase: "https://qldinterapi.up.railway.app",
-  
-  // Railway server URL (for feedback/bug reports)
-  // Should be the same as robloxProxyBase
-  RAILWAY_SERVER_URL: "https://qldinterapi.up.railway.app",
+  // Leave empty when this website and API run on the same domain.
+  // Set a full HTTPS URL only when the API is hosted separately.
+  API_SERVER_URL: "",
   
   // Cloudflare Turnstile
   // Get your site key from: https://dash.cloudflare.com/?to=/:account/turnstile
-  // Railway secret name for the server-side secret is: CAPTCHA_SECRET_ARG
+  // The server-side secret is configured as CAPTCHA_SECRET.
   // Set to empty string "" to disable Turnstile (will skip captcha verification)
   // Note: If Turnstile is unavailable or fails to load, users can skip after 3 seconds
   turnstileSiteKey: "", // Replace with your actual site key or leave empty to disable

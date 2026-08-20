@@ -1,4 +1,4 @@
-const PROXY_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.robloxProxyBase) || "";
+const PROXY_BASE = (window.SITE_CONFIG && window.SITE_CONFIG.API_SERVER_URL) || "";
 
 // Track last known status to detect transitions
 const lastStatus = {

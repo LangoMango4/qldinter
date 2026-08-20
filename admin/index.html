@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1e90ff">
   <title>Administrator Panel</title>
-  <link rel="icon" href="../favicon.png">
+  <link rel="icon" href="../assets/images/favicon.png">
   <link rel="manifest" href="../manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../styles.css">
-  <script defer src="../navigation.js"></script>
+  <link rel="stylesheet" href="../styles/styles.css">
+  <script defer src="../scripts/navigation.js"></script>
   <script defer src="./admin-panel.js"></script>
   <style>
     .admin-page { padding-top: 90px; min-height: 100vh; background: #f1f5f9; }
@@ -38,7 +38,7 @@
 <body>
   <nav class="navbar">
     <a href="/" class="logo">
-      <img src="../mainico.png" alt="QI Logo" class="logo-img">
+      <img src="../assets/images/mainico.png" alt="QI Logo" class="logo-img">
       <span>Server Administrator Panel</span>
     </a>
     <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -166,8 +166,8 @@
       </div>
     </div>
   </main>
-  <script src="../maintenance.js"></script>
-  <script src="../config.js"></script>
+  <script src="../scripts/maintenance.js"></script>
+  <script src="../scripts/config.js"></script>
   <script>
     (function(){
       const init = () => {

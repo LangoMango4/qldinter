@@ -1,14 +1,14 @@
 const slides = document.querySelectorAll(".hero-slide");
 
 const images = [
-  "images_/hero1.png",
-  "images_/hero2.png",
-  "images_/hero3.png",
-  "images_/hero4.png",
-  "images_/hero5.png",
-  "images_/hero6.png",
-  "images_/hero7.png",
-  "images_/hero8.png"
+  "assets/images/hero1.png",
+  "assets/images/hero2.png",
+  "assets/images/hero3.png",
+  "assets/images/hero4.png",
+  "assets/images/hero5.png",
+  "assets/images/hero6.png",
+  "assets/images/hero7.png",
+  "assets/images/hero8.png"
 ];
 
 let current = 0;

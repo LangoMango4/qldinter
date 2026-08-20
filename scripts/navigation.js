@@ -110,7 +110,7 @@ async function checkUserAuthentication() {
 }
 
 function resolveApiBase() {
-  const configured = (window.SITE_CONFIG && (window.SITE_CONFIG.RAILWAY_SERVER_URL || window.SITE_CONFIG.robloxProxyBase)) || '';
+  const configured = (window.SITE_CONFIG && window.SITE_CONFIG.API_SERVER_URL) || '';
   const cleanConfigured = String(configured || '').trim().replace(/\/$/, '');
   return cleanConfigured || window.location.origin;
 }
@@ -340,10 +340,10 @@ function ensureGlobalFooter() {
           <p>is a Queensland-inspired Roblox roleplay community focused on realistic, immersive, and enjoyable experiences. Explore Westlands, join a variety of teams, and create your own stories alongside a growing community.</p>
           <div class="footer-icons">
             <a href="https://discord.gg/9jaAn54Ydx" target="_blank" aria-label="Discord">
-              <img src="/images_/discord-logo.png" alt="Discord">
+              <img src="/assets/images/discord-logo.png" alt="Discord">
             </a>
             <a href="https://www.roblox.com/communities/35458162/QI-Queensland-Interactive#!/about" target="_blank" aria-label="Roblox">
-              <img src="/images_/roblox-icon.png" alt="Roblox">
+              <img src="/assets/images/roblox-icon.png" alt="Roblox">
             </a>
           </div>
         </div>

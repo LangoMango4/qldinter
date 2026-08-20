@@ -895,7 +895,7 @@ app.get("/auth/discord/start", (req, res) => {
     return res.status(500).json({
       error: "Discord OAuth is not configured.",
       missing,
-      hint: "Set missing variables in your Railway service and redeploy."
+      hint: "Set the missing variables in your server environment and restart the service."
     });
   }
 

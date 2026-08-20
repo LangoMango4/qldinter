@@ -40,3 +40,9 @@
 # debug information files
 *.dwo
 .vscode/launch.json
+
+# Local environments and dependencies
+.venv/
+node_modules/
+server/.env
+npm-debug.log*

@@ -64,7 +64,7 @@ class AdminPanel {
   }
 
   resolveApiBase() {
-    const configured = (window.SITE_CONFIG && (window.SITE_CONFIG.RAILWAY_SERVER_URL || window.SITE_CONFIG.robloxProxyBase)) || '';
+    const configured = (window.SITE_CONFIG && window.SITE_CONFIG.API_SERVER_URL) || '';
     const cleanConfigured = String(configured || '').trim().replace(/\/$/, '');
     return cleanConfigured || window.location.origin;
   }

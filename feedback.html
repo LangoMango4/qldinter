@@ -6,15 +6,14 @@
   <meta name="theme-color" content="#1e90ff">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <title>Feedback & Bug Reports - Queensland Interactive</title>
-  <link rel="icon" href="./favicon.png">
-  <link rel="apple-touch-icon" href="./favicon.png">
+  <link rel="icon" href="./assets/images/favicon.png">
+  <link rel="apple-touch-icon" href="./assets/images/favicon.png">
   <link rel="manifest" href="./manifest.json">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles/styles.css">
   
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=waving_hand" />
-  <link rel="stylesheet" href="./styles.css">
 
   <!-- Error handling -->
   <script>
@@ -37,7 +36,7 @@
     });
   </script>
   
-  <script defer src="./navigation.js"></script>
+  <script defer src="./scripts/navigation.js"></script>
 
   <style>
     .feedback-page {
@@ -274,7 +273,7 @@
 <!-- NAV -->
 <nav class="navbar">
   <a href="/" class="logo">
-    <img src="./mainico.png" alt="QI Logo" class="logo-img">
+    <img src="./assets/images/mainico.png" alt="QI Logo" class="logo-img">
     <span>Queensland Interactive</span>
   </a>
   
@@ -291,8 +290,8 @@
     <li><a href="/faq/">FAQ</a></li>
     <li><a href="/operations/">Operations</a></li>
     <li><a href="/feedback.html">Feedback</a></li>
-    <li><a href="/banned-users">Banned Users</a></li>
-    <li><a href="/tos">TOS</a></li>
+    <li><a href="/banned-users.html">Banned Users</a></li>
+    <li><a href="/tos.html">TOS</a></li>
     <li><a href="/licence.html">Licence</a></li>
     <li><a class="cta" href="https://discord.gg/9jaAn54Ydx" target="_blank">Discord</a></li>
   </ul>
@@ -414,8 +413,8 @@
   </div>
 </div>
 
-<script src="./maintenance.js"></script>
-<script src="./config.js"></script>
+<script src="./scripts/maintenance.js"></script>
+<script src="./scripts/config.js"></script>
 
 <script>
   // Type selector
@@ -463,8 +462,8 @@
     errorMessage.style.display = 'none';
 
     try {
-      // Get the Railway server URL from config
-      const serverUrl = window.SITE_CONFIG?.RAILWAY_SERVER_URL || window.RAILWAY_SERVER_URL || 'https://api-queenslandinteractive-rblx.up.railway.app';
+      // Use the configured API host, or this same origin for self-hosting.
+      const serverUrl = window.SITE_CONFIG?.API_SERVER_URL || window.location.origin;
       
       const response = await fetch(`${serverUrl}/api/feedback`, {
         method: 'POST',
