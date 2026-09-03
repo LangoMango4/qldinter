@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#163388">
+  <title>Page Not Found - Queensland Interactive</title>
+  <link rel="icon" href="/assets/images/favicon.png">
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    .not-found-page { min-height: calc(100vh - 88px); display: grid; place-items: center; padding: 110px 16px 64px; }
+    .not-found-card { width: min(760px, 100%); padding: 42px; text-align: center; }
+    .not-found-icon { color: #163388; font-size: 48px; margin-bottom: 10px; }
+    .not-found-code { color: #dc2626; font: 800 4rem "Poppins", sans-serif; line-height: 1; }
+    .not-found-card h1 { margin: 12px 0 8px; color: #163388; font-family: "Poppins", sans-serif; }
+    .not-found-card p { color: #64748b; line-height: 1.6; }
+    .not-found-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+    .not-found-actions a { display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 8px; text-decoration: none; font-weight: 700; }
+    .not-found-home { background: #163388; color: #fff; }
+    .not-found-back { border: 1px solid #dbe3ef; color: #163388; background: #fff; }
+    .not-found-details { margin-top: 24px; color: #64748b; font-size: .82rem; }
+    @media (max-width: 600px) { .not-found-card { padding: 30px 20px; } .not-found-code { font-size: 3.2rem; } .not-found-actions a { width: 100%; justify-content: center; } }
+  </style>
+</head>
+<body>
+  <main class="not-found-page">
+    <section class="page-card not-found-card">
+      <div class="material-icons not-found-icon" aria-hidden="true">search_off</div>
+      <div class="not-found-code">404</div>
+      <h1>Page not found</h1>
+      <p>The page you requested does not exist, may have moved, or is temporarily unavailable.</p>
+      <div class="not-found-actions">
+        <a class="not-found-home" href="/">Go to home</a>
+        <a class="not-found-back" href="javascript:history.back()">Go back</a>
+      </div>
+      <p class="not-found-details">Requested URL: <span id="requested-url"></span></p>
+    </section>
+  </main>
+  <script>
+    document.getElementById('requested-url').textContent = window.location.pathname;
+  </script>
+  <script src="/scripts/navigation.js"></script>
+</body>
+</html>

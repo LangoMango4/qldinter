@@ -2236,3 +2236,225 @@ h2,
         background: #ff0000;
     }
 }
+
+.staff-operations-card {
+  padding: 30px 34px 26px;
+}
+
+.staff-operations-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.staff-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: #64748b;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.staff-focus-button {
+  border: 1px solid #dbe3ef;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #163388;
+  padding: 10px 14px;
+  font: 600 0.86rem "Poppins", sans-serif;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.staff-focus-button:hover {
+  background: #eef4ff;
+}
+
+.staff-overall-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 22px 0 16px;
+  padding: 16px 18px;
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.staff-status-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #0e9f6e;
+  box-shadow: 0 0 0 5px #d9f7eb;
+}
+
+.staff-overall-status strong,
+.staff-overall-status span:not(.staff-status-dot) {
+  display: block;
+}
+
+.staff-overall-status strong {
+  color: #0f172a;
+  font-size: 1rem;
+}
+
+.staff-overall-status div span {
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.staff-service-list {
+  display: grid;
+  gap: 10px;
+}
+
+.staff-service-list .status-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 94px;
+  padding: 14px 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+}
+
+.staff-service-list .status-label,
+.staff-service-list .status-meta {
+  display: block;
+}
+
+.staff-service-list .status-meta {
+  margin-top: 4px;
+}
+
+.staff-service-list .status-card strong {
+  font-size: 0.92rem;
+  min-width: 76px;
+  text-align: right;
+}
+
+.staff-service-list .status-card strong::before {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  margin: 0 8px 1px 0;
+  border-radius: 50%;
+  background: #0e9f6e;
+  box-shadow: 0 0 0 4px #d9f7eb;
+  vertical-align: middle;
+}
+
+.staff-service-list .status-card.status-warn strong::before {
+  background: #d97706;
+  box-shadow: 0 0 0 4px #fef3c7;
+}
+
+.staff-service-list .status-card.status-bad strong::before {
+  background: #dc2626;
+  box-shadow: 0 0 0 4px #fee2e2;
+}
+
+.staff-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.staff-metrics-grid .status-card {
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.staff-focus-mode {
+  background: #f8fafc;
+}
+
+.staff-focus-mode .navbar,
+.staff-focus-mode .site-footer,
+.staff-focus-mode #cookie-consent-banner {
+  display: none !important;
+}
+
+.staff-focus-mode .staff-operations-page {
+  width: min(1180px, calc(100% - 48px));
+  min-height: 100vh;
+  padding: 32px 0 48px;
+}
+
+.staff-focus-mode .staff-operations-card {
+  min-height: calc(100vh - 80px);
+}
+
+.staff-focus-mode .staff-operations-heading .staff-eyebrow,
+.staff-focus-mode .staff-operations-heading h1,
+.staff-focus-mode .staff-operations-heading .page-heading p {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .staff-operations-heading {
+    flex-direction: column;
+  }
+
+  .staff-focus-button {
+    align-self: flex-start;
+  }
+
+  .staff-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .staff-service-list .status-card {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .staff-service-list .status-card strong {
+    text-align: left;
+  }
+
+  .staff-focus-mode .staff-operations-page {
+    width: calc(100% - 24px);
+    padding: 12px 0;
+  }
+}
+
+.staff-service-list .status-card > div {
+  width: 100%;
+  min-width: 0;
+}
+
+.staff-uptime-track {
+  width: 100%;
+  height: 8px;
+  margin-top: 10px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: repeating-linear-gradient(90deg, #e8ecf1 0 9px, #ffffff 9px 11px);
+}
+
+.staff-uptime-track span {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: #0e9f6e;
+  transition: width 0.5s ease;
+}
+
+.staff-uptime-label {
+  display: block;
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 0.7rem;
+}

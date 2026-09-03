@@ -26,36 +26,44 @@
   </nav>
 
   <main class="page-shell staff-operations-page">
-    <section class="page-card reveal">
-      <div class="page-heading">
-        <h1>WEBSITE Operations</h1>
-        <p>View the live status of our web services.</p>
+    <section class="page-card staff-operations-card reveal">
+      <div class="staff-operations-heading">
+        <div class="page-heading">
+          <span class="staff-eyebrow">Private staff monitor</span>
+          <h1>WEBSITE Operations</h1>
+          <p>Live service health and Railway API telemetry.</p>
+        </div>
+        <button class="staff-focus-button" id="staff-focus-button" type="button" aria-pressed="false">
+          <span aria-hidden="true">⛶</span> Focus view
+        </button>
       </div>
       <div id="staff-status" class="admin-status">Checking staff access...</div>
       <p id="staff-login-prompt" style="display:none;"><a href="/admin/">Open the admin panel to sign in.</a></p>
       <div id="staff-dashboard" style="display:none;">
-        <div class="ops-status-cards">
+        <div class="staff-overall-status">
+          <span class="staff-status-dot" aria-hidden="true"></span>
+          <div><strong id="staff-overall-title">All systems operational</strong><span id="staff-overall-meta">Live checks are running</span></div>
+        </div>
+        <div class="staff-service-list">
           <div class="status-card" id="staff-api-card">
-            <span class="status-label">Railway API</span>
+            <div><span class="status-label">API</span><small class="status-meta" id="staff-api-meta">Checking service...</small><div class="staff-uptime-track"><span id="staff-api-bar"></span></div><small class="staff-uptime-label" id="staff-api-uptime">Tracking uptime...</small></div>
             <strong id="staff-api-state">Loading...</strong>
-            <small class="status-meta" id="staff-api-meta">Checking service...</small>
           </div>
           <div class="status-card" id="staff-website-card">
-            <span class="status-label">Website</span>
+            <div><span class="status-label">Website</span><small class="status-meta" id="staff-website-meta">Checking service...</small><div class="staff-uptime-track"><span id="staff-website-bar"></span></div><small class="staff-uptime-label" id="staff-website-uptime">Tracking uptime...</small></div>
             <strong id="staff-website-state">Loading...</strong>
-            <small class="status-meta" id="staff-website-meta">Checking service...</small>
           </div>
           <div class="status-card" id="staff-game-card">
-            <span class="status-label">Game</span>
+            <div><span class="status-label">Game</span><small class="status-meta" id="staff-game-meta">Checking service...</small><div class="staff-uptime-track"><span id="staff-game-bar"></span></div><small class="staff-uptime-label" id="staff-game-uptime">Tracking uptime...</small></div>
             <strong id="staff-game-state">Loading...</strong>
-            <small class="status-meta" id="staff-game-meta">Checking service...</small>
           </div>
         </div>
-        <div class="ops-status-cards ops-metrics-grid">
+        <div class="staff-metrics-grid ops-metrics-grid">
           <div class="status-card"><span class="status-label">API Uptime</span><strong id="staff-uptime">Loading...</strong><small class="status-meta">Since last restart</small></div>
           <div class="status-card"><span class="status-label">API Speed</span><strong id="staff-speed">Loading...</strong><small class="status-meta">Average response time</small></div>
           <div class="status-card"><span class="status-label">Requests</span><strong id="staff-requests">Loading...</strong><small class="status-meta">Since last restart</small></div>
           <div class="status-card"><span class="status-label">Downtime</span><strong id="staff-downtime">Loading...</strong><small class="status-meta" id="staff-downtime-meta">Website; game</small></div>
+          <div class="status-card"><span class="status-label">Last check</span><strong id="staff-last-check">Loading...</strong><small class="status-meta">Automatic refresh every 30 seconds</small></div>
         </div>
         <p class="status-updated" id="staff-updated">Live data loading...</p>
       </div>

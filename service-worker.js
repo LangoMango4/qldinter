@@ -2,6 +2,7 @@ const CACHE_NAME = 'qldinter-v11';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/404.html',
   '/styles/styles.css',
   '/scripts/animations.js',
   '/scripts/hero-slider.js',
