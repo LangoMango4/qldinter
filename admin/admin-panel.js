@@ -11,6 +11,7 @@ class AdminPanel {
     this.webhookTestBtn = document.getElementById('test-webhook-btn');
     this.webhookTestStatus = document.getElementById('webhook-test-status');
     this.trelloLink = document.getElementById('admin-trello-link');
+    this.operationsLink = document.getElementById('admin-operations-link');
     this.banTargetRadios = Array.from(document.querySelectorAll('input[name="ban-target-type"]'));
     this.banGroupField = document.getElementById('ban-group-field');
     this.banUserFields = Array.from(document.querySelectorAll('.ban-user-field'));
@@ -112,6 +113,9 @@ class AdminPanel {
     }
     if (this.logoutBtn) {
       this.logoutBtn.style.display = enabled ? 'inline-flex' : 'none';
+    }
+    if (this.operationsLink) {
+      this.operationsLink.style.display = enabled ? 'inline-flex' : 'none';
     }
   }
 

@@ -1485,6 +1485,33 @@ h2,
   gap: 18px;
 }
 
+.ops-metrics-grid {
+  margin-top: 16px;
+}
+
+.status-updated {
+  margin-top: 16px;
+  color: #6b7280;
+  font-size: 0.85rem;
+  text-align: right;
+}
+
+.staff-operations-page {
+  min-height: calc(100vh - 88px);
+  padding-top: 110px;
+}
+
+.staff-operations-page ~ .site-footer {
+  padding-top: 48px;
+}
+
+@media (max-width: 768px) {
+  .staff-operations-page {
+    min-height: calc(100vh - 60px);
+    padding-top: 82px;
+  }
+}
+
 /* ABOUT */
 .about {
   padding: 100px 22%;

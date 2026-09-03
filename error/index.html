@@ -8,6 +8,7 @@
   <title>Error - Queensland Interactive</title>
   <link rel="manifest" href="../manifest.json">
   <link rel="stylesheet" href="../styles/styles.css">
+  <script src="../scripts/config.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -379,7 +380,8 @@ Time: ${document.getElementById('error-time').textContent}
           userId: 'Unknown ID',
           details: `The 404 page was shown for ${window.location.href}`
         };
-        const response = await fetch('/api/notify-404', {
+        const apiBase = String(window.SITE_CONFIG?.API_SERVER_URL || window.location.origin).replace(/\/$/, '');
+        const response = await fetch(`${apiBase}/api/notify-404`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

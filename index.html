@@ -731,7 +731,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const fetchReviews = async () => {
     try {
-      const response = await fetch('/api/reviews', { cache: 'no-store' });
+      const apiBase = String(window.SITE_CONFIG?.API_SERVER_URL || window.location.origin).replace(/\/$/, '');
+      const response = await fetch(`${apiBase}/api/reviews`, { cache: 'no-store' });
       if (!response.ok) {
         throw new Error('Failed to load reviews');
       }

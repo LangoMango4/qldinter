@@ -463,7 +463,7 @@
 
     try {
       // Use the configured API host, or this same origin for self-hosting.
-      const serverUrl = window.SITE_CONFIG?.API_SERVER_URL || window.location.origin;
+      const serverUrl = String(window.SITE_CONFIG?.API_SERVER_URL || window.location.origin).replace(/\/$/, '');
       
       const response = await fetch(`${serverUrl}/api/feedback`, {
         method: 'POST',

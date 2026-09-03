@@ -371,6 +371,7 @@
     </div>
   </div>
 
+  <script src="../../scripts/config.js"></script>
   <script>
     async function checkAuth() {
       const isPasswordLoggedIn = sessionStorage.getItem('mdtLoggedIn') === 'true';
@@ -379,7 +380,8 @@
       }
 
       try {
-        const response = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' });
+        const apiBase = String(window.SITE_CONFIG?.API_SERVER_URL || window.location.origin).replace(/\/$/, '');
+        const response = await fetch(`${apiBase}/api/auth/me`, { credentials: 'include', cache: 'no-store' });
         return response.ok;
       } catch (error) {
         return false;

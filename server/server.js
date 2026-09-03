@@ -3,8 +3,41 @@ const { randomUUID } = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
+const loadEnvironmentFile = () => {
+  const environmentFile = path.join(__dirname, ".env");
+  if (!fs.existsSync(environmentFile)) {
+    return;
+  }
+
+  const lines = fs.readFileSync(environmentFile, "utf8").split(/\r?\n/);
+  lines.forEach((line) => {
+    const trimmedLine = line.trim();
+    if (!trimmedLine || trimmedLine.startsWith("#")) {
+      return;
+    }
+
+    const separatorIndex = trimmedLine.indexOf("=");
+    if (separatorIndex <= 0) {
+      return;
+    }
+
+    const key = trimmedLine.slice(0, separatorIndex).trim();
+    let value = trimmedLine.slice(separatorIndex + 1).trim();
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+      value = value.slice(1, -1);
+    }
+
+    if (!process.env[key]) {
+      process.env[key] = value;
+    }
+  });
+};
+
+loadEnvironmentFile();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+const HOST = process.env.HOST || "0.0.0.0";
 const GROUP_ID = 35458162;
 const TIKTOK_HANDLE = "qldinteractive";
 const TIKTOK_URL = `https://www.tiktok.com/@${TIKTOK_HANDLE}`;
@@ -30,13 +63,32 @@ const ADMIN_USER_IDS = String(process.env.ADMIN_USER_IDS || "")
   .map((value) => value.trim())
   .filter(Boolean);
 const SESSION_COOKIE_NAME = "qldinter_session";
+const WEBSITE_ORIGIN = String(process.env.WEBSITE_ORIGIN || "").trim().replace(/\/$/, "");
 const WEBSITE_STATUS_URL = process.env.WEBSITE_STATUS_URL || "https://queenslandinteractive-rblx.com/";
 const GAME_STATUS_URL = process.env.GAME_STATUS_URL || "https://www.roblox.com/games/74079904616243/Westlands-Queenlands";
 const WEBSITE_ROOT = path.resolve(__dirname, "..");
 const DATA_DIR = path.join(__dirname, "data");
 const MODERATION_DATA_FILE = path.join(DATA_DIR, "moderation-state.json");
+const SERVER_STARTED_AT = Date.now();
+const metrics = {
+  requests: 0,
+  responseTimeTotalMs: 0,
+  statusChecks: {
+    website: { online: null, checkedAt: null, downtimeStartedAt: null, downtimeMs: 0 },
+    game: { online: null, checkedAt: null, downtimeStartedAt: null, downtimeMs: 0 }
+  }
+};
 app.use(express.json());
 app.set("trust proxy", 1);
+
+app.use((req, res, next) => {
+  const startedAt = Date.now();
+  metrics.requests += 1;
+  res.on("finish", () => {
+    metrics.responseTimeTotalMs += Date.now() - startedAt;
+  });
+  next();
+});
 
 const botAuthChallenges = new Map();
 const oauthStates = new Map();
@@ -243,7 +295,8 @@ const cache = {
   groupStatus: { value: null, expiresAt: 0 },
   teamMembers: { value: null, expiresAt: 0 },
   tiktokStats: { value: null, expiresAt: 0 },
-  liveStatus: { value: null, expiresAt: 0 }
+  liveStatus: { value: null, expiresAt: 0 },
+  metrics: { value: null, expiresAt: 0 }
 };
 
 const ssuState = {
@@ -464,6 +517,38 @@ const checkServiceHealth = async (url) => {
   }
 };
 
+const recordServiceCheck = (serviceName, service) => {
+  const record = metrics.statusChecks[serviceName];
+  if (!record || service.state === "Not configured") return;
+
+  const checkedAt = Date.now();
+  if (record.online === true && service.online === false) {
+    record.downtimeStartedAt = checkedAt;
+  } else if (record.online === false && service.online === true && record.downtimeStartedAt) {
+    record.downtimeMs += checkedAt - record.downtimeStartedAt;
+    record.downtimeStartedAt = null;
+  }
+  record.online = service.online;
+  record.checkedAt = new Date(checkedAt).toISOString();
+};
+
+const formatDuration = (durationMs) => {
+  const totalSeconds = Math.floor(durationMs / 1000);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+};
+
+const getServiceMetrics = (serviceName) => {
+  const record = metrics.statusChecks[serviceName];
+  const downtimeMs = record.downtimeStartedAt
+    ? record.downtimeMs + Date.now() - record.downtimeStartedAt
+    : record.downtimeMs;
+  return { lastCheckedAt: record.checkedAt, downtimeMs, downtime: formatDuration(downtimeMs) };
+};
+
 const fetchSsuStatus = async () => {
   if (!BOTGHOST_SSU_STATUS_URL) {
     return {
@@ -612,10 +697,10 @@ const updateSsuState = ({ active, label, url, mode }) => {
 
 app.use((req, res, next) => {
   const requestOrigin = String(req.headers.origin || "").trim();
-  if (requestOrigin) {
+  if (requestOrigin && (!WEBSITE_ORIGIN || requestOrigin === WEBSITE_ORIGIN)) {
     res.set("Access-Control-Allow-Origin", requestOrigin);
     res.set("Vary", "Origin");
-  } else {
+  } else if (!WEBSITE_ORIGIN) {
     res.set("Access-Control-Allow-Origin", "*");
   }
 
@@ -645,6 +730,38 @@ app.get("/", (req, res) => {
 });
 
 app.use(express.static(WEBSITE_ROOT));
+
+app.get("/api/health", (req, res) => {
+  res.json({ ok: true, uptimeSeconds: Math.floor(process.uptime()), checkedAt: new Date().toISOString() });
+});
+
+app.get("/api/metrics", requireAdmin, async (req, res) => {
+  try {
+    const data = await withCache("metrics", 30 * 1000, async () => {
+      const [website, game] = await Promise.all([
+        checkServiceHealth(WEBSITE_STATUS_URL),
+        checkServiceHealth(GAME_STATUS_URL)
+      ]);
+      recordServiceCheck("website", website);
+      recordServiceCheck("game", game);
+      const uptimeMs = Date.now() - SERVER_STARTED_AT;
+      return {
+        checkedAt: new Date().toISOString(),
+        uptimeSeconds: Math.floor(uptimeMs / 1000),
+        uptime: formatDuration(uptimeMs),
+        requests: metrics.requests,
+        averageResponseMs: metrics.requests ? Math.round(metrics.responseTimeTotalMs / metrics.requests) : 0,
+        services: {
+          website: { ...website, ...getServiceMetrics("website") },
+          game: { ...game, ...getServiceMetrics("game") }
+        }
+      };
+    });
+    res.json(data);
+  } catch (error) {
+    res.status(502).json({ error: "Failed to collect server metrics." });
+  }
+});
 
 app.get("/api/group-status", async (req, res) => {
   try {
@@ -866,8 +983,8 @@ app.get("/api/live-status", async (req, res) => {
         checkedAt: new Date().toISOString(),
         ssu,
         services: {
-          website,
-          game
+          website: { ...website, ...getServiceMetrics("website") },
+          game: { ...game, ...getServiceMetrics("game") }
         }
       };
     });
@@ -1730,7 +1847,7 @@ app.use(async (req, res) => {
   return res.status(404).json({ error: 'Not found' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Roblox proxy running on ${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Roblox proxy running on http://${HOST}:${PORT}`);
 });
 

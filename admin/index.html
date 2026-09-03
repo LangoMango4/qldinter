@@ -44,6 +44,7 @@
     <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
     <ul id="nav-menu">
       <li><a href="/">Home</a></li>
+      <li><a id="admin-operations-link" href="/admin/operations/" style="display:none;">Staff Operations</a></li>
       <li><a id="admin-trello-link" class="cta" href="https://trello.com/b/9SbBqljD/westlands-gameban-mangement" target="_blank" style="display:none;">Game Trello</a></li>
       <li class="nav-profile-item">
         <div id="user-profile" class="user-profile" aria-haspopup="true" aria-expanded="false" style="display: none;">
@@ -66,10 +67,8 @@
         </div>
         <div id="admin-status" class="admin-status">Checking admin access...</div>
         <div class="admin-actions" style="flex-direction: column; align-items: center;">
-          <script src="https://latch.argusgroup.co.uk/v1/captcha/api.js" async defer></script>
-          <div class="argus-captcha" data-sitekey="argus_RW4iDyo7Z5YcX6t-F_p2eQ" style="margin-bottom:12px;"></div>
           <div class="admin-buttons" style="display:flex; gap:12px;">
-            <button id="admin-login" class="admin-btn admin-btn-primary" type="button" disabled aria-disabled="true">Login with Discord</button>
+            <button id="admin-login" class="admin-btn admin-btn-primary" type="button">Login with Discord</button>
             <button id="admin-logout" class="admin-btn admin-btn-danger" type="button" style="display: none;">Logout</button>
           </div>
         </div>
@@ -168,36 +167,6 @@
   </main>
   <script src="../scripts/maintenance.js"></script>
   <script src="../scripts/config.js"></script>
-  <script>
-    (function(){
-      const init = () => {
-        const btn = document.getElementById('admin-login');
-        if (!btn) return;
-        // ensure disabled by default
-        btn.disabled = true;
-        btn.setAttribute('aria-disabled','true');
-
-        // preserve any existing global handler
-        const prev = window.onArgusCaptchaVerified;
-        window.onArgusCaptchaVerified = function(token) {
-          try {
-            if (typeof prev === 'function') prev(token);
-          } catch (e) {
-            console.error('previous onArgus handler failed', e);
-          }
-          if (token) {
-            btn.disabled = false;
-            btn.removeAttribute('aria-disabled');
-            // store token for later use if needed
-            btn.dataset.argusToken = token;
-          }
-        };
-      };
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-      } else init();
-    })();
-  </script>
 </body>
 </html>
 

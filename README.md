@@ -19,6 +19,6 @@ npm install
 npm start
 ```
 
-The site and API are served at `http://localhost:3000`.
+The API is served at `http://localhost:3000` when run locally.
 
 For production setup on your own Windows or Linux server, see [docs/SELF_HOSTING.md](docs/SELF_HOSTING.md).

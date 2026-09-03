@@ -124,6 +124,11 @@ const loadLiveOperationsStatus = async () => {
   const sessionCard = document.getElementById("ops-session-card");
   const websiteCard = document.getElementById("ops-website-card");
   const gameCard = document.getElementById("ops-game-card");
+  const apiUptimeEl = document.getElementById("api-uptime");
+  const apiSpeedEl = document.getElementById("api-speed");
+  const apiRequestsEl = document.getElementById("api-requests");
+  const apiDowntimeEl = document.getElementById("api-downtime");
+  const statusUpdatedEl = document.getElementById("status-updated");
 
   if (!ssuValueEl || !websiteEl || !gameEl) {
     return;
@@ -131,6 +136,7 @@ const loadLiveOperationsStatus = async () => {
 
   try {
     const data = await fetchJson(buildProxyUrl("/api/live-status"));
+    const metricsData = await fetchJson(buildProxyUrl("/api/metrics"));
     const ssu = data.ssu || {};
 
     ssuValueEl.textContent = ssu.label || "Unavailable";
@@ -157,6 +163,11 @@ const loadLiveOperationsStatus = async () => {
     const services = data.services || {};
     applyServiceStatus(services.website, websiteEl, websiteMetaEl, websiteCard, "website");
     applyServiceStatus(services.game, gameEl, gameMetaEl, gameCard, "game");
+    if (apiUptimeEl) apiUptimeEl.textContent = metricsData.uptime || "Unavailable";
+    if (apiSpeedEl) apiSpeedEl.textContent = `${metricsData.averageResponseMs ?? "-"}ms`;
+    if (apiRequestsEl) apiRequestsEl.textContent = String(metricsData.requests ?? "-");
+    if (apiDowntimeEl) apiDowntimeEl.textContent = metricsData.services?.website?.downtime || "0d 0h 0m 0s";
+    if (statusUpdatedEl) statusUpdatedEl.textContent = `Live check ${new Date(data.checkedAt).toLocaleTimeString()}`;
   } catch (error) {
     ssuValueEl.textContent = "Unavailable";
     if (ssuMetaEl) {
@@ -166,6 +177,7 @@ const loadLiveOperationsStatus = async () => {
 
     applyServiceStatus(null, websiteEl, websiteMetaEl, websiteCard, "website");
     applyServiceStatus(null, gameEl, gameMetaEl, gameCard, "game");
+    if (statusUpdatedEl) statusUpdatedEl.textContent = "Live data unavailable";
   }
 };
 

@@ -10,9 +10,8 @@ window.SITE_CONFIG = {
   maintenanceEnds: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   
   // Roblox API proxy base URL
-  // Leave empty when this website and API run on the same domain.
-  // Set a full HTTPS URL only when the API is hosted separately.
-  API_SERVER_URL: "",
+  // Railway public API URL. Replace with the URL shown by your Railway service.
+  API_SERVER_URL: "https://qldinterapi.up.railway.app",
   
   // Cloudflare Turnstile
   // Get your site key from: https://dash.cloudflare.com/?to=/:account/turnstile

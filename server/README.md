@@ -10,7 +10,7 @@ npm install
 npm start
 ```
 
-The server listens on `http://localhost:3000` by default. Set `PORT` to use another port.
+The server listens on all network interfaces at port `3000` by default. Set `HOST` or `PORT` to change this. Check connectivity with `http://SERVER_ADDRESS:3000/api/health`.
 
 Feedback is submitted through `/feedback.html` and delivered using `DISCORD_WEBHOOK_URL`.
 
