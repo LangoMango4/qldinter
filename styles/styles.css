@@ -665,6 +665,20 @@ h2,
   text-decoration: none;
 }
 
+.hero-help-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(22, 51, 136, 0.9);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+}
+
+.hero-help-btn:hover {
+  background: #ffffff;
+  color: #163388;
+}
+
 .hero-content p {
   max-width: 700px;
   line-height: 1.5;

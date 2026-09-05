@@ -390,6 +390,7 @@
         <div class="dropdown-item-level1"><a href="#sections">Community</a></div>
         <div class="dropdown-item-level1"><a href="/ourteam/">Team</a></div>
         <div class="dropdown-item-level1"><a href="/faq/">Help</a></div>
+        <div class="dropdown-item-level1"><a href="/information/">Information</a></div>
         <div class="dropdown-item-level1"><a href="/operations/">Status</a></div>
         <div class="dropdown-item-level1"><a href="/tos.html">TOS</a></div>
         <div class="dropdown-item-level1"><a href="/licence.html">Licence</a></div>
@@ -432,7 +433,8 @@
     <div>
       <h1>Step Into & Discover<br>YOUR World of Roleplay</h1>
       <p class="hero-subtitle"><span id="typed"></span><span class="typed-cursor">|</span></p>
-      <div style="margin-top:20px;text-align:middle;"><a href="#sections" class="hero-btn">Discover Now!</a></div>
+      <div class="hero-actions">
+        <a href="/information/" class="hero-btn">View Information</a>      </div>
     </div>
   </div>
 </section>
@@ -747,11 +749,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         return;
       }
-      this.reviewItems = reviews;
-      renderReviewSlide(this.reviewItems[this.currentReviewIndex]);
+      reviewItems = reviews;
+      renderReviewSlide(reviewItems[currentReviewIndex]);
       setInterval(() => {
-        this.currentReviewIndex = (this.currentReviewIndex + 1) % this.reviewItems.length;
-        renderReviewSlide(this.reviewItems[this.currentReviewIndex]);
+        currentReviewIndex = (currentReviewIndex + 1) % reviewItems.length;
+        renderReviewSlide(reviewItems[currentReviewIndex]);
       }, 7000);
     } catch (error) {
       renderReviewSlide({

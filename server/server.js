@@ -697,7 +697,8 @@ const updateSsuState = ({ active, label, url, mode }) => {
 
 app.use((req, res, next) => {
   const requestOrigin = String(req.headers.origin || "").trim();
-  if (requestOrigin && (!WEBSITE_ORIGIN || requestOrigin === WEBSITE_ORIGIN)) {
+  const isLocalDevelopmentOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(requestOrigin);
+  if (requestOrigin && (!WEBSITE_ORIGIN || requestOrigin === WEBSITE_ORIGIN || isLocalDevelopmentOrigin)) {
     res.set("Access-Control-Allow-Origin", requestOrigin);
     res.set("Vary", "Origin");
   } else if (!WEBSITE_ORIGIN) {

@@ -351,6 +351,7 @@ function ensureGlobalFooter() {
           <h4>Quick Links</h4>
           <a href="/">Home</a>
           <a href="/ourteam/">About Us</a>
+          <a href="/information/">Information</a>
           <a href="/legal/">Legal</a>
           <a href="/admin/">Admin</a>
         </div>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#163388">
+  <meta name="description" content="Queensland Interactive information hub for rules, FAQs, support, service Discords, applications, and access.">
+  <title>Information Hub - Queensland Interactive</title>
+  <link rel="icon" href="../assets/images/favicon.png">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../styles/styles.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script defer src="../scripts/animations.js"></script>
+  <script defer src="../scripts/navigation.js"></script>
+  <style>
+    .info-page { padding-top: 112px; }
+    .info-hero { display: grid; grid-template-columns: 1.4fr .8fr; gap: 24px; align-items: end; margin-bottom: 24px; }
+    .info-hero h1 { margin-bottom: 10px; }
+    .info-hero p { max-width: 680px; }
+    .info-jump { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+    .info-jump a, .info-action { display: inline-flex; align-items: center; padding: 9px 12px; border: 1px solid #dbe3ef; border-radius: 8px; background: #f8fafc; color: #163388; font-size: .82rem; font-weight: 700; text-decoration: none; }
+    .info-jump .material-icons, .info-tile .material-icons { margin-right: 7px; font-size: 19px; vertical-align: middle; }
+    .info-directory { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .info-tile { display: block; padding: 18px 14px; border: 1px solid #dbe3ef; border-radius: 10px; background: #fff; color: #163388; text-decoration: none; text-align: center; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+    .info-tile:hover { transform: translateY(-2px); border-color: #163388; box-shadow: 0 8px 20px rgba(22, 51, 136, .1); }
+    .info-tile .material-icons { display: block; margin: 0 auto 8px; font-size: 30px; }
+    .info-tile strong { display: block; font-size: .86rem; }
+    .info-layout { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+    .info-section { scroll-margin-top: 104px; }
+    .info-section-wide { grid-column: 1 / -1; }
+    .info-section h2 { margin-bottom: 6px; color: #163388; font-family: "Poppins", sans-serif; }
+    .info-section > p { margin-bottom: 16px; color: #64748b; line-height: 1.6; }
+    .info-list { display: grid; gap: 8px; }
+    .info-list details { border: 1px solid #e2e8f0; border-radius: 9px; background: #f8fafc; }
+    .info-list summary { cursor: pointer; list-style: none; padding: 13px 15px; color: #0f172a; font-weight: 700; }
+    .info-list summary::-webkit-details-marker { display: none; }
+    .info-list summary::after { content: "+"; float: right; color: #163388; font-size: 1.1rem; }
+    .info-list details[open] summary::after { content: "-"; }
+    .info-list details p { padding: 0 15px 14px; color: #475569; line-height: 1.6; }
+    .info-numbered { margin: 0; padding-left: 24px; color: #475569; line-height: 1.65; }
+    .info-numbered li { padding: 5px 0; }
+    .info-numbered strong { color: #0f172a; }
+    .info-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+    .info-card { display: flex; flex-direction: column; gap: 9px; padding: 17px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }
+    .info-card h3 { color: #0f172a; font-size: 1rem; }
+    .info-card p { flex: 1; color: #475569; font-size: .88rem; line-height: 1.55; }
+    .info-card a { align-self: flex-start; }
+    .info-note { padding: 14px 16px; border-left: 4px solid #163388; border-radius: 8px; background: #eef4ff; color: #334155; line-height: 1.6; }
+    .info-support { display: grid; gap: 12px; }
+    .info-support strong { color: #0f172a; }
+    @media (max-width: 900px) { .info-directory { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 760px) { .info-page { padding-top: 82px; } .info-hero, .info-layout { grid-template-columns: 1fr; } .info-directory { grid-template-columns: repeat(2, 1fr); } .info-jump { justify-content: flex-start; } .info-section-wide { grid-column: auto; } }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="/" class="logo"><img src="../assets/images/mainico.png" alt="QI Logo" class="logo-img"><span>Queensland Interactive</span></a>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+    <ul id="nav-menu">
+      <li><a href="/">Home</a></li><li><a href="/information/">Information</a></li><li><a href="/operations/">Operations</a></li><li><a href="/faq/">FAQ</a></li><li><a class="cta" href="https://discord.gg/9jaAn54Ydx" target="_blank">Discord</a></li>
+    </ul>
+  </nav>
+
+  <main class="page-shell info-page">
+    <section class="page-card info-hero reveal">
+      <div class="page-heading"><span class="staff-eyebrow">Queensland Interactive</span><h1>Information Hub</h1><p>Select a topic below to view its dedicated information page.</p></div>
+    </section>
+
+    <nav class="info-directory" aria-label="Information directory">
+      <a class="info-tile" href="rules/"><span class="material-icons">gavel</span><strong>Rules</strong></a>
+      <a class="info-tile" href="faq/"><span class="material-icons">help_outline</span><strong>FAQ</strong></a>
+      <a class="info-tile" href="support/"><span class="material-icons">support_agent</span><strong>Support</strong></a>
+      <a class="info-tile" href="services/"><span class="material-icons">groups</span><strong>Service Discords</strong></a>
+      <a class="info-tile" href="applications/"><span class="material-icons">assignment</span><strong>Applications</strong></a>
+    </nav>
+
+  </main>
+  <script src="../scripts/maintenance.js"></script>
+</body>
+</html>
