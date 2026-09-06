@@ -129,6 +129,8 @@ const loadLiveOperationsStatus = async () => {
   const apiRequestsEl = document.getElementById("api-requests");
   const apiDowntimeEl = document.getElementById("api-downtime");
   const statusUpdatedEl = document.getElementById("status-updated");
+  const ssuOverlayEl = document.getElementById("ssu-live-overlay");
+  const ssuDiscordLinkEl = document.querySelector(".ssu-discord-link");
 
   if (!ssuValueEl || !websiteEl || !gameEl) {
     return;
@@ -136,7 +138,12 @@ const loadLiveOperationsStatus = async () => {
 
   try {
     const data = await fetchJson(buildProxyUrl("/api/live-status"));
-    const metricsData = await fetchJson(buildProxyUrl("/api/metrics"));
+    let metricsData = null;
+    try {
+      metricsData = await fetchJson(buildProxyUrl("/api/metrics"));
+    } catch (metricsError) {
+      console.info("Protected staff metrics are unavailable on the public status page.");
+    }
     const ssu = data.ssu || {};
 
     ssuValueEl.textContent = ssu.label || "Unavailable";
@@ -160,13 +167,20 @@ const loadLiveOperationsStatus = async () => {
       }
     }
 
+    if (ssuOverlayEl) {
+      ssuOverlayEl.hidden = !ssu.active;
+      if (ssu.active && ssu.link && ssu.link.startsWith("https://")) {
+        ssuDiscordLinkEl.href = ssu.link;
+      }
+    }
+
     const services = data.services || {};
     applyServiceStatus(services.website, websiteEl, websiteMetaEl, websiteCard, "website");
     applyServiceStatus(services.game, gameEl, gameMetaEl, gameCard, "game");
-    if (apiUptimeEl) apiUptimeEl.textContent = metricsData.uptime || "Unavailable";
-    if (apiSpeedEl) apiSpeedEl.textContent = `${metricsData.averageResponseMs ?? "-"}ms`;
-    if (apiRequestsEl) apiRequestsEl.textContent = String(metricsData.requests ?? "-");
-    if (apiDowntimeEl) apiDowntimeEl.textContent = metricsData.services?.website?.downtime || "0d 0h 0m 0s";
+    if (apiUptimeEl) apiUptimeEl.textContent = metricsData?.uptime || "Staff view only";
+    if (apiSpeedEl) apiSpeedEl.textContent = metricsData ? `${metricsData.averageResponseMs ?? "-"}ms` : "Staff view only";
+    if (apiRequestsEl) apiRequestsEl.textContent = metricsData ? String(metricsData.requests ?? "-") : "Staff view only";
+    if (apiDowntimeEl) apiDowntimeEl.textContent = metricsData?.services?.website?.downtime || "Staff view only";
     if (statusUpdatedEl) statusUpdatedEl.textContent = `Live check ${new Date(data.checkedAt).toLocaleTimeString()}`;
   } catch (error) {
     ssuValueEl.textContent = "Unavailable";
@@ -178,6 +192,7 @@ const loadLiveOperationsStatus = async () => {
     applyServiceStatus(null, websiteEl, websiteMetaEl, websiteCard, "website");
     applyServiceStatus(null, gameEl, gameMetaEl, gameCard, "game");
     if (statusUpdatedEl) statusUpdatedEl.textContent = "Live data unavailable";
+    if (ssuOverlayEl) ssuOverlayEl.hidden = true;
   }
 };
 

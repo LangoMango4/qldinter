@@ -2472,3 +2472,55 @@ h2,
   color: #64748b;
   font-size: 0.7rem;
 }
+
+.ssu-live-overlay {
+  margin-top: 20px;
+  min-height: 230px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 16px;
+  background: linear-gradient(90deg, rgba(10, 27, 70, .92), rgba(10, 27, 70, .48)), url("../assets/images/hero4.png") center/cover;
+  color: #fff;
+}
+
+.ssu-live-overlay[hidden] {
+  display: none;
+}
+
+.ssu-live-content {
+  width: min(620px, calc(100% - 40px));
+  padding: 30px 0;
+  text-align: center;
+}
+
+.ssu-live-content h2 {
+  margin: 8px 0;
+  color: #fff;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.ssu-live-content p {
+  color: #e0eafe;
+}
+
+.ssu-live-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.ssu-live-button {
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: #fff;
+  color: #163388;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ssu-live-button:hover {
+  background: #dbeafe;
+}
