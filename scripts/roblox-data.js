@@ -18,7 +18,7 @@ const formatNumber = (value) => {
 };
 
 const fetchJson = async (url) => {
-  const response = await fetch(url, { cache: "no-store" });
+  const response = await fetch(url, { cache: "no-store", credentials: "include" });
   if (!response.ok) {
     throw new Error(`Request failed: ${response.status}`);
   }

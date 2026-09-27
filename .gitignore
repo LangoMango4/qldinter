@@ -46,3 +46,4 @@
 node_modules/
 server/.env
 npm-debug.log*
+scripts/hero-slider.js
