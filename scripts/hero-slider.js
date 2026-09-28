@@ -1,8 +1,8 @@
 const slides = document.querySelectorAll(".hero-slide");
 
-const images = [
+const slideSources = [
+  "assets/images/hero2.mp4",
   "assets/images/hero1.png",
-  "assets/images/hero2.png",
   "assets/images/hero3.png",
   "assets/images/hero4.png",
   "assets/images/hero5.png",
@@ -12,16 +12,37 @@ const images = [
 ];
 
 let current = 0;
+const videos = new Map();
 
-// assign images
 slides.forEach((slide, i) => {
-  slide.style.backgroundImage = `url(${images[i % images.length]})`;
+  const source = slideSources[i % slideSources.length];
+
+  if (/\.mp4(?:$|\?)/i.test(source)) {
+    const video = document.createElement("video");
+    video.className = "hero-slide-video";
+    video.src = source;
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+    video.setAttribute("aria-hidden", "true");
+    slide.append(video);
+    videos.set(slide, video);
+  } else {
+    slide.style.backgroundImage = `url(${source})`;
+  }
 });
+
+videos.get(slides[current])?.play().catch(() => {});
 
 // cycle
 setInterval(() => {
-  slides[current].classList.remove("active");
+  const previousSlide = slides[current];
+  previousSlide.classList.remove("active");
+  videos.get(previousSlide)?.pause();
   current = (current + 1) % slides.length;
-  slides[current].classList.add("active");
+  const activeSlide = slides[current];
+  activeSlide.classList.add("active");
+  videos.get(activeSlide)?.play().catch(() => {});
 }, 5000);
 
