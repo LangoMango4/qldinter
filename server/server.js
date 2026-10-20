@@ -364,6 +364,31 @@ const isQliteTrelloAccountActive = async (cardId, expectedListId) => {
   return card.closed === false && card.idList === listId;
 };
 
+const setQliteTrelloAccountAccess = async (cardId, listId, active) => {
+  const params = new URLSearchParams({
+    closed: String(!active),
+    ...(active ? { idList: listId } : {})
+  });
+  const response = await fetch(trelloApiUrl(`cards/${encodeURIComponent(cardId)}`, Object.fromEntries(params)), {
+    method: "PUT",
+    headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(8000)
+  });
+  if (response.status === 404) {
+    const error = new Error("The Trello QLiTE account card no longer exists.");
+    error.status = 404;
+    throw error;
+  }
+  if (!response.ok) {
+    console.error("Trello QLiTE account access update failed:", response.status);
+    const error = new Error("Could not update this account's Trello access record.");
+    error.status = response.status;
+    throw error;
+  }
+  const card = await response.json();
+  return card.closed === false && card.idList === listId;
+};
+
 const sendBanToTrello = async (ban) => {
   console.log("Trello config check:");
   console.log("- TRELLO_API_KEY:", !!TRELLO_API_KEY);
@@ -1793,6 +1818,87 @@ app.get("/api/admin/me", requireAdmin, (req, res) => {
     user: req.adminUser,
     adminMode: "allowlist"
   });
+});
+
+app.get("/api/admin/qlite-accounts", requireAdmin, async (req, res) => {
+  try {
+    const accounts = await Promise.all(Object.values(qliteAccounts).map(async (account) => ({
+      discordId: account.discordId,
+      username: account.username,
+      createdAt: account.createdAt,
+      accessActive: await isQliteTrelloAccountActive(account.trelloCardId, account.trelloListId)
+    })));
+    accounts.sort((left, right) => left.username.localeCompare(right.username));
+    return res.json({ accounts });
+  } catch (error) {
+    console.error("Unable to load QLiTE account access for admin:", error);
+    return res.status(503).json({ error: "Could not verify QLiTE account access in Trello." });
+  }
+});
+
+app.put("/api/admin/qlite-accounts/:discordId/access", requireAdmin, async (req, res) => {
+  const discordId = String(req.params.discordId || "");
+  const active = req.body?.active;
+  if (!/^\d{1,25}$/.test(discordId) || typeof active !== "boolean") {
+    return res.status(400).json({ error: "A valid Discord user ID and boolean access status are required." });
+  }
+
+  const account = qliteAccounts[discordId];
+  if (!account) {
+    return res.status(404).json({ error: "QLiTE account not found." });
+  }
+
+  try {
+    const listId = account.trelloListId || await resolveQliteAccountsListId();
+    let trelloCardId = account.trelloCardId;
+    let accessActive = false;
+    try {
+      accessActive = await setQliteTrelloAccountAccess(trelloCardId, listId, active);
+    } catch (error) {
+      if (!active || error.status !== 404) throw error;
+      trelloCardId = await createQliteTrelloAccountCard({
+        id: account.discordId,
+        username: account.username
+      }, listId);
+      accessActive = true;
+    }
+
+    if (accessActive !== active) {
+      return res.status(502).json({ error: "Trello did not confirm the requested account access change." });
+    }
+
+    const previousAccount = { ...account };
+    account.trelloCardId = trelloCardId;
+    account.trelloListId = listId;
+    try {
+      saveQliteAccounts();
+    } catch (error) {
+      Object.assign(account, previousAccount);
+      console.error("Unable to persist the QLiTE account access change:", error);
+      return res.status(500).json({ error: "Trello was updated, but the server could not save the account record. Contact support." });
+    }
+
+    const affectedSessions = [];
+    for (const [token, session] of discordSessions.entries()) {
+      if (String(session.user?.id) === discordId && session.authMethod === "qlite-password") {
+        affectedSessions.push(token);
+      }
+    }
+    if (!active) {
+      affectedSessions.forEach((token) => discordSessions.delete(token));
+    }
+
+    return res.json({
+      success: true,
+      discordId,
+      username: account.username,
+      accessActive,
+      revokedSessions: active ? 0 : affectedSessions.length
+    });
+  } catch (error) {
+    console.error("Unable to update QLiTE account access:", error);
+    return res.status(502).json({ error: error.message || "Could not update QLiTE account access." });
+  }
 });
 
 app.get("/api/admin/moderation", requireAdmin, (req, res) => {

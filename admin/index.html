@@ -164,6 +164,16 @@
           <h2 class="admin-title">Current Bans</h2>
           <div id="ban-list" class="admin-list"></div>
         </section>
+
+        <section class="admin-card">
+          <h2 class="admin-title">QLiTE Account Access</h2>
+          <p class="admin-subtitle">Restore revoked QLiTE accounts or revoke access. Re-allowing an account moves its Trello card back to the QLiTE Accounts list. Passwords are never shown here.</p>
+          <div class="admin-actions" style="margin-bottom: 14px;">
+            <button id="refresh-qlite-accounts" class="admin-btn admin-btn-primary" type="button">Refresh accounts</button>
+          </div>
+          <div id="qlite-accounts-status" class="admin-status" role="status" aria-live="polite">Loading QLiTE accounts…</div>
+          <div id="qlite-account-list" class="admin-list"></div>
+        </section>
       </div>
     </div>
   </main>
@@ -171,4 +181,3 @@
   <script src="../scripts/config.js"></script>
 </body>
 </html>
-

@@ -13,6 +13,9 @@ class AdminPanel {
     this.trelloLink = document.getElementById('admin-trello-link');
     this.operationsLink = document.getElementById('admin-operations-link');
     this.operationsButton = document.getElementById('admin-operations-button');
+    this.qliteAccountList = document.getElementById('qlite-account-list');
+    this.qliteAccountsStatus = document.getElementById('qlite-accounts-status');
+    this.refreshQliteAccountsButton = document.getElementById('refresh-qlite-accounts');
     this.banTargetRadios = Array.from(document.querySelectorAll('input[name="ban-target-type"]'));
     this.banGroupField = document.getElementById('ban-group-field');
     this.banUserFields = Array.from(document.querySelectorAll('.ban-user-field'));
@@ -48,6 +51,7 @@ class AdminPanel {
 
     this.webhookTestBtn?.addEventListener('click', () => this.testWebhook());
     this.reviewForm?.addEventListener('submit', (event) => this.handleReviewSubmit(event));
+    this.refreshQliteAccountsButton?.addEventListener('click', () => this.loadQliteAccounts());
 
     const banReasonSelect = document.getElementById('ban-reason');
     const otherReasonInput = document.getElementById('ban-other-reason');
@@ -309,8 +313,7 @@ class AdminPanel {
     this.toggleTrelloLink(false);
     await this.refreshAuth();
     if (this.isAdmin) {
-      await this.loadBans();
-      await this.loadReviews();
+      await Promise.all([this.loadBans(), this.loadReviews(), this.loadQliteAccounts()]);
     }
   }
 
@@ -438,6 +441,92 @@ class AdminPanel {
     }
   }
 
+  setQliteAccountsStatus(message, type = 'info') {
+    if (!this.qliteAccountsStatus) return;
+    this.qliteAccountsStatus.className = 'admin-status';
+    if (type === 'error') this.qliteAccountsStatus.classList.add('admin-error');
+    if (type === 'success') this.qliteAccountsStatus.classList.add('admin-success');
+    this.qliteAccountsStatus.textContent = message;
+  }
+
+  async loadQliteAccounts() {
+    if (!this.isAdmin || !this.qliteAccountList) return;
+    this.setQliteAccountsStatus('Loading QLiTE account access from Trello…');
+    if (this.refreshQliteAccountsButton) this.refreshQliteAccountsButton.disabled = true;
+
+    try {
+      const response = await fetch(`${this.apiBase}/api/admin/qlite-accounts`, {
+        credentials: 'include',
+        cache: 'no-store'
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || 'Failed to load QLiTE accounts.');
+
+      const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
+      if (accounts.length === 0) {
+        this.qliteAccountList.innerHTML = '<div class="admin-meta">No QLiTE accounts are registered.</div>';
+      } else {
+        this.qliteAccountList.innerHTML = accounts.map((account) => {
+          const username = this.escapeHtml(account.username || 'Unknown');
+          const discordId = this.escapeHtml(account.discordId || '');
+          const status = account.accessActive ? 'Access allowed' : 'Access revoked';
+          const statusType = account.accessActive ? 'admin-success' : 'admin-error';
+          const action = account.accessActive ? 'Revoke access' : 'Re-allow';
+          const actionClass = account.accessActive ? 'admin-btn-danger' : 'admin-btn-primary';
+          return `
+            <div class="admin-list-item">
+              <div>
+                <div><strong>${username}</strong></div>
+                <div class="admin-meta">Discord ID: ${discordId}</div>
+                <div class="admin-status ${statusType}" style="margin: 7px 0 0; padding: 6px 9px;">${status}</div>
+              </div>
+              <button class="admin-btn ${actionClass}" type="button" data-qlite-access="${discordId}" data-active="${!account.accessActive}">${action}</button>
+            </div>
+          `;
+        }).join('');
+        this.qliteAccountList.querySelectorAll('[data-qlite-access]').forEach((button) => {
+          button.addEventListener('click', () => this.updateQliteAccountAccess(
+            button.dataset.qliteAccess,
+            button.dataset.active === 'true',
+            button
+          ));
+        });
+      }
+      this.setQliteAccountsStatus(`Loaded ${accounts.length} QLiTE account${accounts.length === 1 ? '' : 's'}.`, 'success');
+    } catch (error) {
+      this.qliteAccountList.innerHTML = '';
+      this.setQliteAccountsStatus(error.message || 'Failed to load QLiTE account access.', 'error');
+    } finally {
+      if (this.refreshQliteAccountsButton) this.refreshQliteAccountsButton.disabled = false;
+    }
+  }
+
+  async updateQliteAccountAccess(discordId, active, button) {
+    if (!discordId || !this.isAdmin) return;
+    const action = active ? 're-allow' : 'revoke access for';
+    if (!window.confirm(`Are you sure you want to ${action} Discord user ${discordId}?`)) return;
+
+    button.disabled = true;
+    try {
+      const response = await fetch(`${this.apiBase}/api/admin/qlite-accounts/${encodeURIComponent(discordId)}/access`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ active })
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || 'Failed to update QLiTE account access.');
+      this.setQliteAccountsStatus(
+        `${payload.username || discordId} access ${active ? 're-allowed' : 'revoked'} successfully.`,
+        'success'
+      );
+      await this.loadQliteAccounts();
+    } catch (error) {
+      this.setQliteAccountsStatus(error.message || 'Failed to update QLiTE account access.', 'error');
+      button.disabled = false;
+    }
+  }
+
   async testWebhook() {
     if (!this.isAdmin) {
       this.setWebhookTestStatus('Not authenticated as admin.', 'error');
@@ -513,4 +602,3 @@ if (document.readyState === 'loading') {
 } else {
   new AdminPanel();
 }
-
