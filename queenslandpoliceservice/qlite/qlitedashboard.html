@@ -3,409 +3,1249 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>QLiTE Dashboard</title>
-  <link rel="icon" href="/assets/images/favicon.png">
-  <link rel="stylesheet" href="/styles/styles.css">
+  <title>QLiTE Roblox Officer Dashboard</title>
+  <link rel="icon" href="../../assets/images/favicon.png">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      margin: 0;
       min-height: 100vh;
-      background: radial-gradient(circle at top left, rgba(30, 144, 255, 0.18), transparent 38%),
-                  radial-gradient(circle at bottom right, rgba(22, 51, 136, 0.22), transparent 30%),
-                  #08121f;
-      color: #e2e8f0;
-      font-family: "Roboto", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
-    }
-    .dashboard-shell {
-      width: min(1400px, calc(100% - 32px));
-      margin: 0 auto;
-      padding: 32px 0 64px;
-    }
-    .dashboard-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 32px;
-    }
-    .dashboard-brand {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .dashboard-brand img {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
-      object-fit: contain;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-    }
-    .dashboard-brand h1 {
       margin: 0;
-      font-size: clamp(2rem, 2.8vw, 2.7rem);
-      color: white;
-      letter-spacing: -0.03em;
-    }
-    .dashboard-brand p {
-      margin: 4px 0 0;
-      color: #9ca3af;
-      font-size: 0.95rem;
-    }
-    .dashboard-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .dashboard-button {
-      border: none;
-      border-radius: 999px;
-      padding: 12px 20px;
-      background: #1e40af;
-      color: white;
-      cursor: pointer;
-      font-weight: 600;
-      transition: transform 0.2s ease, background 0.2s ease;
-    }
-    .dashboard-button:hover {
-      transform: translateY(-1px);
-      background: #2563eb;
-    }
-    .dashboard-grid {
-      display: grid;
-      gap: 24px;
-      grid-template-columns: 1.55fr 1fr;
-    }
-    .dashboard-card {
-      background: rgba(10, 20, 38, 0.92);
-      border: 1px solid rgba(148, 163, 184, 0.18);
-      border-radius: 24px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.2);
-      padding: 26px;
-      backdrop-filter: blur(18px);
-    }
-    .dashboard-subtitle {
-      color: #94a3b8;
-      margin: 0 0 18px;
-    }
-    .dashboard-section {
-      display: grid;
-      gap: 18px;
-    }
-    .search-bar {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-    .search-input {
-      flex: 1 1 320px;
-      min-width: 200px;
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.22);
-      padding: 14px 18px;
-      background: rgba(255,255,255,0.06);
-      color: white;
-      outline: none;
-      font-size: 1rem;
-    }
-    .search-input::placeholder {
-      color: #94a3b8;
-    }
-    .pill-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .pill {
-      border-radius: 999px;
-      padding: 10px 14px;
-      background: #111a2b;
-      color: #cbd5e1;
-      font-size: 0.92rem;
-      border: 1px solid rgba(148, 163, 184, 0.12);
-    }
-    .panel-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin: 0 0 12px;
-      color: white;
-      font-size: 1.15rem;
-    }
-    .panel-title span {
-      color: #94a3b8;
-      font-size: 0.95rem;
-    }
-    .search-results,
-    .details-list {
-      display: grid;
-      gap: 14px;
-    }
-    .result-card,
-    .detail-card {
-      background: rgba(15, 24, 48, 0.95);
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      border-radius: 18px;
-      padding: 18px;
-    }
-    .result-card:hover,
-    .detail-card:hover {
-      border-color: rgba(66, 153, 225, 0.28);
-      transform: translateY(-1px);
-    }
-    .result-card {
-      cursor: pointer;
-      transition: transform 0.15s ease, border-color 0.15s ease;
-    }
-    .result-card-title,
-    .detail-card-title {
-      font-size: 1rem;
-      margin: 0 0 8px;
-      color: white;
-    }
-    .result-card-text,
-    .detail-card-text {
-      margin: 0;
-      color: #cbd5e1;
-      line-height: 1.7;
-      font-size: 0.95rem;
-    }
-    .status-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      border-radius: 999px;
-      background: rgba(59, 130, 246, 0.15);
-      color: #93c5fd;
-      padding: 6px 10px;
-      font-size: 0.82rem;
-      font-weight: 600;
-    }
-    .detail-columns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-    .info-group {
-      display: grid;
-      gap: 10px;
-    }
-    .info-label {
-      color: #94a3b8;
-      font-size: 0.86rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .info-value {
-      color: white;
-      font-weight: 600;
-      line-height: 1.5;
-    }
-    .alert-chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: #111b2c;
-      color: #c7d2fe;
-      border: 1px solid rgba(148, 163, 184, 0.12);
-      font-size: 0.88rem;
-      font-weight: 600;
-    }
-    .alert-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .alert-row .alert-chip[data-type="high"] {
-      background: #7f1d1d;
-      color: #fecaca;
-      border-color: rgba(248, 113, 113, 0.2);
-    }
-    .alert-row .alert-chip[data-type="medium"] {
-      background: #78350f;
-      color: #fed7aa;
-      border-color: rgba(253, 186, 116, 0.2);
-    }
-    .alert-row .alert-chip[data-type="low"] {
-      background: #134e4a;
-      color: #a7f3d0;
-      border-color: rgba(52, 211, 153, 0.2);
-    }
-    .detail-image {
-      width: 100%;
-      aspect-ratio: 16 / 10;
-      border-radius: 18px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
       display: grid;
       place-items: center;
-      color: #94a3b8;
-      font-size: 0.95rem;
-      border: 1px solid rgba(148, 163, 184, 0.12);
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 0, rgba(38, 79, 149, .35), transparent 55%),
+        #09131d;
+      color: #eef3ff;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
     }
-    .detail-image img {
-      max-width: 100%;
-      border-radius: 16px;
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .ipad-container {
+      position: relative;
+      width: min(1000px, 100vw, calc(100dvh * 10 / 7));
+      aspect-ratio: 10 / 7;
+    }
+
+    .background-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .screen {
+      position: absolute;
+      top: 50%;
+      left: 49.55%;
+      display: flex;
+      flex-direction: column;
+      width: 81%;
+      height: 86.43%;
+      overflow: hidden;
+      transform: translate(-50%, -50%);
+      background: #101a2d;
+      color: #f5f7fb;
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, .12);
+    }
+
+    .topbar {
+      display: flex;
+      flex: 0 0 52px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 17px;
+      background: #0b1220;
+      border-bottom: 1px solid #2a3854;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    .brand img {
+      width: 30px;
+      height: 30px;
+      padding: 2px;
+      border-radius: 7px;
+      background: #fff;
+      object-fit: contain;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .09em;
+    }
+
+    .brand-caption {
+      margin: 2px 0 0;
+      color: #91a1bc;
+      font-size: 9px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .demo-label {
+      padding: 5px 8px;
+      border: 1px solid rgba(250, 204, 21, .35);
+      border-radius: 4px;
+      background: rgba(250, 204, 21, .1);
+      color: #facc15;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .signout {
+      padding: 6px 9px;
+      border: 1px solid #36445d;
+      border-radius: 5px;
+      background: transparent;
+      color: #dbe5f7;
+      font-size: 10px;
+    }
+
+    .quick-nav {
+      display: flex;
+      flex: 0 0 38px;
+      align-items: center;
+      gap: 6px;
+      padding: 0 15px;
+      overflow-x: auto;
+      background: #15213a;
+      border-bottom: 1px solid #2a3854;
+      scrollbar-width: none;
+    }
+
+    .quick-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-chip {
+      flex: 0 0 auto;
+      padding: 5px 9px;
+      border: 0;
+      border-radius: 4px;
+      background: #36445e;
+      color: #f8fafc;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .03em;
+    }
+
+    .nav-chip:nth-child(1) { background: #b93b48; }
+    .nav-chip:nth-child(2) { background: #6350a3; }
+    .nav-chip:nth-child(3) { background: #bd6832; }
+    .nav-chip:nth-child(4) { background: #b78a22; }
+    .nav-chip:nth-child(5) { background: #398795; }
+    .nav-chip:nth-child(6) { background: #3f639e; }
+
+    .workspace {
+      display: grid;
+      flex: 1;
+      min-height: 0;
+      grid-template-columns: minmax(245px, .88fr) minmax(0, 1.35fr);
+      gap: 12px;
+      padding: 12px;
+      background:
+        radial-gradient(ellipse at 85% 0, rgba(44, 71, 123, .32), transparent 48%),
+        #111c32;
+    }
+
+    .panel {
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      border: 1px solid #2c3a56;
+      border-radius: 7px;
+      background: #192640;
+    }
+
+    .search-panel {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 12px 9px;
+    }
+
+    .eyebrow {
+      margin: 0 0 4px;
+      color: #7e9bc5;
+      font-size: 8px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+
+    .panel-heading h2,
+    .profile-heading h2 {
+      margin: 0;
+      font-size: 14px;
+      letter-spacing: .02em;
+    }
+
+    .online-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3bd298;
+      box-shadow: 0 0 9px rgba(59, 210, 152, .65);
+    }
+
+    .search-form {
+      display: flex;
+      gap: 6px;
+      padding: 0 10px 9px;
+    }
+
+    .search-form input {
+      min-width: 0;
+      flex: 1;
+      height: 34px;
+      padding: 0 9px;
+      border: 1px solid #394966;
+      border-radius: 5px;
+      outline: none;
+      background: #111a2b;
+      color: white;
+      font-size: 10px;
+    }
+
+    .search-form input::placeholder {
+      color: #8190a9;
+    }
+
+    .search-form input:focus,
+    .record-form input:focus,
+    .record-form select:focus,
+    .record-form textarea:focus {
+      border-color: #5d9dff;
+      box-shadow: 0 0 0 2px rgba(69, 139, 255, .15);
+    }
+
+    .primary-button {
+      border: 1px solid #4387ec;
+      border-radius: 5px;
+      background: #2466c9;
+      color: white;
+      font-weight: 700;
+    }
+
+    .search-form button {
+      padding: 0 10px;
+      font-size: 10px;
+    }
+
+    .hint {
+      margin: 0;
+      padding: 0 11px 10px;
+      color: #8796af;
+      font-size: 9px;
+      line-height: 1.45;
+    }
+
+    .search-status {
+      min-height: 26px;
+      padding: 6px 11px;
+      border-top: 1px solid rgba(255, 255, 255, .06);
+      border-bottom: 1px solid rgba(255, 255, 255, .06);
+      color: #aebbd0;
+      font-size: 9px;
+    }
+
+    .search-status[data-error="true"] {
+      color: #ff9999;
+    }
+
+    .results {
+      min-height: 0;
+      flex: 1;
+      overflow: auto;
+      padding: 7px;
+    }
+
+    .result {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      gap: 9px;
+      padding: 8px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      background: transparent;
+      color: inherit;
+      text-align: left;
+    }
+
+    .result:hover,
+    .result[aria-current="true"] {
+      border-color: #394b6d;
+      background: #233451;
+    }
+
+    .avatar {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      place-items: center;
+      overflow: hidden;
+      border: 1px solid #405474;
+      border-radius: 5px;
+      background: #253653;
+      color: #b9c9e3;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
     }
-    @media (max-width: 1080px) {
-      .dashboard-grid {
-        grid-template-columns: 1fr;
-      }
-      .detail-columns {
-        grid-template-columns: 1fr;
-      }
+
+    .result-copy {
+      min-width: 0;
     }
+
+    .result-name {
+      overflow: hidden;
+      margin: 0;
+      font-size: 10px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .result-username {
+      overflow: hidden;
+      margin: 3px 0 0;
+      color: #95a6c0;
+      font-size: 9px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .empty-state {
+      padding: 18px 10px;
+      color: #95a6c0;
+      font-size: 10px;
+      line-height: 1.55;
+      text-align: center;
+    }
+
+    .profile-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      padding: 11px;
+      overflow-y: auto;
+    }
+
+    .profile-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .connection-status {
+      color: #81d7b3;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: .04em;
+    }
+
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 10px;
+      border: 1px solid #334563;
+      border-radius: 6px;
+      background: linear-gradient(115deg, #243858, #1c2a43);
+    }
+
+    .profile-card .avatar {
+      width: 54px;
+      height: 54px;
+      flex-basis: 54px;
+      border-radius: 6px;
+    }
+
+    .profile-copy {
+      min-width: 0;
+    }
+
+    .profile-name {
+      overflow: hidden;
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .profile-username {
+      margin: 3px 0 5px;
+      color: #aabbd5;
+      font-size: 10px;
+    }
+
+    .profile-id {
+      color: #8295b2;
+      font-size: 9px;
+    }
+
+    .verified {
+      margin-left: 4px;
+      color: #66b5ff;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .stat {
+      min-width: 0;
+      padding: 8px;
+      border: 1px solid #2e3d58;
+      border-radius: 5px;
+      background: #151f34;
+    }
+
+    .stat-label {
+      display: block;
+      margin-bottom: 4px;
+      color: #8294b0;
+      font-size: 8px;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+    }
+
+    .stat-value {
+      overflow: hidden;
+      display: block;
+      color: #f3f6fb;
+      font-size: 10px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .action-button {
+      min-height: 32px;
+      padding: 7px;
+      border: 1px solid #405273;
+      border-radius: 5px;
+      background: #253755;
+      color: #ecf3ff;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .action-button:hover {
+      background: #304563;
+    }
+
+    .action-button.fine {
+      border-color: #796034;
+      background: #413621;
+      color: #ffe2a0;
+    }
+
+    .action-button.warrant {
+      border-color: #7d404a;
+      background: #482630;
+      color: #ffb4bc;
+    }
+
+    .records-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 1px;
+    }
+
+    .records-heading h3 {
+      margin: 0;
+      font-size: 10px;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .local-note {
+      color: #8d9bb2;
+      font-size: 8px;
+      text-align: right;
+    }
+
+    .records {
+      display: grid;
+      gap: 5px;
+    }
+
+    .record {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 8px;
+      border-left: 2px solid #e2ae46;
+      border-radius: 3px;
+      background: #151f34;
+    }
+
+    .record[data-type="Warrant"] {
+      border-left-color: #e66c79;
+    }
+
+    .record-copy {
+      min-width: 0;
+    }
+
+    .record-title {
+      margin: 0;
+      color: #eef3fc;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .record-detail {
+      overflow: hidden;
+      margin: 3px 0 0;
+      color: #98a8c0;
+      font-size: 8px;
+      text-overflow: ellipsis;
+    }
+
+    .record-date {
+      flex: 0 0 auto;
+      color: #7f91ad;
+      font-size: 8px;
+    }
+
+    .footer {
+      display: flex;
+      flex: 0 0 21px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 13px;
+      background: #0b1220;
+      color: #7889a4;
+      font-size: 8px;
+    }
+
+    dialog {
+      width: min(370px, calc(100% - 30px));
+      padding: 0;
+      border: 1px solid #405273;
+      border-radius: 8px;
+      background: #182640;
+      color: #f3f6fb;
+      box-shadow: 0 18px 65px rgba(0, 0, 0, .55);
+    }
+
+    dialog::backdrop {
+      background: rgba(3, 8, 17, .76);
+    }
+
+    .record-form {
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+    }
+
+    .record-form h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .record-form .form-caption {
+      margin: -6px 0 1px;
+      color: #9baac0;
+      font-size: 10px;
+    }
+
+    .record-form label {
+      display: grid;
+      gap: 5px;
+      color: #bcc8da;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .record-form input,
+    .record-form select,
+    .record-form textarea {
+      width: 100%;
+      min-height: 34px;
+      padding: 8px;
+      border: 1px solid #394966;
+      border-radius: 5px;
+      outline: none;
+      background: #101a2b;
+      color: white;
+      font-size: 11px;
+    }
+
+    .record-form textarea {
+      min-height: 66px;
+      resize: vertical;
+    }
+
+    .dialog-warning {
+      margin: 0;
+      color: #f2ca72;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 7px;
+      margin-top: 2px;
+    }
+
+    .dialog-actions button {
+      min-height: 31px;
+      padding: 0 11px;
+      font-size: 10px;
+    }
+
+    .cancel-button {
+      border: 1px solid #43516a;
+      border-radius: 5px;
+      background: transparent;
+      color: #d8e1ef;
+    }
+
     @media (max-width: 680px) {
-      .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
+      .ipad-container {
+        width: 100vw;
+        height: 100dvh;
+        aspect-ratio: auto;
       }
-      .dashboard-actions {
+
+      .background-image {
+        display: none;
+      }
+
+      .screen {
+        inset: 0;
         width: 100%;
+        height: 100%;
+        transform: none;
       }
-      .search-bar {
-        flex-direction: column;
+
+      .workspace {
+        grid-template-columns: minmax(120px, .78fr) minmax(0, 1.22fr);
+        gap: 7px;
+        padding: 7px;
+      }
+
+      .topbar {
+        flex-basis: 47px;
+        padding: 0 10px;
+      }
+
+      .brand-caption,
+      .demo-label,
+      .local-note {
+        display: none;
+      }
+
+      .profile-panel {
+        padding: 8px;
+      }
+
+      .profile-name {
+        font-size: 13px;
+      }
+
+      .stat {
+        padding: 6px;
       }
     }
+
   </style>
 </head>
 <body>
-  <div class="dashboard-shell">
-    <header class="dashboard-header">
-      <div class="dashboard-brand">
-        <img src="/assets/images/qps.png" alt="QLiTE Logo">
-        <div>
-          <h1>QLiTE Dashboard</h1>
-          <p>Intelligence & investigative overview for Queensland Police Service.</p>
+  <main class="ipad-container" aria-label="QLiTE Roblox officer dashboard">
+    <img class="background-image" src="../../assets/images/ipad.png" alt="">
+    <section class="screen">
+      <header class="topbar">
+        <div class="brand">
+          <img src="../../assets/images/qps.png" alt="">
+          <div>
+            <p class="brand-title">QLiTE <span style="color:#65a9ff">/ ROBLOX</span></p>
+            <p class="brand-caption">Queensland Police Service · Mobile data terminal</p>
+          </div>
         </div>
-      </div>
-      <div class="dashboard-actions">
-        <button class="dashboard-button" onclick="goHome()">Back to QLiTE Login</button>
-        <button class="dashboard-button" onclick="signOut()">Sign out</button>
-      </div>
-    </header>
+        <div class="topbar-right">
+          <span class="demo-label">QLiTE Westlands Police</span>
+          <button class="signout" type="button" onclick="signOut()">Sign out</button>
+        </div>
+      </header>
 
-    <div class="dashboard-grid">
-      <section class="dashboard-card">
-        <div class="dashboard-section">
-          <div class="panel-title">
+      <nav class="quick-nav" aria-label="Record categories">
+        <button class="nav-chip" type="button" data-category="Safety">SAFETY</button>
+        <button class="nav-chip" type="button" data-category="DV">DV</button>
+        <button class="nav-chip" type="button" data-category="Directions">DIRECTIONS</button>
+        <button class="nav-chip" type="button" data-category="Fines">FINES</button>
+        <button class="nav-chip" type="button" data-category="Warrants">WARRANTS</button>
+        <button class="nav-chip" type="button" data-category="Traffic">TRAFFIC</button>
+      </nav>
+
+      <div class="workspace">
+        <section class="panel search-panel" aria-labelledby="search-title">
+          <div class="panel-heading">
             <div>
-              <strong>Person search</strong>
-              <span>Search QPS records and quick match results</span>
+              <p class="eyebrow">Roblox public directory</p>
+              <h2 id="search-title">Player search</h2>
             </div>
+            <span class="online-dot" title="Search service available"></span>
           </div>
-
-          <div class="search-bar">
-            <input class="search-input" type="search" placeholder="Search by name, alias, vehicle or location">
-            <button class="dashboard-button" style="min-width: 145px;">Search</button>
+          <form class="search-form" id="search-form">
+            <input id="search-input" type="search" maxlength="50" autocomplete="off" placeholder="Username or display name" aria-label="Roblox username or display name">
+            <button class="primary-button" type="submit">Search</button>
+          </form>
+          <p class="hint">Search public Roblox profiles by username or display name. Select a player to view their profile.</p>
+          <div class="search-status" id="search-status" role="status" aria-live="polite">Enter a Roblox name to begin.</div>
+          <div class="results" id="results" aria-label="Search results">
+            <div class="empty-state">Player matches will appear here.</div>
           </div>
+        </section>
 
-          <div class="search-results">
-            <div class="result-card">
-              <p class="result-card-title">No recent searches</p>
-              <p class="result-card-text">This area will display search results once you search for a person, vehicle, location, or organisation.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="dashboard-card">
-        <div class="dashboard-section">
-          <div class="panel-title">
+        <section class="panel profile-panel" aria-labelledby="overview-title">
+          <div class="profile-heading">
             <div>
-              <strong>Selected person</strong>
-              <span>Active alerts, details & domestic violence flags</span>
+              <p class="eyebrow">Roblox player record</p>
+              <h2 id="overview-title">Person overview</h2>
+            </div>
+            <span class="connection-status">PUBLIC PROFILE</span>
+          </div>
+          <div class="profile-card">
+            <div class="avatar" id="profile-avatar" aria-label="Player avatar">?</div>
+            <div class="profile-copy">
+              <p class="profile-name" id="profile-name">No player selected</p>
+              <p class="profile-username" id="profile-username">Search to open a public Roblox profile</p>
+              <span class="profile-id" id="profile-id">PLAYER ID —</span>
             </div>
           </div>
+          <div class="stats">
+            <div class="stat">
+              <span class="stat-label">Account created</span>
+              <span class="stat-value" id="profile-created">—</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Verification</span>
+              <span class="stat-value" id="profile-verified">—</span>
+            </div>
+            <div class="stat">
+              <span class="stat-label">Local records</span>
+              <span class="stat-value" id="record-count">0</span>
+            </div>
+          </div>
+          <div class="actions" aria-label="Player record actions">
+            <button class="action-button fine" type="button" data-action="Fine" disabled>＋ Issue fine</button>
+            <button class="action-button warrant" type="button" data-action="Warrant" disabled>＋ Add warrant</button>
+          </div>
+          <div class="records-heading">
+            <h3>Officer notes & records</h3>
+            <span class="local-note">Saved on this device only</span>
+          </div>
+          <div class="records" id="records">
+            <div class="empty-state">Select a player to view or add local training records.</div>
+          </div>
+        </section>
+      </div>
 
-          <div class="detail-image">
-            <span style="color:#94a3b8; font-size:0.95rem; text-align:center; max-width: 220px;">No person is selected yet. Search for a record to populate this panel.</span>
-          </div>
+      <footer class="footer">
+        <span>QLiTE Roblox · Player records are not Roblox moderation actions</span>
+        <span id="clock"></span>
+      </footer>
+    </section>
+  </main>
 
-          <div class="detail-columns">
-            <div class="info-group">
-              <p class="info-label">Name</p>
-              <p class="info-value">—</p>
-            </div>
-            <div class="info-group">
-              <p class="info-label">DOB</p>
-              <p class="info-value">—</p>
-            </div>
-            <div class="info-group">
-              <p class="info-label">Age</p>
-              <p class="info-value">—</p>
-            </div>
-            <div class="info-group">
-              <p class="info-label">Location</p>
-              <p class="info-value">—</p>
-            </div>
-          </div>
-
-          <div class="panel-title" style="margin-top: 18px;">
-            <strong>Alerts</strong>
-            <span>Latest safety and domestic reports</span>
-          </div>
-          <div class="alert-row">
-            <span class="alert-chip" data-type="high">PAIP — 10 days ago</span>
-            <span class="alert-chip" data-type="medium">Domestic Violence report — 2 days ago</span>
-            <span class="alert-chip" data-type="low">Document for service — 2 days ago</span>
-          </div>
-
-          <div class="details-list">
-            <div class="detail-card">
-              <p class="detail-card-title">Current order</p>
-              <p class="detail-card-text">Respondent for Aggressive Behaviour order with FOELWER, Mary Marcus — 10/03/2025.</p>
-            </div>
-            <div class="detail-card">
-              <p class="detail-card-title">Incident highlights</p>
-              <p class="detail-card-text">No e-Contacts recorded. Mother reports high-risk domestic violence indicators and recent traffic avoidance.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  </div>
+  <dialog id="record-dialog" aria-labelledby="dialog-title">
+    <form class="record-form" id="record-form">
+      <h2 id="dialog-title">Add player record</h2>
+      <p class="form-caption" id="dialog-player"></p>
+      <label id="amount-field" hidden>
+        Fine amount (in-game credits)
+        <input id="fine-amount" type="number" min="1" max="1000000" step="1" value="100">
+      </label>
+      <label id="priority-field" hidden>
+        Priority
+        <select id="warrant-priority">
+          <option value="Standard">Standard</option>
+          <option value="Urgent">Urgent</option>
+        </select>
+      </label>
+      <label>
+        Reason
+        <textarea id="record-reason" maxlength="240" required placeholder="Enter the reason for this training record"></textarea>
+      </label>
+      <p class="dialog-warning">Training record only. This does not contact Roblox or restrict an account.</p>
+      <div class="dialog-actions">
+        <button class="cancel-button" type="button" id="cancel-record">Cancel</button>
+        <button class="primary-button" type="submit" id="save-record">Save record</button>
+      </div>
+    </form>
+  </dialog>
 
   <script src="../../scripts/config.js"></script>
   <script>
-    async function checkAuth() {
-      const isPasswordLoggedIn = sessionStorage.getItem('mdtLoggedIn') === 'true';
-      if (isPasswordLoggedIn) {
-        return true;
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    const searchStatus = document.getElementById('search-status');
+    const resultsContainer = document.getElementById('results');
+    const dialog = document.getElementById('record-dialog');
+    const recordForm = document.getElementById('record-form');
+    const selectedActions = document.querySelectorAll('[data-action]');
+    const storageKey = 'qliteRobloxOfficerRecords';
+    let selectedPlayer = null;
+    let pendingRecordType = null;
+    let searchSequence = 0;
+    let activeSearchKeyword = '';
+    let nextPageCursor = null;
+
+    function setSearchStatus(message, isError = false) {
+      searchStatus.textContent = message;
+      searchStatus.dataset.error = String(isError);
+    }
+
+    function getApiBaseUrl() {
+      const configuredUrl = window.SITE_CONFIG?.API_SERVER_URL;
+      const apiBaseUrl = String(configuredUrl || window.location.origin).replace(/\/$/, '');
+      if (!/^https?:\/\//i.test(apiBaseUrl)) {
+        throw new Error('QLiTE API is not configured. Open the dashboard from the QLiTE website.');
+      }
+      return apiBaseUrl;
+    }
+
+    async function fetchRobloxApi(path) {
+      const apiUrl = `${getApiBaseUrl()}/api/roblox/${path}`;
+      let response;
+      try {
+        response = await fetch(apiUrl, {
+          headers: { Accept: 'application/json' },
+          cache: 'no-store'
+        });
+      } catch (error) {
+        throw new Error(`Could not reach the QLiTE API at ${new URL(apiUrl).host}. Check that the API server is online.`, { cause: error });
       }
 
+      if (response.status === 404) {
+        throw new Error('The QLiTE API does not have Roblox lookup enabled yet. Deploy the updated server before searching.');
+      }
+
+      let payload;
+      try {
+        payload = await response.json();
+      } catch (error) {
+        throw new Error(`QLiTE API returned an invalid response (HTTP ${response.status}).`, { cause: error });
+      }
+      if (!response.ok) {
+        throw new Error(payload.error || `QLiTE API request failed with HTTP ${response.status}.`);
+      }
+      return payload;
+    }
+
+    async function loadAvatarImage(player, avatar) {
+      try {
+        const payload = await fetchRobloxApi(`users/${encodeURIComponent(player.id)}/avatar`);
+        const imageUrl = payload.data?.[0]?.imageUrl;
+        if (typeof imageUrl !== 'string') {
+          throw new Error('Roblox did not return an avatar image URL.');
+        }
+
+        const image = document.createElement('img');
+        image.alt = '';
+        image.loading = 'lazy';
+        image.addEventListener('load', () => avatar.replaceChildren(image), { once: true });
+        image.addEventListener('error', () => {
+          avatar.title = 'Avatar preview unavailable.';
+        }, { once: true });
+        image.src = imageUrl;
+      } catch (error) {
+        avatar.title = 'Avatar preview unavailable.';
+        console.warn('Unable to load a Roblox avatar preview.', error);
+      }
+    }
+
+    function makeAvatar(player, sizeClass = '') {
+      const avatar = document.createElement('div');
+      avatar.className = `avatar ${sizeClass}`.trim();
+      avatar.textContent = (player.displayName || player.name || '?').slice(0, 1).toUpperCase();
+      avatar.setAttribute('aria-label', `${player.displayName || player.name} avatar`);
+      loadAvatarImage(player, avatar);
+      return avatar;
+    }
+
+    async function searchPlayers(keyword, cursor = null) {
+      const sequence = cursor ? searchSequence : ++searchSequence;
+      if (!cursor) {
+        activeSearchKeyword = keyword;
+        nextPageCursor = null;
+        resultsContainer.replaceChildren();
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = 'Searching…';
+        resultsContainer.append(empty);
+      } else {
+        const loadMore = document.getElementById('load-more');
+        if (loadMore) loadMore.disabled = true;
+      }
+      setSearchStatus(cursor ? 'Loading more public profiles…' : 'Searching the public Roblox directory…');
+
+      try {
+        const params = new URLSearchParams({ keyword, limit: '10' });
+        if (cursor) params.set('cursor', cursor);
+        const payload = await fetchRobloxApi(`users/search?${params.toString()}`);
+        if (sequence !== searchSequence) return;
+
+        const players = Array.isArray(payload.data) ? payload.data : [];
+        document.getElementById('load-more')?.remove();
+        if (!cursor) resultsContainer.replaceChildren();
+        if (players.length === 0 && !cursor) {
+          const noResults = document.createElement('div');
+          noResults.className = 'empty-state';
+          noResults.textContent = `No public profiles found for “${keyword}”.`;
+          resultsContainer.append(noResults);
+          setSearchStatus('Search complete · 0 matches');
+          return;
+        }
+
+        if (players.length === 0) {
+          nextPageCursor = null;
+          setSearchStatus(`Search complete · ${resultsContainer.querySelectorAll('.result').length} matches · no more profiles`);
+          return;
+        }
+
+        players.forEach((player) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'result';
+          button.dataset.playerId = String(player.id);
+          button.setAttribute('aria-current', 'false');
+          button.append(makeAvatar(player));
+
+          const copy = document.createElement('span');
+          copy.className = 'result-copy';
+          const name = document.createElement('span');
+          name.className = 'result-name';
+          name.textContent = player.displayName || player.name;
+          const username = document.createElement('span');
+          username.className = 'result-username';
+          username.textContent = `@${player.name} · ID ${player.id}`;
+          copy.append(name, username);
+          button.append(copy);
+          button.addEventListener('click', () => selectPlayer(player, button));
+          resultsContainer.append(button);
+        });
+        nextPageCursor = payload.nextPageCursor || null;
+        if (nextPageCursor) {
+          const loadMore = document.createElement('button');
+          loadMore.id = 'load-more';
+          loadMore.type = 'button';
+          loadMore.className = 'action-button';
+          loadMore.style.width = '100%';
+          loadMore.style.marginTop = '5px';
+          loadMore.textContent = 'Load more players';
+          loadMore.addEventListener('click', () => searchPlayers(activeSearchKeyword, nextPageCursor));
+          resultsContainer.append(loadMore);
+        }
+        setSearchStatus(`Search complete · ${resultsContainer.querySelectorAll('.result').length} matches${nextPageCursor ? ' · more available' : ''}`);
+      } catch (error) {
+        if (sequence !== searchSequence) return;
+        if (!cursor) {
+          resultsContainer.replaceChildren();
+          const failure = document.createElement('div');
+          failure.className = 'empty-state';
+          failure.textContent = error instanceof Error ? error.message : 'Could not load Roblox search results.';
+          resultsContainer.append(failure);
+        } else {
+          const loadMore = document.getElementById('load-more');
+          if (loadMore) loadMore.disabled = false;
+        }
+        setSearchStatus(error instanceof Error ? error.message : 'Roblox search failed.', true);
+      }
+    }
+
+    async function selectPlayer(player, selectedButton) {
+      selectedPlayer = player;
+      document.querySelectorAll('.result').forEach((button) => {
+        button.setAttribute('aria-current', String(button === selectedButton));
+      });
+      selectedActions.forEach((button) => {
+        button.disabled = false;
+      });
+
+      const profileName = document.getElementById('profile-name');
+      profileName.replaceChildren(document.createTextNode(player.displayName || player.name));
+      if (player.hasVerifiedBadge) {
+        const verified = document.createElement('span');
+        verified.className = 'verified';
+        verified.textContent = '✓';
+        verified.title = 'Roblox verified';
+        profileName.append(verified);
+      }
+      document.getElementById('profile-username').textContent = `@${player.name}`;
+      document.getElementById('profile-id').textContent = `PLAYER ID ${player.id}`;
+      document.getElementById('profile-verified').textContent = player.hasVerifiedBadge ? 'Verified' : 'Not verified';
+
+      const avatar = makeAvatar(player);
+      avatar.id = 'profile-avatar';
+      document.getElementById('profile-avatar').replaceWith(avatar);
+      renderRecords();
+      document.getElementById('profile-created').textContent = 'Loading…';
+
+      try {
+        const profile = await fetchRobloxApi(`users/${encodeURIComponent(player.id)}`);
+        if (!selectedPlayer || String(selectedPlayer.id) !== String(player.id)) return;
+        document.getElementById('profile-created').textContent = profile.created
+          ? new Date(profile.created).toLocaleDateString()
+          : 'Not available';
+      } catch (error) {
+        if (selectedPlayer && String(selectedPlayer.id) === String(player.id)) {
+          document.getElementById('profile-created').textContent = 'Not available';
+          setSearchStatus(error instanceof Error ? `Profile details unavailable: ${error.message}` : 'Profile details unavailable.', true);
+        }
+      }
+    }
+
+    function readRecords() {
+      try {
+        const stored = JSON.parse(localStorage.getItem(storageKey) || '{}');
+        if (stored && typeof stored === 'object' && !Array.isArray(stored)) return stored;
+        throw new Error('Stored records have an invalid format.');
+      } catch (error) {
+        throw new Error('Could not read local officer records. Clear this site’s stored data and try again.', { cause: error });
+      }
+    }
+
+    function renderRecords() {
+      const container = document.getElementById('records');
+      container.replaceChildren();
+      try {
+        const playerRecords = selectedPlayer ? readRecords()[String(selectedPlayer.id)] || [] : [];
+        document.getElementById('record-count').textContent = String(playerRecords.length);
+        if (playerRecords.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = 'No local training records for this player.';
+          container.append(empty);
+          return;
+        }
+
+        playerRecords.slice().reverse().forEach((record) => {
+          const item = document.createElement('article');
+          item.className = 'record';
+          item.dataset.type = record.type;
+          const copy = document.createElement('div');
+          copy.className = 'record-copy';
+          const title = document.createElement('p');
+          title.className = 'record-title';
+          title.textContent = record.type === 'Fine'
+            ? `Fine · ${Number(record.amount).toLocaleString()} credits`
+            : `Warrant · ${record.priority}`;
+          const detail = document.createElement('p');
+          detail.className = 'record-detail';
+          detail.textContent = record.reason;
+          const date = document.createElement('time');
+          date.className = 'record-date';
+          date.dateTime = record.createdAt;
+          date.textContent = new Date(record.createdAt).toLocaleDateString();
+          copy.append(title, detail);
+          item.append(copy, date);
+          container.append(item);
+        });
+      } catch (error) {
+        document.getElementById('record-count').textContent = '—';
+        const failure = document.createElement('div');
+        failure.className = 'empty-state';
+        failure.textContent = error instanceof Error ? error.message : 'Unable to load local records.';
+        container.append(failure);
+      }
+    }
+
+    function openRecordDialog(type) {
+      if (!selectedPlayer) {
+        setSearchStatus('Search for and select a player before adding a record.', true);
+        searchInput.focus();
+        return;
+      }
+      pendingRecordType = type;
+      document.getElementById('dialog-title').textContent = `Add ${type.toLowerCase()}`;
+      document.getElementById('dialog-player').textContent = `${selectedPlayer.displayName || selectedPlayer.name} (@${selectedPlayer.name})`;
+      document.getElementById('amount-field').hidden = type !== 'Fine';
+      document.getElementById('priority-field').hidden = type !== 'Warrant';
+      document.getElementById('record-reason').value = '';
+      dialog.showModal();
+      document.getElementById('record-reason').focus();
+    }
+
+    document.querySelectorAll('[data-action]').forEach((button) => {
+      button.addEventListener('click', () => openRecordDialog(button.dataset.action));
+    });
+
+    searchForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const keyword = searchInput.value.trim();
+      if (!keyword) {
+        setSearchStatus('Enter a username or display name to search.', true);
+        searchInput.focus();
+        return;
+      }
+      searchPlayers(keyword);
+    });
+
+    recordForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      if (!selectedPlayer || !pendingRecordType) return;
+
+      const reason = document.getElementById('record-reason').value.trim();
+      const amount = Number(document.getElementById('fine-amount').value);
+      if (!reason || (pendingRecordType === 'Fine' && (!Number.isInteger(amount) || amount < 1 || amount > 1000000))) return;
+
+      try {
+        const records = readRecords();
+        const playerId = String(selectedPlayer.id);
+        const playerRecords = records[playerId] || [];
+        playerRecords.push({
+          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+          type: pendingRecordType,
+          reason,
+          createdAt: new Date().toISOString(),
+          ...(pendingRecordType === 'Fine' ? { amount } : {
+            priority: document.getElementById('warrant-priority').value
+          })
+        });
+        records[playerId] = playerRecords;
+        localStorage.setItem(storageKey, JSON.stringify(records));
+        dialog.close();
+        pendingRecordType = null;
+        renderRecords();
+      } catch (error) {
+        window.alert(error instanceof Error ? error.message : 'Could not save the local training record.');
+      }
+    });
+
+    document.getElementById('cancel-record').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('close', () => {
+      pendingRecordType = null;
+    });
+
+    document.querySelectorAll('.nav-chip').forEach((button) => {
+      button.addEventListener('click', () => {
+        const category = button.dataset.category;
+        if (category === 'Fines') {
+          openRecordDialog('Fine');
+        } else if (category === 'Warrants') {
+          openRecordDialog('Warrant');
+        } else {
+          setSearchStatus(`${category} records are available after selecting a player.`);
+          searchInput.focus();
+        }
+      });
+    });
+
+    function updateClock() {
+      document.getElementById('clock').textContent = new Date().toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    async function checkAuth() {
       try {
         const apiBase = String(window.SITE_CONFIG?.API_SERVER_URL || window.location.origin).replace(/\/$/, '');
-        const response = await fetch(`${apiBase}/api/auth/me`, { credentials: 'include', cache: 'no-store' });
+        const response = await fetch(`${apiBase}/api/qlite/session`, {
+          credentials: 'include',
+          cache: 'no-store'
+        });
         return response.ok;
       } catch (error) {
+        console.error('Unable to verify the QLiTE session.', error);
         return false;
       }
     }
 
     async function initialize() {
-      const authenticated = await checkAuth();
-      if (!authenticated) {
+      if (!await checkAuth()) {
         window.location.href = 'index.html';
-        return;
       }
     }
 
-    function goHome() {
+    async function signOut() {
+      const apiBase = String(window.SITE_CONFIG?.API_SERVER_URL || window.location.origin).replace(/\/$/, '');
+      try {
+        await fetch(`${apiBase}/api/auth/logout`, {
+          method: 'POST',
+          credentials: 'include',
+          cache: 'no-store'
+        });
+      } catch (error) {
+        console.error('Unable to end the QLiTE session.', error);
+      }
       window.location.href = 'index.html';
     }
 
-    function signOut() {
-      sessionStorage.removeItem('mdtLoggedIn');
-      window.location.href = 'index.html';
-    }
-
+    updateClock();
+    window.setInterval(updateClock, 60000);
+    renderRecords();
     initialize();
+    window.setInterval(async () => {
+      if (!await checkAuth()) {
+        window.location.href = 'index.html';
+      }
+    }, 60000);
   </script>
 </body>
 </html>

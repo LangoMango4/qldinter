@@ -1,220 +1,458 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QLiTE Login</title>
-
-<link href="https://googleapis.com" rel="stylesheet">
-
-<style>
-*{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
-}
-
-body {
-    background: #09131d;
-    background-image: linear-gradient(rgba(9,19,29,.9), rgba(9,19,29,.95)), url("assets/background.jpg");
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    overflow: hidden;
-}
-
-.ipad-container {
-    position: relative;
-    width: 1000px;
-    height: 700px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.background-image {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    z-index: 1;
-    pointer-events: none;
-}
-
-.screen {
-    position: absolute;
-    top: 50%;
-    left: 49.55%;
-    transform: translate(-50%, -50%);
-    width: 810px; /* Aligns app space nicely inside the iPad canvas */
-    height: 605px;
-    background: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 2;
-    overflow: hidden;
-}
-
-.login-container {
-    width: 400%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.logo {
-    width: 100px;
-    height: auto;
-    margin-bottom: 25px;
-}
-
-h1 {
-    color: #4a4a4a;
-    text-align: center;
-    font-size: 34px;
-    font-weight: 400;
-    letter-spacing: 0.5px;
-    margin-bottom: 22px;
-}
-
-.input-group {
-    width: 100%;
-    margin-bottom: 10px;
-}
-
-input {
-    width: 100%;
-    padding: 11px;
-    background: #ffffff;
-    border: 1px solid #d1d1d6;
-    border-radius: 6px;
-    color: #000000;
-    font-size: 15px;
-    text-align: center;
-    outline: none;
-}
-
-input::placeholder {
-    color: #a9a9a9;
-}
-
-input:focus {
-    border-color: #007aff;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 6px;
-    background: #147efb;
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 5px;
-    transition: background 0.2s;
-}
-
-button:hover {
-    background: #0062cc;
-}
-
-#error {
-    margin-top: 10px;
-    color: #ff3b30;
-    text-align: center;
-    font-size: 13px;
-    display: none;
-}
-
-.footer-text {
-    margin-top: 18px;
-    color: #636366;
-    font-size: 12px;
-    text-align: center;
-    line-height: 1.4;
-}
-
-.footer-text a {
-    color: #147efb;
-    text-transform: none;
-    text-decoration: none;
-}
-.fade-grey {
-  filter: grayscale(100%); /* Turns the image completely grey */
-  opacity: 0.4;            /* Sets transparency (values from 0.0 to 1.0) */
-}
-.top-left-btn {
-  position: fixed;   /* Keeps the button in place when scrolling */
-  top: 15px;         /* Distance from the top edge */
-  left: 15px;        /* Distance from the left edge */
-  z-index: 9999;     /* Ensures it stays on top of other content */
-}
-</style>
-</head>
-
-<body>
-<a href="/" class="top-left-btn">
-  <button type="button">Close QLiTE</button>
-</a>
-<div class="ipad-container">
-    
-    <img class="background-image" src="/assets/images/ipad.png" width="1000" height="700" alt="Background">
-
-    <div class="screen">
-        <div class="login-container">
-
-            <img src="/assets/images/qps.png" class="logo" alt="QI Queensland Police">
-
-            <h1>QLiTE</h1>
-
-            <form id="login-form" onsubmit="event.preventDefault(); login();" style="width:100%;">
-              <div class="input-group">
-                  <input id="username" type="text" placeholder="Username">
-              </div>
-              <div class="input-group">
-                  <input id="password" type="password" placeholder="Password">
-              </div>
-              <button type="submit">Log In</button>
-            </form>
-            <p style="color: #8e8e93; font-size: 11px; margin-top: 10px;">OR</p>
-            <button onclick="loginWithDiscord()">Sign In With Discord</button>
-            <div id="error" style="display:none;">Incorrect username or password.</div>
-
-            <div class="footer-text">
-                <p>Contact Service Desk @ <a href="mailto:support@queenslandinteractive-rblx.com">support@queenslandinteractive-rblx.com</a></p>
-                <p style="color: #8e8e93; font-size: 11px; margin-top: 2px;">Version 1.11 (2224)</p>
-                <p style="color: #fa0404; font-size: 11px; margin-top: 15px;">Intended for Queensland Interactive Use ONLY.</p>
-                <p style="color: #fa0404; font-size: 11px; margin-top: 2px;">Copyright © 2020 – 2026 Queensland Interactive. All Rights Reserved.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script>
-function login(){
-    const USER = "admin";
-    const PASS = "password";
-
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    if(username === USER && password === PASS){
-        sessionStorage.setItem("mdtLoggedIn","true");
-        window.location.href = "dashboard.html";
-    } else {
-        document.getElementById("error").style.display="block";
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QLiTE Login</title>
+  <style>
+    * {
+      box-sizing: border-box;
     }
-}
-</script>
 
+    body {
+      display: grid;
+      min-height: 100vh;
+      margin: 0;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 0, rgba(38, 79, 149, .35), transparent 55%),
+        #09131d;
+      color: #222c3b;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .ipad-container {
+      position: relative;
+      width: min(1000px, 100vw, calc(100dvh * 10 / 7));
+      aspect-ratio: 10 / 7;
+    }
+
+    .background-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .screen {
+      position: absolute;
+      top: 50%;
+      left: 49.55%;
+      display: grid;
+      width: 81%;
+      height: 86.43%;
+      overflow: auto;
+      padding: 20px;
+      place-items: center;
+      transform: translate(-50%, -50%);
+      background: #fff;
+    }
+
+    .login-card {
+      width: min(100%, 370px);
+      text-align: center;
+    }
+
+    .logo {
+      width: 76px;
+      height: 76px;
+      margin-bottom: 8px;
+      object-fit: contain;
+    }
+
+    h1 {
+      margin: 0 0 7px;
+      color: #243047;
+      font-size: 30px;
+      font-weight: 500;
+      letter-spacing: .03em;
+    }
+
+    .intro {
+      margin: 0 0 18px;
+      color: #687386;
+      font-size: 13px;
+    }
+
+    .account-status {
+      margin: 0 0 12px;
+      color: #586579;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .form {
+      display: grid;
+      gap: 9px;
+      text-align: left;
+    }
+
+    .form label {
+      display: grid;
+      gap: 5px;
+      color: #505c6f;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .form input {
+      width: 100%;
+      min-height: 42px;
+      padding: 10px 12px;
+      border: 1px solid #d1d8e2;
+      border-radius: 6px;
+      outline: none;
+      background: #fff;
+      color: #1e293b;
+      font-size: 14px;
+    }
+
+    .form input:focus {
+      border-color: #147efb;
+      box-shadow: 0 0 0 3px rgba(20, 126, 251, .12);
+    }
+
+    .form input[readonly] {
+      background: #f3f5f8;
+      color: #556176;
+    }
+
+    .primary-button,
+    .discord-button {
+      display: flex;
+      width: 100%;
+      min-height: 43px;
+      align-items: center;
+      justify-content: center;
+      border: 0;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      transition: filter .15s ease;
+    }
+
+    .primary-button {
+      margin-top: 3px;
+      background: #147efb;
+    }
+
+    .discord-button {
+      gap: 8px;
+      background: #5865f2;
+    }
+
+    .primary-button:hover,
+    .discord-button:hover {
+      filter: brightness(.92);
+    }
+
+    .primary-button:disabled,
+    .discord-button:disabled {
+      cursor: wait;
+      opacity: .65;
+    }
+
+    .discord-button svg {
+      width: 19px;
+      height: 19px;
+      fill: currentColor;
+    }
+
+    .separator {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 14px 0;
+      color: #98a1af;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .separator::before,
+    .separator::after {
+      height: 1px;
+      flex: 1;
+      background: #e0e4ea;
+      content: "";
+    }
+
+    .notice,
+    .error {
+      display: none;
+      margin: 11px 0 0;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .notice {
+      color: #287352;
+    }
+
+    .error {
+      color: #c62828;
+    }
+
+    .password-help {
+      margin: 0;
+      color: #778396;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .footer {
+      margin-top: 18px;
+      color: #798394;
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .footer a {
+      color: #147efb;
+      text-decoration: none;
+    }
+
+    .footer .warning {
+      margin-top: 6px;
+      color: #bb3131;
+    }
+
+    .close-link {
+      position: fixed;
+      z-index: 3;
+      top: 15px;
+      left: 15px;
+      padding: 9px 12px;
+      border: 1px solid rgba(255, 255, 255, .18);
+      border-radius: 6px;
+      background: #147efb;
+      color: white;
+      font-size: 12px;
+      font-weight: 650;
+      text-decoration: none;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 680px) {
+      .ipad-container {
+        width: 100vw;
+        height: 100dvh;
+        aspect-ratio: auto;
+      }
+
+      .background-image {
+        display: none;
+      }
+
+      .screen {
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        transform: none;
+      }
+
+      .close-link {
+        top: 8px;
+        left: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="close-link" href="/">Close QLiTE</a>
+  <main class="ipad-container">
+    <img class="background-image" src="../../assets/images/ipad.png" alt="">
+    <section class="screen">
+      <div class="login-card">
+        <img class="logo" src="../../assets/images/qps.png" alt="Queensland Police Service">
+        <h1>QLiTE</h1>
+        <p class="intro">Roblox officer access</p>
+        <p class="account-status" id="account-status">Sign in with your QLiTE account, or verify your Discord account to get started.</p>
+
+        <form class="form" id="login-form">
+          <label for="username">Discord username</label>
+          <input id="username" name="username" type="text" maxlength="64" autocomplete="username" required placeholder="Your Discord username">
+          <label for="login-password">Password</label>
+          <input id="login-password" name="password" type="password" maxlength="128" autocomplete="current-password" required placeholder="Your QLiTE password">
+          <button class="primary-button" id="login-button" type="submit">Sign in</button>
+        </form>
+
+        <div class="separator">OR</div>
+
+        <button class="discord-button" id="discord-button" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.73 5.04A18.2 18.2 0 0 0 15.24 3.7l-.22.45a16.9 16.9 0 0 0-6.04 0l-.23-.45a18.1 18.1 0 0 0-4.49 1.35C1.42 9.24.65 13.34 1.03 17.38a18.2 18.2 0 0 0 5.51 2.79l1.19-1.93c-.65-.24-1.27-.54-1.85-.9l.45-.35a12.9 12.9 0 0 0 11.34 0l.45.35c-.59.36-1.21.66-1.86.9l1.2 1.93a18.2 18.2 0 0 0 5.51-2.79c.45-4.69-.77-8.75-3.24-12.34ZM8.8 14.98c-1.1 0-2-1.01-2-2.25s.88-2.26 2-2.26 2.02 1.02 2 2.26c0 1.24-.88 2.25-2 2.25Zm6.4 0c-1.1 0-2-1.01-2-2.25s.88-2.26 2-2.26 2.02 1.02 2 2.26c0 1.24-.87 2.25-2 2.25Z"/></svg>
+          Verify with Discord
+        </button>
+
+        <form class="form" id="setup-form" hidden>
+          <label for="discord-username">Discord username</label>
+          <input id="discord-username" type="text" readonly>
+          <label for="new-password">Set QLiTE password</label>
+          <input id="new-password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required placeholder="At least 12 characters">
+          <label for="confirm-password">Confirm password</label>
+          <input id="confirm-password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required placeholder="Enter the password again">
+          <p class="password-help">Your password is stored as a secure hash on the QLiTE server. Trello records your Discord account and access status only.</p>
+          <button class="primary-button" id="setup-button" type="submit">Create QLiTE account</button>
+        </form>
+
+        <p class="error" id="error" role="alert" aria-live="polite"></p>
+        <p class="notice" id="notice" role="status" aria-live="polite"></p>
+
+        <div class="footer">
+          <p>Contact Service Desk @ <a href="mailto:support@queenslandinteractive-rblx.com">support@queenslandinteractive-rblx.com</a></p>
+          <p>Version 1.11 (2224)</p>
+          <p class="warning">Intended for Queensland Interactive Use ONLY.</p>
+          <p class="warning">Copyright © 2020 – 2026 Queensland Interactive. All Rights Reserved.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="../../scripts/config.js"></script>
+  <script>
+    const apiBase = String(window.SITE_CONFIG?.API_SERVER_URL || window.location.origin).replace(/\/$/, '');
+    const loginForm = document.getElementById('login-form');
+    const setupForm = document.getElementById('setup-form');
+    const loginButton = document.getElementById('login-button');
+    const setupButton = document.getElementById('setup-button');
+    const discordButton = document.getElementById('discord-button');
+    const errorMessage = document.getElementById('error');
+    const noticeMessage = document.getElementById('notice');
+    const accountStatus = document.getElementById('account-status');
+
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+      noticeMessage.style.display = 'none';
+    }
+
+    function showNotice(message) {
+      noticeMessage.textContent = message;
+      noticeMessage.style.display = 'block';
+      errorMessage.style.display = 'none';
+    }
+
+    async function apiRequest(path, options = {}) {
+      let response;
+      try {
+        response = await fetch(`${apiBase}${path}`, {
+          credentials: 'include',
+          cache: 'no-store',
+          ...options
+        });
+      } catch (error) {
+        throw new Error(`Could not reach the QLiTE server at ${new URL(apiBase).host}. Please try again later.`, { cause: error });
+      }
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(payload.error || `QLiTE server returned HTTP ${response.status}.`);
+      return payload;
+    }
+
+    async function checkDiscordSession() {
+      try {
+        const status = await apiRequest('/api/qlite/account/status');
+        if (status.accountConfigured && status.accessActive) {
+          accountStatus.textContent = `Discord verified as ${status.username}. This account already has a password; sign in above. You can verify Discord again to change it.`;
+          document.getElementById('username').value = status.username;
+          document.getElementById('setup-button').textContent = 'Change QLiTE password';
+          document.getElementById('setup-form').hidden = false;
+          document.getElementById('discord-username').value = status.username;
+          document.getElementById('discord-button').hidden = true;
+          return;
+        }
+        if (status.accountConfigured && !status.accessActive) {
+          accountStatus.textContent = 'This QLiTE account has been revoked. Contact an administrator to restore access.';
+          discordButton.hidden = true;
+          return;
+        }
+        accountStatus.textContent = `Discord verified as ${status.username}. Set a QLiTE password to finish creating your account.`;
+        document.getElementById('discord-username').value = status.username;
+        document.getElementById('setup-form').hidden = false;
+        document.getElementById('discord-button').hidden = true;
+      } catch (error) {
+        if (error.message.includes('401')) return;
+        if (error.message.includes('Trello')) {
+          accountStatus.textContent = 'Account status is temporarily unavailable.';
+          showError(error.message);
+        }
+      }
+    }
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorMessage.style.display = 'none';
+      loginButton.disabled = true;
+      loginButton.textContent = 'Signing in…';
+      try {
+        await apiRequest('/api/qlite/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: document.getElementById('username').value.trim(),
+            password: document.getElementById('login-password').value
+          })
+        });
+        window.location.href = 'qlitedashboard.html';
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = 'Sign in';
+      }
+    });
+
+    setupForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorMessage.style.display = 'none';
+      const password = document.getElementById('new-password').value;
+      if (password.length < 12) {
+        showError('Choose a password with at least 12 characters.');
+        return;
+      }
+      if (password !== document.getElementById('confirm-password').value) {
+        showError('The passwords do not match.');
+        return;
+      }
+
+      setupButton.disabled = true;
+      setupButton.textContent = 'Saving securely…';
+      try {
+        await apiRequest('/api/qlite/account/setup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        window.location.href = 'qlitedashboard.html';
+      } catch (error) {
+        showError(error.message);
+      } finally {
+        setupButton.disabled = false;
+        setupButton.textContent = document.getElementById('account-status').textContent.includes('already has a password')
+          ? 'Change QLiTE password'
+          : 'Create QLiTE account';
+      }
+    });
+
+    discordButton.addEventListener('click', () => {
+      const returnTo = new URL('index.html', window.location.href).href;
+      window.location.href = `${apiBase}/auth/discord/start?returnTo=${encodeURIComponent(returnTo)}`;
+    });
+
+    checkDiscordSession();
+  </script>
 </body>
 </html>

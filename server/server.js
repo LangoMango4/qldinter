@@ -1,5 +1,5 @@
 const express = require("express");
-const { randomUUID } = require("crypto");
+const { randomUUID, randomBytes, scryptSync, timingSafeEqual } = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -54,6 +54,8 @@ const STATUSAPI_WEBHOOK = process.env.STATUSAPI_WEBHOOK || "";
 const TRELLO_API_KEY = process.env.TRELLO_API_KEY || "";
 const TRELLO_API_TOKEN = process.env.TRELLO_API_TOKEN || "";
 const TRELLO_BANS_LIST_ID = process.env.TRELLO_BANS_LIST_ID || "";
+const TRELLO_QLITE_ACCOUNTS_BOARD_ID = process.env.TRELLO_QLITE_ACCOUNTS_BOARD_ID || "68d53ce4beaece9f9828096d";
+const TRELLO_QLITE_ACCOUNTS_LIST_ID = process.env.TRELLO_QLITE_ACCOUNTS_LIST_ID || "";
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || "";
 const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || "";
@@ -69,6 +71,7 @@ const GAME_STATUS_URL = process.env.GAME_STATUS_URL || "https://www.roblox.com/g
 const WEBSITE_ROOT = path.resolve(__dirname, "..");
 const DATA_DIR = path.join(__dirname, "data");
 const MODERATION_DATA_FILE = path.join(DATA_DIR, "moderation-state.json");
+const QLITE_ACCOUNTS_FILE = path.join(DATA_DIR, "qlite-accounts.json");
 const SERVER_STARTED_AT = Date.now();
 const metrics = {
   requests: 0,
@@ -98,6 +101,7 @@ let moderationState = {
   notifications: [],
   reviews: []
 };
+let qliteAccounts = {};
 
 const ensureDataDirectory = () => {
   if (!fs.existsSync(DATA_DIR)) {
@@ -170,6 +174,181 @@ const createDefaultModerationState = () => ({
 const saveModerationState = () => {
   ensureDataDirectory();
   fs.writeFileSync(MODERATION_DATA_FILE, JSON.stringify(moderationState, null, 2), "utf8");
+};
+
+const loadQliteAccounts = () => {
+  ensureDataDirectory();
+  if (!fs.existsSync(QLITE_ACCOUNTS_FILE)) {
+    qliteAccounts = {};
+    return;
+  }
+
+  const parsed = JSON.parse(fs.readFileSync(QLITE_ACCOUNTS_FILE, "utf8"));
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    throw new Error("QLiTE account database has an invalid format.");
+  }
+  qliteAccounts = parsed;
+};
+
+const saveQliteAccounts = () => {
+  ensureDataDirectory();
+  const temporaryFile = `${QLITE_ACCOUNTS_FILE}.${randomUUID()}.tmp`;
+  fs.writeFileSync(temporaryFile, JSON.stringify(qliteAccounts, null, 2), { encoding: "utf8", mode: 0o600 });
+  fs.renameSync(temporaryFile, QLITE_ACCOUNTS_FILE);
+};
+
+const isPasswordValid = (password) => typeof password === "string" && password.length >= 12 && password.length <= 128;
+
+const hashQlitePassword = (password, salt = randomBytes(16).toString("hex")) => ({
+  salt,
+  passwordHash: scryptSync(password, salt, 64).toString("hex")
+});
+
+const verifyQlitePassword = (password, account) => {
+  if (!isPasswordValid(password) || typeof account?.salt !== "string" || typeof account?.passwordHash !== "string") {
+    return false;
+  }
+  const storedHash = Buffer.from(account.passwordHash, "hex");
+  const candidateHash = scryptSync(password, account.salt, 64);
+  return storedHash.length === candidateHash.length && timingSafeEqual(storedHash, candidateHash);
+};
+
+const isTrelloConfiguredForQlite = () => Boolean(
+  TRELLO_API_KEY && TRELLO_API_TOKEN && (TRELLO_QLITE_ACCOUNTS_LIST_ID || TRELLO_QLITE_ACCOUNTS_BOARD_ID)
+);
+
+let qliteAccountsListCache = { id: "", expiresAt: 0 };
+
+const trelloApiUrl = (resource, params = {}) => {
+  const query = new URLSearchParams({
+    ...params,
+    key: TRELLO_API_KEY,
+    token: TRELLO_API_TOKEN
+  });
+  return `https://api.trello.com/1/${resource}?${query.toString()}`;
+};
+
+const resolveQliteAccountsListId = async () => {
+  if (TRELLO_QLITE_ACCOUNTS_LIST_ID) return TRELLO_QLITE_ACCOUNTS_LIST_ID;
+  if (!TRELLO_QLITE_ACCOUNTS_BOARD_ID) {
+    throw new Error("A Trello QLiTE accounts board ID or list ID must be configured.");
+  }
+  if (qliteAccountsListCache.id && qliteAccountsListCache.expiresAt > Date.now()) {
+    return qliteAccountsListCache.id;
+  }
+
+  const boardListsResponse = await fetch(trelloApiUrl(
+    `boards/${encodeURIComponent(TRELLO_QLITE_ACCOUNTS_BOARD_ID)}/lists`,
+    { filter: "open", fields: "id,name,closed" }
+  ), {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+    signal: AbortSignal.timeout(8000)
+  });
+  if (!boardListsResponse.ok) {
+    console.error("Trello QLiTE board lookup failed:", boardListsResponse.status);
+    throw new Error("Could not access the configured Trello board. Check the Trello API credentials and board ID.");
+  }
+  const boardLists = await boardListsResponse.json();
+  const existingList = Array.isArray(boardLists)
+    ? boardLists.find((list) => list.name === "QLiTE Accounts" && !list.closed)
+    : null;
+
+  let listId = existingList?.id;
+  if (!listId) {
+    const createListResponse = await fetch(trelloApiUrl("lists", {
+      idBoard: TRELLO_QLITE_ACCOUNTS_BOARD_ID,
+      name: "QLiTE Accounts",
+      pos: "bottom"
+    }), {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      signal: AbortSignal.timeout(8000)
+    });
+    if (!createListResponse.ok) {
+      console.error("Trello QLiTE accounts list creation failed:", createListResponse.status);
+      throw new Error("Could not create the QLiTE Accounts list on the Trello board.");
+    }
+    const createdList = await createListResponse.json();
+    listId = createdList.id;
+  }
+  if (typeof listId !== "string" || !listId) {
+    throw new Error("Trello did not return a valid QLiTE Accounts list ID.");
+  }
+
+  qliteAccountsListCache = { id: listId, expiresAt: Date.now() + 60 * 1000 };
+  return listId;
+};
+
+const createQliteTrelloAccountCard = async (user, listId) => {
+  const params = new URLSearchParams({
+    idList: listId,
+    name: `QLiTE account · ${user.username}`,
+    desc: [
+      "QLiTE account access record.",
+      `Discord user ID: ${user.id}`,
+      `Discord username: ${user.username}`,
+      `Account status: Active`,
+      `Linked at: ${new Date().toISOString()}`,
+      "",
+      "This card intentionally contains no password or password hash.",
+      "Archive this card or move it out of the QLiTE accounts list to revoke password sign-in."
+    ].join("\n"),
+    pos: "top"
+  });
+
+  const response = await fetch(trelloApiUrl("cards"), {
+    method: "POST",
+    headers: { Accept: "application/json" },
+    body: params,
+    signal: AbortSignal.timeout(10000)
+  });
+  if (!response.ok) {
+    const details = await response.text().catch(() => "");
+    console.error("Trello QLiTE account card creation failed:", response.status, details);
+    throw new Error("Could not link this QLiTE account to Trello.");
+  }
+  const card = await response.json();
+  if (!card.id) {
+    throw new Error("Trello did not return an account card ID.");
+  }
+  return card.id;
+};
+
+const deleteQliteTrelloAccountCard = async (cardId) => {
+  const params = new URLSearchParams({
+    key: TRELLO_API_KEY,
+    token: TRELLO_API_TOKEN
+  });
+  const response = await fetch(`https://api.trello.com/1/cards/${encodeURIComponent(cardId)}?${params.toString()}`, {
+    method: "DELETE",
+    signal: AbortSignal.timeout(8000)
+  });
+  if (!response.ok && response.status !== 404) {
+    throw new Error(`Trello returned HTTP ${response.status} while cleaning up an incomplete account.`);
+  }
+};
+
+const isQliteTrelloAccountActive = async (cardId, expectedListId) => {
+  if (!isTrelloConfiguredForQlite() || !cardId) {
+    throw new Error("Trello account access could not be verified.");
+  }
+  const listId = expectedListId || await resolveQliteAccountsListId();
+  const params = new URLSearchParams({
+    fields: "id,idList,closed"
+  });
+  const response = await fetch(trelloApiUrl(`cards/${encodeURIComponent(cardId)}`, Object.fromEntries(params)), {
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+    signal: AbortSignal.timeout(8000)
+  });
+  if (response.status === 404) return false;
+  if (!response.ok) {
+    console.error("Trello QLiTE account status check failed:", response.status);
+    throw new Error("Trello account access could not be verified.");
+  }
+  const card = await response.json();
+  return card.closed === false && card.idList === listId;
 };
 
 const sendBanToTrello = async (ban) => {
@@ -281,6 +460,58 @@ const fetchJson = async (url) => {
     throw new Error(`Request failed: ${response.status}`);
   }
   return response.json();
+};
+
+const robloxProxyCache = new Map();
+let robloxSearchRateLimitedUntil = 0;
+
+const getRobloxCachedResponse = (key) => {
+  const entry = robloxProxyCache.get(key);
+  if (!entry || entry.expiresAt <= Date.now()) {
+    robloxProxyCache.delete(key);
+    return null;
+  }
+  return entry.value;
+};
+
+const cacheRobloxResponse = (key, value, ttlMs) => {
+  if (robloxProxyCache.size >= 100 && !robloxProxyCache.has(key)) {
+    const oldestKey = robloxProxyCache.keys().next().value;
+    if (oldestKey !== undefined) robloxProxyCache.delete(oldestKey);
+  }
+  robloxProxyCache.set(key, { value, expiresAt: Date.now() + ttlMs });
+};
+
+const fetchRobloxJson = async (url) => {
+  const response = await fetch(url, {
+    cache: "no-store",
+    headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(8000)
+  });
+  if (!response.ok) {
+    const error = new Error(`Roblox API returned HTTP ${response.status}.`);
+    error.status = response.status;
+    const retryAfter = Number(response.headers.get("retry-after"));
+    error.retryAfterSeconds = Number.isFinite(retryAfter) && retryAfter > 0 ? retryAfter : 60;
+    throw error;
+  }
+  return response.json();
+};
+
+const sendRobloxProxyError = (res, error) => {
+  if (error.status === 429) {
+    const retryAfterSeconds = Math.max(1, Math.ceil(error.retryAfterSeconds || 60));
+    res.set("Retry-After", String(retryAfterSeconds));
+    return res.status(429).json({
+      error: `Roblox is rate-limiting requests. Try again in ${retryAfterSeconds} seconds.`,
+      retryAfterSeconds
+    });
+  }
+  if (error.name === "TimeoutError" || error.name === "AbortError") {
+    return res.status(504).json({ error: "Roblox did not respond in time. Please try again." });
+  }
+  console.error("Roblox API proxy request failed:", error);
+  return res.status(502).json({ error: "Could not reach the Roblox API. Please try again later." });
 };
 
 const chunkArray = (items, size) => {
@@ -617,6 +848,33 @@ const isWebhookAuthorized = (req) => {
   );
 };
 
+const isTrustedQliteRequest = (req) => {
+  const origin = String(req.headers.origin || "").trim();
+  if (!origin) return true;
+  if (WEBSITE_ORIGIN && origin === WEBSITE_ORIGIN) return true;
+  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+};
+
+const qliteLoginFailures = new Map();
+const QLITE_LOGIN_MAX_ATTEMPTS = 5;
+const QLITE_LOGIN_LOCKOUT_MS = 15 * 60 * 1000;
+
+const getQliteLoginKey = (req, username) => `${req.ip}:${username.toLowerCase()}`;
+
+const createQlitePasswordSession = (res, user, trelloCardId) => {
+  cleanupDiscordSessions();
+  const sessionToken = randomUUID();
+  const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
+  discordSessions.set(sessionToken, {
+    user,
+    authMethod: "qlite-password",
+    trelloCardId,
+    createdAt: Date.now(),
+    expiresAt
+  });
+  setSessionCookie(res, sessionToken, 24 * 60 * 60 * 1000);
+};
+
 const normalizeSessionMode = (value) => {
   if (!value || typeof value !== "string") {
     return "";
@@ -734,6 +992,86 @@ app.use(express.static(WEBSITE_ROOT));
 
 app.get("/api/health", (req, res) => {
   res.json({ ok: true, uptimeSeconds: Math.floor(process.uptime()), checkedAt: new Date().toISOString() });
+});
+
+app.get("/api/roblox/users/search", async (req, res) => {
+  const keyword = typeof req.query.keyword === "string" ? req.query.keyword.trim() : "";
+  const cursor = typeof req.query.cursor === "string" ? req.query.cursor : "";
+  if (!keyword || keyword.length > 50 || cursor.length > 1024) {
+    return res.status(400).json({ error: "Provide a search term of 1–50 characters and a valid page cursor." });
+  }
+
+  const retryAfterSeconds = Math.ceil((robloxSearchRateLimitedUntil - Date.now()) / 1000);
+  if (retryAfterSeconds > 0) {
+    res.set("Retry-After", String(retryAfterSeconds));
+    return res.status(429).json({
+      error: `Roblox is rate-limiting searches. Try again in ${retryAfterSeconds} seconds.`,
+      retryAfterSeconds
+    });
+  }
+
+  const cacheKey = `search:${keyword.toLowerCase()}:${cursor}`;
+  const cached = getRobloxCachedResponse(cacheKey);
+  if (cached) return res.json(cached);
+
+  const params = new URLSearchParams({ keyword, limit: "10" });
+  if (cursor) params.set("cursor", cursor);
+
+  try {
+    const data = await fetchRobloxJson(`https://users.roblox.com/v1/users/search?${params.toString()}`);
+    cacheRobloxResponse(cacheKey, data, 60 * 1000);
+    return res.json(data);
+  } catch (error) {
+    if (error.status === 429) {
+      robloxSearchRateLimitedUntil = Date.now() + Math.max(1, error.retryAfterSeconds || 60) * 1000;
+    }
+    return sendRobloxProxyError(res, error);
+  }
+});
+
+app.get("/api/roblox/users/:userId/avatar", async (req, res) => {
+  const userId = String(req.params.userId || "");
+  if (!/^\d{1,20}$/.test(userId)) {
+    return res.status(400).json({ error: "A numeric Roblox user ID is required." });
+  }
+
+  const cacheKey = `avatar:${userId}`;
+  const cached = getRobloxCachedResponse(cacheKey);
+  if (cached) return res.json(cached);
+
+  const params = new URLSearchParams({
+    userIds: userId,
+    size: "150x150",
+    format: "Png",
+    isCircular: "false"
+  });
+
+  try {
+    const data = await fetchRobloxJson(`https://thumbnails.roblox.com/v1/users/avatar-headshot?${params.toString()}`);
+    cacheRobloxResponse(cacheKey, data, 5 * 60 * 1000);
+    return res.json(data);
+  } catch (error) {
+    return sendRobloxProxyError(res, error);
+  }
+});
+
+app.get("/api/roblox/users/:userId", async (req, res) => {
+  const userId = String(req.params.userId || "");
+  if (!/^\d{1,20}$/.test(userId)) {
+    return res.status(400).json({ error: "A numeric Roblox user ID is required." });
+  }
+
+  const cacheKey = `profile:${userId}`;
+  const cached = getRobloxCachedResponse(cacheKey);
+  if (cached) return res.json(cached);
+
+  try {
+    const data = await fetchRobloxJson(`https://users.roblox.com/v1/users/${userId}`);
+    cacheRobloxResponse(cacheKey, data, 5 * 60 * 1000);
+    return res.json(data);
+  } catch (error) {
+    return sendRobloxProxyError(res, error);
+  }
 });
 
 app.get("/api/metrics", requireAdmin, async (req, res) => {
@@ -1174,6 +1512,207 @@ app.get("/api/auth/me", (req, res) => {
     authenticated: true,
     user: session.user,
     expiresAt: new Date(session.expiresAt).toISOString()
+  });
+});
+
+app.get("/api/qlite/account/status", async (req, res) => {
+  const session = getDiscordSession(req);
+  if (!session) return res.status(401).json({ authenticated: false });
+
+  const account = qliteAccounts[String(session.user.id)];
+  if (!account) {
+    return res.json({
+      authenticated: true,
+      username: session.user.username,
+      accountConfigured: false
+    });
+  }
+
+  try {
+    const active = await isQliteTrelloAccountActive(account.trelloCardId, account.trelloListId);
+    return res.json({
+      authenticated: true,
+      username: account.username,
+      accountConfigured: true,
+      accessActive: active
+    });
+  } catch (error) {
+    console.error("Unable to check QLiTE account status in Trello:", error);
+    return res.status(503).json({ error: "Trello account access could not be verified. Please try again later." });
+  }
+});
+
+app.post("/api/qlite/account/setup", async (req, res) => {
+  if (!isTrustedQliteRequest(req)) {
+    return res.status(403).json({ error: "Requests from this website are not allowed." });
+  }
+  const session = getDiscordSession(req);
+  if (!session) return res.status(401).json({ error: "Sign in with Discord before setting a QLiTE password." });
+  if (!isPasswordValid(req.body?.password)) {
+    return res.status(400).json({ error: "Choose a password between 12 and 128 characters." });
+  }
+  if (!isTrelloConfiguredForQlite()) {
+    return res.status(503).json({ error: "Trello account linking is not configured on the server." });
+  }
+
+  const discordId = String(session.user.id);
+  const discordUsername = String(session.user.username || "").trim();
+  if (!discordUsername) return res.status(400).json({ error: "Discord did not provide a username for this account." });
+  const existingAccount = qliteAccounts[discordId];
+  if (existingAccount) {
+    try {
+      if (!await isQliteTrelloAccountActive(existingAccount.trelloCardId, existingAccount.trelloListId)) {
+        return res.status(403).json({ error: "QLiTE access has been revoked. Contact an administrator." });
+      }
+    } catch (error) {
+      console.error("Unable to verify QLiTE account status before password update:", error);
+      return res.status(503).json({ error: "Trello account access could not be verified. Please try again later." });
+    }
+  }
+  const usernameTaken = Object.entries(qliteAccounts).some(([id, account]) => {
+    return id !== discordId && String(account.username || "").toLowerCase() === discordUsername.toLowerCase();
+  });
+  if (usernameTaken) {
+    return res.status(409).json({ error: "This Discord username is already linked to a QLiTE account. Contact an administrator." });
+  }
+
+  try {
+    const { salt, passwordHash } = hashQlitePassword(req.body.password);
+    const trelloListId = existingAccount?.trelloListId || await resolveQliteAccountsListId();
+    const trelloCardId = existingAccount
+      ? existingAccount.trelloCardId
+      : await createQliteTrelloAccountCard(session.user, trelloListId);
+    const nextAccount = {
+      discordId,
+      username: discordUsername,
+      salt,
+      passwordHash,
+      trelloCardId,
+      trelloListId,
+      createdAt: existingAccount?.createdAt || new Date().toISOString(),
+      passwordUpdatedAt: new Date().toISOString()
+    };
+    qliteAccounts[discordId] = nextAccount;
+    try {
+      saveQliteAccounts();
+    } catch (error) {
+      if (existingAccount) qliteAccounts[discordId] = existingAccount;
+      else {
+        delete qliteAccounts[discordId];
+        try {
+          await deleteQliteTrelloAccountCard(trelloCardId);
+        } catch (cleanupError) {
+          console.error("Unable to remove an incomplete QLiTE account card from Trello:", cleanupError);
+        }
+      }
+      console.error("Unable to persist the QLiTE account database:", error);
+      return res.status(500).json({ error: "The account could not be saved on the QLiTE server. Please contact support." });
+    }
+    createQlitePasswordSession(res, {
+      id: discordId,
+      username: nextAccount.username,
+      globalName: nextAccount.username,
+      avatar: session.user.avatar || "",
+      verified: Boolean(session.user.verified)
+    }, trelloCardId);
+    return res.status(existingAccount ? 200 : 201).json({
+      success: true,
+      username: nextAccount.username,
+      passwordUpdated: Boolean(existingAccount)
+    });
+  } catch (error) {
+    console.error("Unable to create QLiTE account:", error);
+    return res.status(502).json({ error: error.message || "Could not link the account to Trello." });
+  }
+});
+
+app.post("/api/qlite/auth/login", async (req, res) => {
+  if (!isTrustedQliteRequest(req)) {
+    return res.status(403).json({ error: "Requests from this website are not allowed." });
+  }
+  const username = typeof req.body?.username === "string" ? req.body.username.trim() : "";
+  const password = req.body?.password;
+  if (!username || username.length > 64 || typeof password !== "string" || password.length > 128) {
+    return res.status(400).json({ error: "Enter your Discord username and password." });
+  }
+  const loginKey = getQliteLoginKey(req, username);
+  const now = Date.now();
+  const failureState = qliteLoginFailures.get(loginKey);
+  if (failureState && failureState.lockedUntil > now) {
+    const retryAfterSeconds = Math.ceil((failureState.lockedUntil - now) / 1000);
+    res.set("Retry-After", String(retryAfterSeconds));
+    return res.status(429).json({ error: `Too many sign-in attempts. Try again in ${retryAfterSeconds} seconds.` });
+  }
+
+  const normalizedUsername = username.toLowerCase();
+  const account = Object.values(qliteAccounts).find((entry) => {
+    return String(entry.username || "").toLowerCase() === normalizedUsername;
+  });
+  const passwordMatches = account
+    ? verifyQlitePassword(password, account)
+    : (scryptSync(password || "invalid", "qlite-login-dummy-salt", 64), false);
+
+  if (!account || !passwordMatches) {
+    const failures = failureState?.lockedUntil ? 1 : (failureState?.failures || 0) + 1;
+    const lockedUntil = failures >= QLITE_LOGIN_MAX_ATTEMPTS ? now + QLITE_LOGIN_LOCKOUT_MS : 0;
+    qliteLoginFailures.set(loginKey, { failures, lockedUntil });
+    if (qliteLoginFailures.size > 5000) {
+      for (const [key, value] of qliteLoginFailures) {
+        if (!value.lockedUntil || value.lockedUntil <= now) qliteLoginFailures.delete(key);
+      }
+    }
+    if (lockedUntil) {
+      res.set("Retry-After", String(Math.ceil(QLITE_LOGIN_LOCKOUT_MS / 1000)));
+      return res.status(429).json({ error: "Too many sign-in attempts. Try again in 15 minutes." });
+    }
+    return res.status(401).json({ error: "Incorrect username or password." });
+  }
+
+  try {
+    if (!await isQliteTrelloAccountActive(account.trelloCardId, account.trelloListId)) {
+      return res.status(403).json({ error: "QLiTE access has been revoked. Contact an administrator." });
+    }
+  } catch (error) {
+    console.error("Unable to verify QLiTE account access in Trello:", error);
+    return res.status(503).json({ error: "Trello account access could not be verified. Please try again later." });
+  }
+
+  qliteLoginFailures.delete(loginKey);
+  createQlitePasswordSession(res, {
+    id: account.discordId,
+    username: account.username,
+    globalName: account.username,
+    avatar: "",
+    verified: false
+  }, account.trelloCardId);
+  return res.json({ success: true, username: account.username });
+});
+
+app.get("/api/qlite/session", async (req, res) => {
+  const session = getDiscordSession(req);
+  if (!session || session.authMethod !== "qlite-password") {
+    return res.status(401).json({ authenticated: false });
+  }
+  const account = qliteAccounts[String(session.user.id)];
+  if (!account || account.trelloCardId !== session.trelloCardId) {
+    discordSessions.delete(session.token);
+    clearSessionCookie(res);
+    return res.status(401).json({ authenticated: false });
+  }
+
+  try {
+    if (!await isQliteTrelloAccountActive(account.trelloCardId, account.trelloListId)) {
+      discordSessions.delete(session.token);
+      clearSessionCookie(res);
+      return res.status(403).json({ authenticated: false, error: "QLiTE access has been revoked." });
+    }
+  } catch (error) {
+    console.error("Unable to verify active QLiTE session in Trello:", error);
+    return res.status(503).json({ error: "Trello account access could not be verified." });
+  }
+  return res.json({
+    authenticated: true,
+    user: { id: account.discordId, username: account.username }
   });
 });
 
@@ -1667,6 +2206,7 @@ app.post("/api/feedback", async (req, res) => {
 
 
 loadModerationState();
+loadQliteAccounts();
 
 // Service status notification endpoint
 app.post("/api/notify-security", async (req, res) => {
@@ -1851,4 +2391,3 @@ app.use(async (req, res) => {
 app.listen(PORT, HOST, () => {
   console.log(`Roblox proxy running on http://${HOST}:${PORT}`);
 });
-

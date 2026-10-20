@@ -45,5 +45,6 @@
 .venv/
 node_modules/
 server/.env
+server/data/qlite-accounts.json
 npm-debug.log*
 scripts/hero-slider.js
