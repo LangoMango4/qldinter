@@ -67,6 +67,19 @@ const ADMIN_USER_IDS = String(process.env.ADMIN_USER_IDS || "")
 const SESSION_COOKIE_NAME = "qldinter_session";
 const WEBSITE_ORIGIN = String(process.env.WEBSITE_ORIGIN || "").trim().replace(/\/$/, "");
 const WEBSITE_STATUS_URL = process.env.WEBSITE_STATUS_URL || "https://queenslandinteractive-rblx.com/";
+const QLITE_ALLOWED_ORIGINS = new Set([
+  WEBSITE_ORIGIN,
+  WEBSITE_STATUS_URL,
+  ...(process.env.QLITE_ALLOWED_ORIGINS || "").split(",")
+].map((value) => {
+  try {
+    const url = new URL(value.trim());
+    return ["http:", "https:"].includes(url.protocol) ? url.origin : "";
+  } catch {
+    return "";
+  }
+}).filter(Boolean));
+QLITE_ALLOWED_ORIGINS.add("https://www.queenslandinteractive-rblx.com");
 const GAME_STATUS_URL = process.env.GAME_STATUS_URL || "https://www.roblox.com/games/74079904616243/Westlands-Queenlands";
 const WEBSITE_ROOT = path.resolve(__dirname, "..");
 const DATA_DIR = path.join(__dirname, "data");
@@ -851,8 +864,7 @@ const isWebhookAuthorized = (req) => {
 const isTrustedQliteRequest = (req) => {
   const origin = String(req.headers.origin || "").trim();
   if (!origin) return true;
-  if (WEBSITE_ORIGIN && origin === WEBSITE_ORIGIN) return true;
-  return /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  return QLITE_ALLOWED_ORIGINS.has(origin) || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
 };
 
 const qliteLoginFailures = new Map();
@@ -956,11 +968,9 @@ const updateSsuState = ({ active, label, url, mode }) => {
 app.use((req, res, next) => {
   const requestOrigin = String(req.headers.origin || "").trim();
   const isLocalDevelopmentOrigin = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(requestOrigin);
-  if (requestOrigin && (!WEBSITE_ORIGIN || requestOrigin === WEBSITE_ORIGIN || isLocalDevelopmentOrigin)) {
+  if (requestOrigin && (QLITE_ALLOWED_ORIGINS.has(requestOrigin) || isLocalDevelopmentOrigin)) {
     res.set("Access-Control-Allow-Origin", requestOrigin);
     res.set("Vary", "Origin");
-  } else if (!WEBSITE_ORIGIN) {
-    res.set("Access-Control-Allow-Origin", "*");
   }
 
   res.set("Access-Control-Allow-Credentials", "true");
