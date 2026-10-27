@@ -425,8 +425,8 @@
         <p class="account-status" id="account-status">Sign in with your QLiTE account, or verify your Discord account to get started.</p>
 
         <form class="form" id="login-form">
-          <label for="username">Discord username</label>
-          <input id="username" name="username" type="text" maxlength="64" autocomplete="username" required placeholder="Your Discord username">
+          <label for="username">Discord username or ID</label>
+          <input id="username" name="username" type="text" maxlength="64" autocomplete="username" required placeholder="Discord username or user ID">
           <label for="login-password">Password</label>
           <input id="login-password" name="password" type="password" maxlength="128" autocomplete="current-password" required placeholder="Your QLiTE password">
           <button class="primary-button" id="login-button" type="submit">Sign in</button>
@@ -507,7 +507,7 @@
       try {
         const status = await apiRequest('/api/qlite/account/status');
         if (status.accountConfigured && status.accessActive) {
-          accountStatus.textContent = `Discord verified as ${status.username}. This account already has a password; sign in above. You can verify Discord again to change it.`;
+          accountStatus.textContent = `Discord verified as ${status.username} (ID ${status.discordId}). Use your username or ID and your case-sensitive password to sign in.`;
           document.getElementById('username').value = status.username;
           document.getElementById('setup-button').textContent = 'Change QLiTE password';
           document.getElementById('setup-form').hidden = false;
@@ -520,7 +520,7 @@
           discordButton.hidden = true;
           return;
         }
-        accountStatus.textContent = `Discord verified as ${status.username}. Set a QLiTE password to finish creating your account.`;
+        accountStatus.textContent = `Discord verified as ${status.username} (ID ${status.discordId}). Set a QLiTE password to finish creating your account.`;
         document.getElementById('discord-username').value = status.username;
         document.getElementById('setup-form').hidden = false;
         document.getElementById('discord-button').hidden = true;
@@ -547,7 +547,9 @@
         });
         window.location.href = 'qlitedashboard.html';
       } catch (error) {
-        showError(error.message);
+        showError(error.message === 'Incorrect username or password.'
+          ? 'Incorrect username or password. Try your Discord username without @, your Discord display name, or your Discord ID. Passwords are case-sensitive.'
+          : error.message);
       } finally {
         loginButton.disabled = false;
         loginButton.textContent = 'Sign in';

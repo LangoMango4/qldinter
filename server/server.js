@@ -950,7 +950,8 @@ const qliteLoginFailures = new Map();
 const QLITE_LOGIN_MAX_ATTEMPTS = 5;
 const QLITE_LOGIN_LOCKOUT_MS = 15 * 60 * 1000;
 
-const getQliteLoginKey = (req, username) => `${req.ip}:${username.toLowerCase()}`;
+const normalizeQliteLogin = (value) => String(value || "").trim().replace(/^@/, "").toLowerCase();
+const getQliteLoginKey = (req, username) => `${req.ip}:${normalizeQliteLogin(username)}`;
 
 const createQlitePasswordSession = (res, user, trelloCardId) => {
   cleanupDiscordSessions();
@@ -1622,6 +1623,7 @@ app.get("/api/qlite/account/status", async (req, res) => {
     return res.json({
       authenticated: true,
       username: session.user.username,
+      discordId: String(session.user.id),
       accountConfigured: false
     });
   }
@@ -1631,6 +1633,7 @@ app.get("/api/qlite/account/status", async (req, res) => {
     return res.json({
       authenticated: true,
       username: account.username,
+      discordId: account.discordId || String(session.user.id),
       accountConfigured: true,
       accessActive: active
     });
@@ -1686,6 +1689,7 @@ app.post("/api/qlite/account/setup", async (req, res) => {
     const nextAccount = {
       discordId,
       username: discordUsername,
+      globalName: String(session.user.globalName || "").trim(),
       salt,
       passwordHash,
       trelloCardId,
@@ -1745,10 +1749,23 @@ app.post("/api/qlite/auth/login", async (req, res) => {
     return res.status(429).json({ error: `Too many sign-in attempts. Try again in ${retryAfterSeconds} seconds.` });
   }
 
-  const normalizedUsername = username.toLowerCase();
-  const account = Object.values(qliteAccounts).find((entry) => {
-    return String(entry.username || "").toLowerCase() === normalizedUsername;
+  try {
+    loadQliteAccounts();
+  } catch (error) {
+    console.error("Unable to load QLiTE accounts for password sign-in:", error);
+    return res.status(500).json({ error: "QLiTE account records could not be loaded. Please try again later." });
+  }
+  const normalizedUsername = normalizeQliteLogin(username);
+  const accounts = Object.entries(qliteAccounts);
+  const accountEntry = accounts.find(([id, entry]) => {
+    return normalizeQliteLogin(entry.username) === normalizedUsername ||
+      String(entry.discordId || id) === username.trim();
   });
+  const displayNameMatches = accounts.filter(([, entry]) => {
+    return entry.globalName && normalizeQliteLogin(entry.globalName) === normalizedUsername;
+  });
+  const matchedEntry = accountEntry || (displayNameMatches.length === 1 ? displayNameMatches[0] : null);
+  const account = matchedEntry ? matchedEntry[1] : null;
   const passwordMatches = account
     ? verifyQlitePassword(password, account)
     : (scryptSync(password || "invalid", "qlite-login-dummy-salt", 64), false);
