@@ -1793,7 +1793,7 @@ app.post("/api/qlite/auth/login", async (req, res) => {
     }
     if (lockedUntil) {
       res.set("Retry-After", String(Math.ceil(QLITE_LOGIN_LOCKOUT_MS / 1000)));
-      return res.status(429).json({ error: "Too many sign-in attempts. Try again in 15 minutes." });
+      return res.status(429).json({ error: `Too many sign-in attempts. Try again in ${Math.ceil(QLITE_LOGIN_LOCKOUT_MS / 60000)} minute${QLITE_LOGIN_LOCKOUT_MS >= 120000 ? "s" : ""}.` });
     }
     return res.status(401).json({ error: "Incorrect username or password." });
   }

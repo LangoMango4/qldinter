@@ -440,7 +440,7 @@
         <img class="logo" src="../../assets/images/qps.png" alt="Queensland Police Service">
         <h1>QLiTE</h1>
         <p class="intro">Roblox officer access</p>
-        <p class="account-status" id="account-status">New users: verify an allowlisted Discord account and create a QLiTE password. Returning users can sign in below.</p>
+        <p class="account-status" id="account-status">Each person needs their own QLiTE account. Being listed in Railway's QLITE_LOGINS only allows access; it does not create an account. New users: choose Verify with Discord, then create a password. Returning users can sign in below.</p>
 
         <form class="form" id="login-form">
           <label for="username">Discord username or ID</label>
@@ -496,6 +496,7 @@
     const errorMessage = document.getElementById('error');
     const noticeMessage = document.getElementById('notice');
     const accountStatus = document.getElementById('account-status');
+    const discordVerificationPendingKey = 'qlite-discord-verification-pending';
     let hasExistingQliteAccount = false;
 
     function showError(message) {
@@ -537,6 +538,7 @@
     async function checkDiscordSession() {
       try {
         const status = await apiRequest('/api/qlite/account/status');
+        sessionStorage.removeItem(discordVerificationPendingKey);
         if (status.accountConfigured && status.accessActive) {
           hasExistingQliteAccount = true;
           accountStatus.textContent = `Your QLiTE account is active. Sign in with ${status.username} or Discord ID ${status.discordId} and your existing password.`;
@@ -558,7 +560,13 @@
         setupForm.hidden = false;
         document.getElementById('discord-button').hidden = true;
       } catch (error) {
-        if (error.message.includes('401')) return;
+        if (error.message.includes('401')) {
+          if (sessionStorage.getItem(discordVerificationPendingKey) === 'true') {
+            sessionStorage.removeItem(discordVerificationPendingKey);
+            showError('Discord verification returned, but the QLiTE server did not retain your sign-in. Ask an administrator to check that Railway is running a single API replica, then try Verify with Discord again.');
+          }
+          return;
+        }
         accountStatus.textContent = error.message;
         showError(error.message);
       }
@@ -587,7 +595,7 @@
         window.location.href = 'qlitedashboard.html';
       } catch (error) {
         showError(error.message === 'Incorrect username or password.'
-          ? 'That username/password combination was not accepted. Use the Discord username shown when you created your account (or your Discord ID). Passwords are case-sensitive.'
+          ? 'That username/password combination was not accepted. If this Discord account has not created a QLiTE password yet, choose Verify with Discord first, then create its account. QLITE_LOGINS only allows access; it does not create accounts. Otherwise use the Discord username shown when the account was created (or its Discord ID). Passwords are case-sensitive.'
           : error.message);
       } finally {
         loginButton.disabled = false;
@@ -643,6 +651,7 @@
 
     discordButton.addEventListener('click', () => {
       const returnTo = new URL('index.html', window.location.href).href;
+      sessionStorage.setItem(discordVerificationPendingKey, 'true');
       window.location.href = `${apiBase}/auth/discord/start?returnTo=${encodeURIComponent(returnTo)}`;
     });
 
