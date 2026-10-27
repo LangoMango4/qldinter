@@ -1,5 +1,5 @@
 const express = require("express");
-const { randomUUID, randomBytes, scryptSync, timingSafeEqual } = require("crypto");
+const { randomUUID, randomBytes, createHmac, scryptSync, timingSafeEqual } = require("crypto");
 const fs = require("fs");
 const path = require("path");
 
@@ -63,6 +63,7 @@ const QLITE_LOGINS = [...new Set(String(process.env.QLITE_LOGINS || "")
   .filter((value) => /^\d{1,25}$/.test(value)))];
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || "";
+const AUTH_SIGNING_SECRET = process.env.SESSION_SECRET || DISCORD_CLIENT_SECRET || randomBytes(32).toString("hex");
 const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || "";
 const DISCORD_OAUTH_SCOPES = process.env.DISCORD_OAUTH_SCOPES || "identify email guilds";
 const ADMIN_USER_IDS = String(process.env.ADMIN_USER_IDS || "")
@@ -70,6 +71,7 @@ const ADMIN_USER_IDS = String(process.env.ADMIN_USER_IDS || "")
   .map((value) => value.trim())
   .filter(Boolean);
 const SESSION_COOKIE_NAME = "qldinter_session";
+const OAUTH_STATE_COOKIE_NAME = "qldinter_oauth_state";
 const WEBSITE_ORIGIN = String(process.env.WEBSITE_ORIGIN || "").trim().replace(/\/$/, "");
 const WEBSITE_STATUS_URL = process.env.WEBSITE_STATUS_URL || "https://queenslandinteractive-rblx.com/";
 const QLITE_ALLOWED_ORIGINS = new Set([
@@ -113,7 +115,6 @@ app.use((req, res, next) => {
 });
 
 const botAuthChallenges = new Map();
-const oauthStates = new Map();
 const discordSessions = new Map();
 let moderationState = {
   bans: [],
@@ -659,6 +660,38 @@ const parseCookies = (req) => {
   }, {});
 };
 
+const createSignedPayload = (payload, purpose) => {
+  const encodedPayload = Buffer.from(JSON.stringify(payload)).toString("base64url");
+  const signature = createHmac("sha256", AUTH_SIGNING_SECRET)
+    .update(`${purpose}.${encodedPayload}`)
+    .digest("base64url");
+  return `${encodedPayload}.${signature}`;
+};
+
+const readSignedPayload = (token, purpose) => {
+  if (typeof token !== "string" || token.length > 8192) return null;
+  const [encodedPayload, signature, ...extra] = token.split(".");
+  if (!encodedPayload || !signature || extra.length > 0 ||
+    !/^[A-Za-z0-9_-]+$/.test(encodedPayload) || !/^[A-Za-z0-9_-]+$/.test(signature)) return null;
+  const expectedSignature = createHmac("sha256", AUTH_SIGNING_SECRET)
+    .update(`${purpose}.${encodedPayload}`)
+    .digest();
+  let actualSignature;
+  try {
+    actualSignature = Buffer.from(signature, "base64url");
+  } catch {
+    return null;
+  }
+  if (actualSignature.length !== expectedSignature.length ||
+    !timingSafeEqual(actualSignature, expectedSignature)) return null;
+  try {
+    const payload = JSON.parse(Buffer.from(encodedPayload, "base64url").toString("utf8"));
+    return payload && payload.version === 1 && payload.purpose === purpose ? payload : null;
+  } catch {
+    return null;
+  }
+};
+
 const setSessionCookie = (res, token, maxAgeMs) => {
   const maxAgeSeconds = Math.max(0, Math.floor(maxAgeMs / 1000));
   const cookie = [
@@ -669,7 +702,29 @@ const setSessionCookie = (res, token, maxAgeMs) => {
     "SameSite=None",
     `Max-Age=${maxAgeSeconds}`
   ].join("; ");
-  res.setHeader("Set-Cookie", cookie);
+  res.append("Set-Cookie", cookie);
+};
+
+const setOAuthStateCookie = (res, nonce) => {
+  res.append("Set-Cookie", [
+    `${OAUTH_STATE_COOKIE_NAME}=${encodeURIComponent(nonce)}`,
+    "Path=/auth/discord/callback",
+    "HttpOnly",
+    "Secure",
+    "SameSite=None",
+    "Max-Age=600"
+  ].join("; "));
+};
+
+const clearOAuthStateCookie = (res) => {
+  res.append("Set-Cookie", [
+    `${OAUTH_STATE_COOKIE_NAME}=`,
+    "Path=/auth/discord/callback",
+    "HttpOnly",
+    "Secure",
+    "SameSite=None",
+    "Max-Age=0"
+  ].join("; "));
 };
 
 const notifyNotFoundWebhook = async (req) => {
@@ -717,16 +772,7 @@ const clearSessionCookie = (res) => {
     "SameSite=None",
     "Max-Age=0"
   ].join("; ");
-  res.setHeader("Set-Cookie", cookie);
-};
-
-const cleanupDiscordAuthState = () => {
-  const now = Date.now();
-  for (const [key, state] of oauthStates.entries()) {
-    if (state.expiresAt <= now) {
-      oauthStates.delete(key);
-    }
-  }
+  res.append("Set-Cookie", cookie);
 };
 
 const cleanupDiscordSessions = () => {
@@ -746,19 +792,27 @@ const getDiscordSession = (req) => {
     return null;
   }
 
-  const session = discordSessions.get(token);
-  if (!session) {
-    return null;
+  const signedSession = readSignedPayload(token, "session");
+  if (signedSession) {
+    if (!signedSession.sessionToken || !signedSession.user?.id ||
+      !Number.isFinite(signedSession.expiresAt) || signedSession.expiresAt <= Date.now()) {
+      return null;
+    }
+    return {
+      token: signedSession.sessionToken,
+      user: signedSession.user,
+      authMethod: signedSession.authMethod,
+      trelloCardId: signedSession.trelloCardId,
+      createdAt: signedSession.createdAt,
+      expiresAt: signedSession.expiresAt
+    };
   }
 
-  if (session.expiresAt <= Date.now()) {
-    discordSessions.delete(token);
-    return null;
-  }
-
+  const legacySession = discordSessions.get(token);
+  if (!legacySession || legacySession.expiresAt <= Date.now()) return null;
   return {
     token,
-    ...session
+    ...legacySession
   };
 };
 
@@ -788,7 +842,7 @@ const qliteLoginDeniedMessage = (discordId) => QLITE_LOGINS.length
   ? `Discord user ID ${String(discordId)} is not listed in QLITE_LOGINS. Add this numeric ID to the Railway variable, separated from other IDs by a comma, then redeploy the server.`
   : "QLiTE sign-in is disabled because QLITE_LOGINS is empty. Add the permitted Discord user IDs to the Railway variable, then redeploy the server.";
 
-const requireQliteSession = (req, res, next) => {
+const requireQliteSession = async (req, res, next) => {
   const session = getDiscordSession(req);
   if (!session || session.authMethod !== "qlite-password") {
     return res.status(401).json({ authenticated: false, error: "QLiTE sign-in is required." });
@@ -804,6 +858,15 @@ const requireQliteSession = (req, res, next) => {
     discordSessions.delete(session.token);
     clearSessionCookie(res);
     return res.status(401).json({ authenticated: false, error: "QLiTE access is no longer active." });
+  }
+  try {
+    if (!await isQliteTrelloAccountActive(account.trelloCardId, account.trelloListId)) {
+      clearSessionCookie(res);
+      return res.status(403).json({ error: "QLiTE access has been revoked. Contact an administrator." });
+    }
+  } catch (error) {
+    console.error("Unable to verify QLiTE access for a protected request:", error);
+    return res.status(503).json({ error: "Trello account access could not be verified. Please try again later." });
   }
   req.qliteUser = session.user;
   return next();
@@ -971,14 +1034,21 @@ const createQlitePasswordSession = (res, user, trelloCardId) => {
   cleanupDiscordSessions();
   const sessionToken = randomUUID();
   const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
-  discordSessions.set(sessionToken, {
+  const session = {
     user,
     authMethod: "qlite-password",
     trelloCardId,
     createdAt: Date.now(),
     expiresAt
-  });
-  setSessionCookie(res, sessionToken, 24 * 60 * 60 * 1000);
+  };
+  discordSessions.set(sessionToken, session);
+  const cookieToken = createSignedPayload({
+    version: 1,
+    purpose: "session",
+    sessionToken,
+    ...session
+  }, "session");
+  setSessionCookie(res, cookieToken, 24 * 60 * 60 * 1000);
 };
 
 const normalizeSessionMode = (value) => {
@@ -1469,8 +1539,6 @@ app.get("/auth/discord/start", (req, res) => {
     });
   }
 
-  cleanupDiscordAuthState();
-  const state = randomUUID();
   const returnTo = String((req.query && req.query.returnTo) || "").trim();
   let safeReturnTo = "/";
 
@@ -1485,12 +1553,17 @@ app.get("/auth/discord/start", (req, res) => {
     }
   }
 
-  oauthStates.set(state, {
+  const nonce = randomUUID();
+  setOAuthStateCookie(res, nonce);
+  const state = createSignedPayload({
+    version: 1,
+    purpose: "oauth-state",
+    nonce,
     createdAt: Date.now(),
     expiresAt: Date.now() + 10 * 60 * 1000,
     returnTo: safeReturnTo,
     redirectUri
-  });
+  }, "oauth-state");
 
   const params = new URLSearchParams({
     client_id: DISCORD_CLIENT_ID,
@@ -1504,13 +1577,13 @@ app.get("/auth/discord/start", (req, res) => {
 });
 
 app.get("/auth/discord/callback", async (req, res) => {
+  const oauthStateNonce = parseCookies(req)[OAUTH_STATE_COOKIE_NAME];
+  clearOAuthStateCookie(res);
   try {
     const missing = getMissingDiscordOAuthConfig();
     if (missing.length > 0) {
       return res.status(500).send(`Discord OAuth is not configured. Missing: ${missing.join(", ")}`);
     }
-
-    cleanupDiscordAuthState();
 
     const code = String((req.query && req.query.code) || "").trim();
     const state = String((req.query && req.query.state) || "").trim();
@@ -1524,12 +1597,11 @@ app.get("/auth/discord/callback", async (req, res) => {
       return res.status(400).send("Missing code or state.");
     }
 
-    const stateEntry = oauthStates.get(state);
-    if (!stateEntry || stateEntry.expiresAt <= Date.now()) {
-      oauthStates.delete(state);
+    const stateEntry = readSignedPayload(state, "oauth-state");
+    if (!stateEntry || !stateEntry.nonce || stateEntry.nonce !== oauthStateNonce ||
+      !Number.isFinite(stateEntry.expiresAt) || stateEntry.expiresAt <= Date.now()) {
       return res.status(400).send("Invalid or expired OAuth state.");
     }
-    oauthStates.delete(state);
 
     const redirectUri = stateEntry.redirectUri || resolveDiscordRedirectUri(req);
     if (!redirectUri) {
@@ -1585,8 +1657,7 @@ app.get("/auth/discord/callback", async (req, res) => {
     cleanupDiscordSessions();
     const sessionToken = randomUUID();
     const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
-
-    discordSessions.set(sessionToken, {
+    const session = {
       user: {
         id: me.id,
         username: me.username,
@@ -1598,9 +1669,16 @@ app.get("/auth/discord/callback", async (req, res) => {
       },
       createdAt: Date.now(),
       expiresAt
-    });
+    };
 
-    setSessionCookie(res, sessionToken, 24 * 60 * 60 * 1000);
+    discordSessions.set(sessionToken, session);
+    const cookieToken = createSignedPayload({
+      version: 1,
+      purpose: "session",
+      sessionToken,
+      ...session
+    }, "session");
+    setSessionCookie(res, cookieToken, 24 * 60 * 60 * 1000);
     const redirectTo = typeof stateEntry.returnTo === "string" && stateEntry.returnTo ? stateEntry.returnTo : "/";
     return res.redirect(redirectTo);
   } catch (error) {
@@ -2221,7 +2299,8 @@ app.post("/api/auth/logout", (req, res) => {
   const cookies = parseCookies(req);
   const token = cookies[SESSION_COOKIE_NAME];
   if (token) {
-    discordSessions.delete(token);
+    const session = readSignedPayload(token, "session");
+    discordSessions.delete(session?.sessionToken || token);
   }
 
   clearSessionCookie(res);
