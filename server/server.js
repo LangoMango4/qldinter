@@ -241,6 +241,15 @@ const saveQliteRecords = () => {
   fs.renameSync(temporaryFile, QLITE_RECORDS_FILE);
 };
 
+const nextQlitePropertySerial = (records) => {
+  const highestSerial = records.reduce((highest, record) => {
+    const match = /^RBX(\d{4,})$/.exec(String(record.serialNumber || ""));
+    return match ? Math.max(highest, Number(match[1])) : highest;
+  }, 1233);
+  const nextSerial = highestSerial + 1;
+  return nextSerial <= 99999999 ? `RBX${String(nextSerial).padStart(4, "0")}` : null;
+};
+
 const isPasswordValid = (password) => typeof password === "string" && password.length >= 12 && password.length <= 128;
 
 const hashQlitePassword = (password, salt = randomBytes(16).toString("hex")) => ({
@@ -1867,9 +1876,12 @@ app.post("/api/qlite/records", requireQliteSession, (req, res) => {
   const markings = String(req.body?.markings || "").trim();
   const additionalInfo = String(req.body?.additionalInfo || "").trim();
   const direction = String(req.body?.direction || "").trim();
+  const vehicleDescription = String(req.body?.vehicleDescription || "").trim();
+  const registration = String(req.body?.registration || "").trim();
+  const impoundLocation = String(req.body?.impoundLocation || "").trim();
   if (!/^\d{1,25}$/.test(playerId) || !playerName || playerName.length > 64 ||
     !username || username.length > 64 || !reason || reason.length > 240 ||
-    !["Safety", "DV", "Move-on Direction", "Fine", "Warrant", "Traffic", "Youth Caution", "Property Receipt"].includes(type)) {
+    !["Safety", "DV", "Move-on Direction", "Fine", "Warrant", "Traffic", "Youth Caution", "Property Receipt", "Impound", "Arrest"].includes(type)) {
     return res.status(400).json({ error: "A valid player, record type and reason are required." });
   }
   if (type === "Fine" && (!Number.isInteger(amount) || amount < 1 || amount > 1000000)) {
@@ -1884,6 +1896,19 @@ app.post("/api/qlite/records", requireQliteSession, (req, res) => {
   }
   if (type === "Move-on Direction" && (!direction || direction.length > 240)) {
     return res.status(400).json({ error: "A move-on direction of 240 characters or fewer is required." });
+  }
+  if (type === "Impound" && (!vehicleDescription || vehicleDescription.length > 160 ||
+    registration.length > 32 || impoundLocation.length > 160)) {
+    return res.status(400).json({ error: "An impounded vehicle description is required; registration must be 32 characters or fewer and location 160 characters or fewer." });
+  }
+  const propertySerial = type === "Property Receipt"
+    ? nextQlitePropertySerial([
+      ...qliteRecords.records,
+      ...qliteRecords.logs.map((entry) => entry.record || {})
+    ])
+    : null;
+  if (type === "Property Receipt" && !propertySerial) {
+    return res.status(503).json({ error: "A property receipt serial number could not be generated. Contact an administrator." });
   }
 
   const createdAt = new Date().toISOString();
@@ -1901,7 +1926,13 @@ app.post("/api/qlite/records", requireQliteSession, (req, res) => {
     },
     ...(type === "Fine" ? { amount } : type === "Warrant" ? { priority } : type === "Move-on Direction" ? { direction } : {})
   };
+  if (type === "Impound") {
+    record.vehicleDescription = vehicleDescription;
+    if (registration) record.registration = registration;
+    if (impoundLocation) record.impoundLocation = impoundLocation;
+  }
   if (type === "Property Receipt") {
+    record.serialNumber = propertySerial;
     record.propertyDescription = propertyDescription;
     if (markings) record.markings = markings;
     if (additionalInfo) record.additionalInfo = additionalInfo;

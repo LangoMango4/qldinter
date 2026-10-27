@@ -65,6 +65,7 @@
     }
 
     .topbar {
+      position: relative;
       display: flex;
       flex: 0 0 52px;
       align-items: center;
@@ -73,6 +74,53 @@
       padding: 0 17px;
       background: #0b1220;
       border-bottom: 1px solid #2a3854;
+    }
+
+    .global-search-trigger {
+      position: absolute;
+      left: 50%;
+      display: flex;
+      width: min(390px, 40%);
+      min-width: 190px;
+      height: 34px;
+      align-items: center;
+      gap: 9px;
+      padding: 0 10px;
+      transform: translateX(-50%);
+      border: 1px solid #35445e;
+      border-radius: 6px;
+      background: #192336;
+      color: #aebbd0;
+      text-align: left;
+      font-size: 10px;
+    }
+
+    .global-search-trigger:hover {
+      border-color: #6288c7;
+      background: #202b40;
+      color: #eff5ff;
+    }
+
+    .global-search-trigger svg {
+      width: 15px;
+      height: 15px;
+      flex: 0 0 auto;
+      color: #91a8cc;
+    }
+
+    .global-search-label {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .global-search-trigger kbd {
+      padding: 2px 5px;
+      border: 1px solid #3b4962;
+      border-radius: 4px;
+      color: #91a1bc;
+      font-size: 9px;
     }
 
     .brand {
@@ -151,13 +199,19 @@
     .nav-chip {
       flex: 0 0 auto;
       padding: 5px 9px;
-      border: 0;
-      border-radius: 4px;
-      background: #36445e;
+      border: 1px solid #35445e;
+      border-radius: 5px;
+      background: #202b40;
       color: #f8fafc;
       font-size: 9px;
       font-weight: 800;
       letter-spacing: .03em;
+    }
+
+    .nav-chip:hover,
+    .nav-chip[aria-pressed="true"] {
+      border-color: #6288c7;
+      background: #293a55;
     }
 
     .workspace {
@@ -170,6 +224,105 @@
       background:
         radial-gradient(ellipse at 85% 0, rgba(44, 71, 123, .32), transparent 48%),
         #111c32;
+    }
+
+    .home-panel {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      flex-direction: column;
+      gap: 11px;
+      margin: 11px;
+      padding: 13px;
+      overflow: auto;
+      border: 1px solid #313b50;
+      border-radius: 8px;
+      background: #171f2e;
+    }
+
+    .home-heading,
+    .home-section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .home-heading h2 {
+      margin: 0;
+      font-size: 15px;
+    }
+
+    .home-grid {
+      display: grid;
+      min-height: 0;
+      flex: 1;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .home-section {
+      min-width: 0;
+      min-height: 135px;
+      padding: 10px;
+      overflow: auto;
+      border: 1px solid #303a4f;
+      border-radius: 6px;
+      background: #20293a;
+    }
+
+    .home-section h3 {
+      margin: 0;
+      color: #dce5f4;
+      font-size: 10px;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .home-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .home-record {
+      display: grid;
+      width: 100%;
+      gap: 4px;
+      padding: 8px;
+      border: 1px solid #35445e;
+      border-left: 3px solid #6983ad;
+      border-radius: 5px;
+      background: #192336;
+      color: #e6edf9;
+      text-align: left;
+    }
+
+    .home-record[data-type="Warrant"] { border-left-color: #e66c79; }
+    .home-record[data-type="Property Receipt"] { border-left-color: #58b6ad; }
+    .home-record[data-type="Arrest"] { border-left-color: #ed8a59; }
+    .home-record[data-type="Impound"] { border-left-color: #c99435; }
+
+    .home-record:hover {
+      background: #26334a;
+    }
+
+    .home-record strong {
+      font-size: 9px;
+    }
+
+    .home-record span,
+    .home-record time {
+      color: #aebbd0;
+      font-size: 8px;
+      line-height: 1.4;
+    }
+
+    .home-summary {
+      display: flex;
+      gap: 8px;
+      color: #aebbd0;
+      font-size: 9px;
     }
 
     .panel {
@@ -491,7 +644,7 @@
 
     .stats {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 7px;
     }
 
@@ -526,6 +679,38 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 7px;
+    }
+
+    .record-actions {
+      display: grid;
+      gap: 5px;
+    }
+
+    .record-actions > label {
+      color: #aebbd0;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .record-action-row {
+      display: flex;
+      gap: 7px;
+    }
+
+    .record-action-row select {
+      min-width: 0;
+      flex: 1;
+      min-height: 32px;
+      padding: 6px 8px;
+      border: 1px solid #405273;
+      border-radius: 5px;
+      background: #202b40;
+      color: #ecf3ff;
+      font-size: 9px;
+    }
+
+    .record-action-row .action-button {
+      flex: 0 0 auto;
     }
 
     .action-button {
@@ -637,6 +822,14 @@
       border-left-color: #6ea7ef;
     }
 
+    .record[data-type="Impound"] {
+      border-left-color: #c99435;
+    }
+
+    .record[data-type="Arrest"] {
+      border-left-color: #ed8a59;
+    }
+
     .record-copy {
       min-width: 0;
     }
@@ -688,6 +881,140 @@
 
     dialog::backdrop {
       background: rgba(3, 8, 17, .76);
+    }
+
+    .global-search-dialog {
+      width: min(620px, calc(100vw - 28px));
+      max-width: none;
+      max-height: min(720px, calc(100dvh - 40px));
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid #3b4962;
+      border-radius: 10px;
+      background: #151e2d;
+      color: #eef3fb;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .48);
+    }
+
+    .global-search-dialog::backdrop {
+      background: rgba(3, 8, 17, .76);
+      backdrop-filter: blur(3px);
+    }
+
+    .global-search-content {
+      display: grid;
+      max-height: inherit;
+      grid-template-rows: auto auto minmax(0, 1fr);
+    }
+
+    .global-search-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 17px 11px;
+      border-bottom: 1px solid #2d384c;
+    }
+
+    .global-search-heading h2 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .global-search-heading p {
+      margin: 4px 0 0;
+      color: #98a8bf;
+      font-size: 10px;
+    }
+
+    .global-search-close {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #3b4962;
+      border-radius: 5px;
+      background: #202b40;
+      color: #dce5f4;
+      font-size: 16px;
+    }
+
+    .global-search-form {
+      display: flex;
+      gap: 8px;
+      padding: 12px 15px;
+      border-bottom: 1px solid #2d384c;
+    }
+
+    .global-search-form input {
+      min-width: 0;
+      min-height: 38px;
+      flex: 1;
+      padding: 8px 11px;
+      border: 1px solid #3b4962;
+      border-radius: 6px;
+      outline: none;
+      background: #101725;
+      color: #f4f7fc;
+      font-size: 12px;
+    }
+
+    .global-search-form input:focus {
+      border-color: #5d9dff;
+      box-shadow: 0 0 0 2px rgba(69, 139, 255, .15);
+    }
+
+    .global-search-results {
+      display: grid;
+      gap: 12px;
+      padding: 13px 15px 16px;
+      overflow: auto;
+    }
+
+    .global-search-group {
+      display: grid;
+      gap: 6px;
+    }
+
+    .global-search-group-content {
+      display: grid;
+      gap: 6px;
+    }
+
+    .global-search-group h3 {
+      margin: 0;
+      color: #8fa4c4;
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+
+    .global-search-result {
+      display: grid;
+      width: 100%;
+      gap: 3px;
+      padding: 9px 10px;
+      border: 1px solid #303d53;
+      border-radius: 6px;
+      background: #1b2638;
+      color: #e7edf7;
+      text-align: left;
+    }
+
+    .global-search-result:hover {
+      border-color: #5578ad;
+      background: #222f44;
+    }
+
+    .global-search-result strong {
+      font-size: 10px;
+    }
+
+    .global-search-result span,
+    .global-search-result time,
+    .global-search-message {
+      margin: 0;
+      color: #9eacc1;
+      font-size: 9px;
+      line-height: 1.45;
     }
 
     .record-form {
@@ -785,9 +1112,43 @@
         padding: 7px;
       }
 
+      .home-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .home-panel {
+        margin: 8px;
+        padding: 9px;
+      }
+
+      .home-section {
+        min-height: 120px;
+      }
+
       .topbar {
         flex-basis: 47px;
         padding: 0 10px;
+      }
+
+      .global-search-trigger {
+        width: 36px;
+        min-width: 36px;
+        height: 34px;
+        justify-content: center;
+        padding: 0;
+      }
+
+      .global-search-label,
+      .global-search-trigger kbd {
+        display: none;
+      }
+
+      .global-search-form {
+        padding: 10px;
+      }
+
+      .global-search-results {
+        padding: 10px;
       }
 
       .brand-caption,
@@ -890,19 +1251,14 @@
 
     .nav-chip {
       padding: 7px 10px;
-      border: 1px solid transparent;
       border-radius: 5px;
-      background: transparent !important;
       color: #aeb9ca;
       font-size: 9px;
       letter-spacing: .055em;
       transition: background .15s ease, border-color .15s ease, color .15s ease;
     }
 
-    .nav-chip:hover,
     .nav-chip[aria-pressed="true"] {
-      border-color: #35445e;
-      background: #28354b !important;
       color: #f5f8ff;
     }
 
@@ -1407,6 +1763,16 @@
         padding: 10px;
       }
 
+      .home-panel {
+        min-height: calc(100svh - 140px);
+        margin: 10px;
+        overflow: visible;
+      }
+
+      .home-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
       .search-panel {
         min-height: 290px;
       }
@@ -1516,10 +1882,6 @@
         grid-template-columns: 1fr 1fr;
       }
 
-      .stat:last-child {
-        grid-column: 1 / -1;
-      }
-
       .actions {
         grid-template-columns: 1fr;
       }
@@ -1539,17 +1901,66 @@
             <p class="brand-caption">Queensland Interactive · Westlands, Queensland</p>
           </div>
         </div>
+        <button class="global-search-trigger" id="global-search-open" type="button" aria-label="Search Roblox players, records, serial numbers, and logs">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.8"></circle>
+            <path d="m16 16 4.2 4.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+          </svg>
+          <span class="global-search-label">Search players, logs, serials…</span>
+          <kbd>/</kbd>
+        </button>
         <div class="topbar-right">
-          <span class="demo-label">WESTLANDS · SECURE</span>
           <button class="signout" type="button" onclick="signOut()">Sign out</button>
         </div>
       </header>
 
-      <nav class="quick-nav" aria-label="Administration">
-        <button class="nav-chip" type="button" data-category="Admin" id="admin-tab" hidden>ADMIN LOGS</button>
+      <nav class="quick-nav" aria-label="QLiTE sections">
+        <button class="nav-chip" type="button" data-view="home" aria-pressed="true">HOME</button>
+        <button class="nav-chip" type="button" data-view="players" aria-pressed="false">PLAYERS</button>
+        <button class="nav-chip" type="button" data-view="admin" id="admin-tab" hidden aria-pressed="false">ADMIN LOGS</button>
       </nav>
 
-      <div class="workspace">
+      <section class="home-panel" id="home-panel" aria-labelledby="home-title">
+        <div class="home-heading">
+          <div>
+            <p class="eyebrow">Westlands · QLiTE</p>
+            <h2 id="home-title">Home</h2>
+          </div>
+          <div class="home-summary">
+            <span id="home-record-count">0 records</span>
+            <span id="home-warrant-count">0 active warrants</span>
+          </div>
+          <button class="action-button" type="button" id="home-search">Search players</button>
+        </div>
+        <div class="home-grid">
+          <section class="home-section" aria-labelledby="home-warrants-title">
+            <div class="home-section-heading">
+              <h3 id="home-warrants-title">Active warrants</h3>
+            </div>
+            <div class="home-list" id="home-warrants"></div>
+          </section>
+          <section class="home-section" aria-labelledby="home-activity-title">
+            <div class="home-section-heading">
+              <h3 id="home-activity-title">Latest logs</h3>
+            </div>
+            <div class="home-list" id="home-activity"></div>
+          </section>
+          <section class="home-section" aria-labelledby="home-property-title">
+            <div class="home-section-heading">
+              <h3 id="home-property-title">Latest property receipts</h3>
+            </div>
+            <div class="home-list" id="home-property"></div>
+          </section>
+          <section class="home-section" aria-labelledby="home-arrests-title">
+            <div class="home-section-heading">
+              <h3 id="home-arrests-title">Latest arrests</h3>
+            </div>
+            <div class="home-list" id="home-arrests"></div>
+          </section>
+        </div>
+      </section>
+
+      <div class="workspace" id="workspace" hidden>
         <section class="panel search-panel" aria-labelledby="search-title">
           <div class="panel-heading">
             <div>
@@ -1606,19 +2017,32 @@
                 <span class="stat-label">Shared records</span>
                 <span class="stat-value" id="record-count">0</span>
               </div>
+              <div class="stat">
+                <span class="stat-label">Arrest history</span>
+                <span class="stat-value" id="arrest-status">No arrest recorded</span>
+              </div>
             </div>
-            <div class="overview-categories" aria-label="Player record categories">
-              <button class="nav-chip" type="button" data-action="Safety">SAFETY</button>
-              <button class="nav-chip" type="button" data-action="DV">DV</button>
-              <button class="nav-chip" type="button" data-action="Move-on Direction">MOVE-ON</button>
-              <button class="nav-chip" type="button" data-action="Fine">FINES</button>
-              <button class="nav-chip" type="button" data-action="Warrant">WARRANTS</button>
-              <button class="nav-chip" type="button" data-action="Traffic">TRAFFIC</button>
-              <button class="nav-chip" type="button" data-action="Youth Caution">YOUTH CAUTIONS</button>
-              <button class="nav-chip" type="button" data-action="Property Receipt">PROPERTY RECEIPTS</button>
+            <div class="record-actions">
+              <label for="record-category">Add a player record</label>
+              <div class="record-action-row">
+                <select id="record-category">
+                  <option value="">Choose category…</option>
+                  <option value="Safety">Safety</option>
+                  <option value="DV">DV</option>
+                  <option value="Move-on Direction">Move-on direction</option>
+                  <option value="Fine">Fine</option>
+                  <option value="Warrant">Warrant</option>
+                  <option value="Traffic">Traffic</option>
+                  <option value="Youth Caution">Youth caution</option>
+                  <option value="Property Receipt">Field property receipt</option>
+                  <option value="Impound">Impound</option>
+                  <option value="Arrest">Arrest</option>
+                </select>
+                <button class="action-button" id="add-record" type="button">Add record</button>
+              </div>
             </div>
             <div class="records-heading">
-              <h3>Officer notes & records</h3>
+              <h3>All records · newest first</h3>
               <span class="local-note">Synced with QLiTE officers</span>
             </div>
             <div class="records" id="records">
@@ -1634,7 +2058,7 @@
             <h2 id="admin-title">Record activity</h2>
           </div>
           <div class="admin-actions">
-            <button class="action-button" type="button" id="admin-back">Back to players</button>
+            <button class="action-button" type="button" id="admin-back">Back to home</button>
             <button class="action-button" type="button" id="refresh-logs">Refresh</button>
           </div>
         </div>
@@ -1650,6 +2074,25 @@
       </footer>
     </section>
   </main>
+
+  <dialog class="global-search-dialog" id="global-search-dialog" aria-labelledby="global-search-title">
+    <div class="global-search-content">
+      <div class="global-search-heading">
+        <div>
+          <h2 id="global-search-title">Search QLiTE</h2>
+          <p>Find Roblox players, shared records, property serials, and admin audit logs.</p>
+        </div>
+        <button class="global-search-close" id="global-search-close" type="button" aria-label="Close search">×</button>
+      </div>
+      <form class="global-search-form" id="global-search-form">
+        <input id="global-search-input" type="search" maxlength="80" autocomplete="off" placeholder="Name, Roblox ID, record detail, or RBX serial" aria-label="Search players, records, serial numbers, and logs" required>
+        <button class="primary-button" type="submit">Search</button>
+      </form>
+      <div class="global-search-results" id="global-search-results" aria-live="polite">
+        <p class="global-search-message">Search across the Roblox directory and QLiTE records.</p>
+      </div>
+    </div>
+  </dialog>
 
   <dialog id="record-dialog" aria-labelledby="dialog-title">
     <form class="record-form" id="record-form">
@@ -1671,8 +2114,8 @@
         <input id="property-description" type="text" maxlength="160" placeholder="Item, make, colour, or other identifier">
       </label>
       <label id="property-markings-field" hidden>
-        Markings / serial number
-        <input id="property-markings" type="text" maxlength="160" placeholder="Serial number, scratches, labels, or other markings">
+        Markings / identifying details
+        <input id="property-markings" type="text" maxlength="160" placeholder="Scratches, labels, or other markings">
       </label>
       <label id="property-additional-field" hidden>
         Additional information
@@ -1681,6 +2124,18 @@
       <label id="direction-field" hidden>
         Move-on direction
         <textarea id="move-on-direction" maxlength="240" placeholder="Enter the direction given to the player"></textarea>
+      </label>
+      <label id="impound-vehicle-field" hidden>
+        Vehicle description
+        <input id="impound-vehicle" type="text" maxlength="160" placeholder="Make, model, colour">
+      </label>
+      <label id="impound-plate-field" hidden>
+        Registration / plate
+        <input id="impound-plate" type="text" maxlength="32" placeholder="Vehicle registration">
+      </label>
+      <label id="impound-location-field" hidden>
+        Impound location
+        <input id="impound-location" type="text" maxlength="120" placeholder="Where the vehicle was taken">
       </label>
       <label>
         Reason
@@ -1702,17 +2157,21 @@
     const resultsContainer = document.getElementById('results');
     const dialog = document.getElementById('record-dialog');
     const recordForm = document.getElementById('record-form');
-    const selectedActions = document.querySelectorAll('[data-action]');
-    const workspace = document.querySelector('.workspace');
+    const workspace = document.getElementById('workspace');
+    const homePanel = document.getElementById('home-panel');
     const adminPanel = document.getElementById('admin-panel');
     const adminLogs = document.getElementById('admin-logs');
     const adminStatus = document.getElementById('admin-status');
+    const globalSearchDialog = document.getElementById('global-search-dialog');
+    const globalSearchForm = document.getElementById('global-search-form');
+    const globalSearchInput = document.getElementById('global-search-input');
+    const globalSearchResults = document.getElementById('global-search-results');
     let sharedRecords = [];
     let isAdmin = false;
     let selectedPlayer = null;
     let pendingRecordType = null;
-    let activeRecordFilter = null;
     let searchSequence = 0;
+    let globalSearchSequence = 0;
     let activeSearchKeyword = '';
     let nextPageCursor = null;
 
@@ -1755,13 +2214,14 @@
       return payload;
     }
 
-    async function fetchRobloxApi(path) {
+    async function fetchRobloxApi(path, requestOptions = {}) {
       const apiUrl = `${getApiBaseUrl()}/api/roblox/${path}`;
       let response;
       try {
         response = await fetch(apiUrl, {
           headers: { Accept: 'application/json' },
-          cache: 'no-store'
+          cache: 'no-store',
+          ...requestOptions
         });
       } catch (error) {
         throw new Error(`Could not reach the QLiTE API at ${new URL(apiUrl).host}. Check that the API server is online.`, { cause: error });
@@ -1943,15 +2403,12 @@
 
     async function selectPlayer(player, selectedButton) {
       selectedPlayer = player;
-      activeRecordFilter = null;
       document.getElementById('profile-empty').hidden = true;
       document.getElementById('profile-content').hidden = false;
       document.querySelectorAll('.result').forEach((button) => {
         button.setAttribute('aria-current', String(button === selectedButton));
       });
-      selectedActions.forEach((button) => {
-        button.disabled = false;
-      });
+      showView('players');
 
       const profileName = document.getElementById('profile-name');
       profileName.replaceChildren(document.createTextNode(player.displayName || player.name));
@@ -1996,14 +2453,11 @@
         ? sharedRecords.filter((record) => record.playerId === String(selectedPlayer.id))
         : [];
       document.getElementById('record-count').textContent = String(playerRecords.length);
-      const recordHeadings = {
-        'Property Receipt': 'Field property receipts',
-        'Youth Caution': 'Youth cautions',
-        'Move-on Direction': 'Move-on directions'
-      };
-      document.querySelector('.records-heading h3').textContent = activeRecordFilter
-        ? recordHeadings[activeRecordFilter] || `${activeRecordFilter} records`
-        : 'Officer notes & records';
+      const arrestCount = playerRecords.filter((record) => record.type === 'Arrest').length;
+      document.getElementById('arrest-status').textContent = arrestCount
+        ? `Yes · ${arrestCount} record${arrestCount === 1 ? '' : 's'}`
+        : 'No arrest recorded';
+      document.querySelector('.records-heading h3').textContent = 'All records · newest first';
       const warrantWarning = document.getElementById('warrant-warning');
       const warrants = playerRecords.filter((record) => record.type === 'Warrant');
       warrantWarning.hidden = warrants.length === 0;
@@ -2011,28 +2465,20 @@
         const warrant = warrants[0];
         warrantWarning.textContent = `ACTIVE WARRANT${warrants.length > 1 ? `S (${warrants.length})` : ''} · ${warrant.priority} · ${warrant.reason}`;
       }
-      const visibleRecords = activeRecordFilter
-        ? playerRecords.filter((record) => record.type === activeRecordFilter)
-        : playerRecords;
-      if (!visibleRecords.length) {
+      const sortedRecords = playerRecords.slice().sort((left, right) => {
+        const leftTime = Date.parse(left.createdAt) || 0;
+        const rightTime = Date.parse(right.createdAt) || 0;
+        return rightTime - leftTime;
+      });
+      if (!sortedRecords.length) {
         const empty = document.createElement('div');
         empty.className = 'empty-state';
-        empty.textContent = !selectedPlayer
-          ? 'Select a player to view shared records.'
-          : activeRecordFilter === 'Property Receipt'
-            ? 'No field property receipts for this player.'
-            : activeRecordFilter === 'Youth Caution'
-              ? 'No youth cautions for this player.'
-              : activeRecordFilter === 'Move-on Direction'
-                ? 'No move-on directions for this player.'
-                : activeRecordFilter
-                  ? `No ${activeRecordFilter} records for this player.`
-                  : 'No shared records for this player.';
+        empty.textContent = selectedPlayer ? 'No shared records for this player.' : 'Select a player to view shared records.';
         container.append(empty);
         return;
       }
 
-      visibleRecords.forEach((record) => {
+      sortedRecords.forEach((record) => {
         const item = document.createElement('article');
         item.className = 'record';
         item.dataset.type = record.type;
@@ -2062,8 +2508,9 @@
         copy.append(detail);
         if (record.type === 'Property Receipt') {
           [
+            record.serialNumber ? `Receipt serial: ${record.serialNumber}` : '',
             record.propertyDescription ? `Property: ${record.propertyDescription}` : '',
-            record.markings ? `Markings / serial: ${record.markings}` : '',
+            record.markings ? `Markings: ${record.markings}` : '',
             record.additionalInfo ? `Additional information: ${record.additionalInfo}` : ''
           ].filter(Boolean).forEach((text) => {
             const propertyDetail = document.createElement('p');
@@ -2072,9 +2519,106 @@
             copy.append(propertyDetail);
           });
         }
+        if (record.type === 'Impound') {
+          [
+            record.vehicleDescription ? `Vehicle: ${record.vehicleDescription}` : '',
+            record.registration ? `Registration: ${record.registration}` : '',
+            record.impoundLocation ? `Location: ${record.impoundLocation}` : ''
+          ].filter(Boolean).forEach((text) => {
+            const impoundDetail = document.createElement('p');
+            impoundDetail.className = 'record-detail';
+            impoundDetail.textContent = text;
+            copy.append(impoundDetail);
+          });
+        }
         item.append(copy, date);
         container.append(item);
       });
+    }
+
+    function sortRecordsNewest(records) {
+      return records.slice().sort((left, right) => {
+        return (Date.parse(right.createdAt) || 0) - (Date.parse(left.createdAt) || 0);
+      });
+    }
+
+    function createHomeRecordButton(record, detail) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'home-record';
+      button.dataset.type = record.type;
+      const title = document.createElement('strong');
+      title.textContent = `${record.type} · ${record.playerName || record.username || 'Unknown player'}`;
+      const description = document.createElement('span');
+      description.textContent = detail;
+      const meta = document.createElement('time');
+      const createdAt = record.createdAt;
+      meta.dateTime = createdAt || '';
+      meta.textContent = `${record.actor?.username || 'QLiTE officer'} · ${createdAt ? new Date(createdAt).toLocaleString() : 'Date unavailable'}`;
+      button.append(title, description, meta);
+      button.addEventListener('click', () => {
+        if (!record.playerId || !record.username) return;
+        searchInput.value = record.username;
+        selectPlayer({
+          id: String(record.playerId),
+          name: record.username,
+          displayName: record.playerName || record.username,
+          hasVerifiedBadge: false
+        }, null);
+      });
+      return button;
+    }
+
+    function renderHomeDashboard() {
+      const sortedRecords = sortRecordsNewest(sharedRecords);
+      const warrants = sortedRecords.filter((record) => record.type === 'Warrant');
+      const receipts = sortedRecords.filter((record) => record.type === 'Property Receipt');
+      const arrests = sortedRecords.filter((record) => record.type === 'Arrest');
+      document.getElementById('home-record-count').textContent = `${sortedRecords.length} record${sortedRecords.length === 1 ? '' : 's'}`;
+      document.getElementById('home-warrant-count').textContent = `${warrants.length} active warrant${warrants.length === 1 ? '' : 's'}`;
+
+      const renderSection = (id, records, getDetail, emptyMessage, limit = 8) => {
+        const container = document.getElementById(id);
+        container.replaceChildren();
+        if (!records.length) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = emptyMessage;
+          container.append(empty);
+          return;
+        }
+        records.slice(0, limit).forEach((record) => {
+          container.append(createHomeRecordButton(record, getDetail(record)));
+        });
+      };
+
+      renderSection(
+        'home-warrants',
+        warrants,
+        (record) => `${record.priority || 'Standard'} priority · ${record.reason}`,
+        'No active warrants.'
+      );
+      renderSection(
+        'home-activity',
+        sortedRecords,
+        (record) => `${record.reason}${record.type === 'Property Receipt' && record.serialNumber ? ` · ${record.serialNumber}` : ''}`,
+        'No record activity yet.',
+        10
+      );
+      renderSection(
+        'home-property',
+        receipts,
+        (record) => `${record.serialNumber || 'No serial'} · ${record.propertyDescription || record.reason}`,
+        'No property receipts yet.',
+        6
+      );
+      renderSection(
+        'home-arrests',
+        arrests,
+        (record) => record.reason,
+        'No arrest records.',
+        6
+      );
     }
 
     async function syncRecords() {
@@ -2083,6 +2627,7 @@
         throw new Error('QLiTE server returned an invalid records list.');
       }
       sharedRecords = payload.records;
+      renderHomeDashboard();
       resultsContainer.querySelectorAll('.result').forEach((button) => {
         const copy = button.querySelector('.result-copy');
         if (copy) {
@@ -2119,6 +2664,7 @@
           const entry = document.createElement('details');
           entry.className = 'admin-log';
           entry.dataset.action = log.action;
+          entry.dataset.logId = String(log.id || '');
           const summary = document.createElement('summary');
           summary.textContent = `${String(log.action || 'updated').toUpperCase()} · ${record.playerName || 'Unknown player'} (@${record.username || 'unknown'}) · ${actor.username || 'Unknown officer'} · ${new Date(log.createdAt).toLocaleString()}`;
           entry.append(summary);
@@ -2127,10 +2673,16 @@
             `Player: ${record.playerName || 'Unknown'} (@${record.username || 'unknown'}) · Roblox ID ${record.playerId || 'unavailable'}`,
             `Record: ${record.type || 'Unknown'}${record.type === 'Fine' ? ` · ${Number(record.amount).toLocaleString()} credits` : record.priority ? ` · ${record.priority} priority` : ''}`,
             ...(record.direction ? [`Move-on direction: ${record.direction}`] : []),
+            ...(record.type === 'Impound' ? [
+              `Vehicle: ${record.vehicleDescription || 'Not recorded'}`,
+              `Registration: ${record.registration || 'Not recorded'}`,
+              `Impound location: ${record.impoundLocation || 'Not recorded'}`
+            ] : []),
             `Reason: ${record.reason || 'No reason recorded'}`,
             ...(record.type === 'Property Receipt' ? [
+              `Receipt serial: ${record.serialNumber || 'Not recorded'}`,
               `Property: ${record.propertyDescription || 'Not recorded'}`,
-              `Markings / serial: ${record.markings || 'Not recorded'}`,
+              `Markings: ${record.markings || 'Not recorded'}`,
               `Additional information: ${record.additionalInfo || 'Not recorded'}`
             ] : []),
             `Original record time: ${new Date(record.createdAt).toLocaleString()}`,
@@ -2168,23 +2720,186 @@
       }
     }
 
-    function showAdminPanel(show) {
-      workspace.hidden = show;
-      adminPanel.hidden = !show;
-      if (show) loadAdminLogs();
+    function createGlobalSearchGroup(title) {
+      const group = document.createElement('section');
+      group.className = 'global-search-group';
+      const heading = document.createElement('h3');
+      heading.textContent = title;
+      const content = document.createElement('div');
+      content.className = 'global-search-group-content';
+      group.append(heading, content);
+      globalSearchResults.append(group);
+      return content;
+    }
+
+    function renderGlobalSearchGroup(content, entries, emptyMessage, renderEntry) {
+      content.replaceChildren();
+      if (!entries.length) {
+        const empty = document.createElement('p');
+        empty.className = 'global-search-message';
+        empty.textContent = emptyMessage;
+        content.append(empty);
+      } else {
+        entries.forEach((entry) => content.append(renderEntry(entry)));
+      }
+    }
+
+    function showGlobalSearchMessage(content, message) {
+      const paragraph = document.createElement('p');
+      paragraph.className = 'global-search-message';
+      paragraph.textContent = message;
+      content.replaceChildren(paragraph);
+    }
+
+    function createGlobalSearchResult(title, detail, meta, onSelect) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'global-search-result';
+      const heading = document.createElement('strong');
+      heading.textContent = title;
+      const description = document.createElement('span');
+      description.textContent = detail;
+      const timestamp = document.createElement('time');
+      timestamp.textContent = meta;
+      button.append(heading, description, timestamp);
+      button.addEventListener('click', onSelect);
+      return button;
+    }
+
+    function globalSearchRecordText(record) {
+      return [
+        record.type,
+        record.playerName,
+        record.username,
+        record.playerId,
+        record.reason,
+        record.serialNumber,
+        record.propertyDescription,
+        record.markings,
+        record.additionalInfo,
+        record.direction,
+        record.vehicleDescription,
+        record.registration,
+        record.impoundLocation,
+        record.actor?.username
+      ].filter(Boolean).join(' ').toLocaleLowerCase();
+    }
+
+    function runGlobalSearch(query) {
+      const sequence = ++globalSearchSequence;
+      globalSearchResults.replaceChildren();
+      const normalizedQuery = query.toLocaleLowerCase();
+      const matchingRecords = sharedRecords.filter((record) => globalSearchRecordText(record).includes(normalizedQuery));
+      const isSerialSearch = /^rbx\d+$/i.test(query);
+      const isRobloxIdSearch = /^\d{5,20}$/.test(query);
+      const playerResults = createGlobalSearchGroup('Roblox players');
+      const recordResults = createGlobalSearchGroup('Shared records & serials');
+      const logResults = createGlobalSearchGroup('Admin audit logs');
+      showGlobalSearchMessage(playerResults, 'Searching Roblox players…');
+      renderGlobalSearchGroup(recordResults, matchingRecords.slice(0, 10), 'No matching shared records or property serials.', (record) => {
+        const title = `${record.type} · ${record.playerName || record.username || 'Unknown player'}`;
+        const detail = [
+          record.serialNumber,
+          record.reason,
+          record.propertyDescription,
+          record.vehicleDescription
+        ].filter(Boolean).join(' · ');
+        return createGlobalSearchResult(title, detail || 'Open the player record', record.createdAt ? new Date(record.createdAt).toLocaleString() : 'Date unavailable', () => {
+          globalSearchDialog.close();
+          if (!record.playerId || !record.username) return;
+          selectPlayer({
+            id: String(record.playerId),
+            name: record.username,
+            displayName: record.playerName || record.username,
+            hasVerifiedBadge: false
+          }, null);
+        });
+      });
+
+      if (isSerialSearch) {
+        showGlobalSearchMessage(playerResults, 'Search by Roblox username or display name to find players.');
+      } else if (!isRobloxIdSearch && query.length > 50) {
+        showGlobalSearchMessage(playerResults, 'Roblox player searches support up to 50 characters.');
+      } else {
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+        const playerLookup = isRobloxIdSearch
+          ? fetchRobloxApi(`users/${encodeURIComponent(query)}`, { signal: controller.signal }).then((player) => ({ data: [player] }))
+          : fetchRobloxApi(`users/search?${new URLSearchParams({ keyword: query, limit: '10' }).toString()}`, { signal: controller.signal });
+        playerLookup.then((payload) => {
+          if (sequence !== globalSearchSequence) return;
+          if (!Array.isArray(payload.data)) {
+            throw new Error('Roblox search returned an invalid player list.');
+          }
+          renderGlobalSearchGroup(playerResults, payload.data, 'No matching Roblox players.', (player) => {
+            const title = `${player.displayName || player.name} (@${player.name})`;
+            return createGlobalSearchResult(title, `Roblox ID ${player.id}`, 'Open player profile', () => {
+              globalSearchDialog.close();
+              selectPlayer(player, null);
+            });
+          });
+        }).catch((error) => {
+          if (sequence !== globalSearchSequence) return;
+          showGlobalSearchMessage(playerResults, error instanceof Error ? `Roblox player search failed: ${error.message}` : 'Roblox player search failed.');
+        }).finally(() => {
+          window.clearTimeout(timeoutId);
+        });
+      }
+
+      if (!isAdmin) {
+        showGlobalSearchMessage(logResults, 'Admin audit logs are only available to administrators.');
+      } else {
+        showGlobalSearchMessage(logResults, 'Searching audit logs…');
+        qliteApi('/api/admin/qlite-logs').then((payload) => {
+          if (sequence !== globalSearchSequence) return;
+          if (!Array.isArray(payload.logs)) {
+            throw new Error('QLiTE server returned an invalid audit log.');
+          }
+          const matchingLogs = payload.logs.filter((log) => JSON.stringify(log).toLocaleLowerCase().includes(normalizedQuery)).slice(0, 10);
+          renderGlobalSearchGroup(logResults, matchingLogs, 'No matching audit log entries.', (log) => {
+            const record = log.record || {};
+            const actor = log.actor || {};
+            return createGlobalSearchResult(
+              `${String(log.action || 'updated').toUpperCase()} · ${record.type || 'Record'} · ${record.playerName || record.username || 'Unknown player'}`,
+              `${actor.username || 'Unknown officer'} · ${record.serialNumber || record.reason || 'No details'}`,
+              log.createdAt ? new Date(log.createdAt).toLocaleString() : 'Date unavailable',
+              async () => {
+                globalSearchDialog.close();
+                showView('admin', false);
+                await loadAdminLogs();
+                const entry = Array.from(adminLogs.querySelectorAll('.admin-log')).find((item) => item.dataset.logId === String(log.id));
+                if (entry) {
+                  entry.open = true;
+                  entry.scrollIntoView({ block: 'center', behavior: 'smooth' });
+                }
+              }
+            );
+          });
+        }).catch((error) => {
+          if (sequence !== globalSearchSequence) return;
+          showGlobalSearchMessage(logResults, error instanceof Error ? `Audit log search failed: ${error.message}` : 'Audit log search failed.');
+        });
+      }
+    }
+
+    function showView(view, shouldLoadAdmin = true) {
+      if (view === 'admin' && !isAdmin) return;
+      homePanel.hidden = view !== 'home';
+      workspace.hidden = view !== 'players';
+      adminPanel.hidden = view !== 'admin';
+      document.querySelectorAll('.quick-nav [data-view]').forEach((button) => {
+        button.setAttribute('aria-pressed', String(button.dataset.view === view));
+      });
+      if (view === 'admin' && shouldLoadAdmin) loadAdminLogs();
     }
 
     function openRecordDialog(type) {
-      activeRecordFilter = type;
       if (!selectedPlayer) {
-        renderRecords();
         setSearchStatus('Search for and select a player before adding a record.', true);
         searchInput.focus();
         return;
       }
       pendingRecordType = type;
-      activeRecordFilter = type;
-      renderRecords();
       document.getElementById('dialog-title').textContent = `Add ${type.toLowerCase()}`;
       document.getElementById('dialog-player').textContent = `${selectedPlayer.displayName || selectedPlayer.name} (@${selectedPlayer.name})`;
       document.getElementById('amount-field').hidden = type !== 'Fine';
@@ -2195,23 +2910,30 @@
       document.getElementById('property-description').required = type === 'Property Receipt';
       document.getElementById('direction-field').hidden = type !== 'Move-on Direction';
       document.getElementById('move-on-direction').required = type === 'Move-on Direction';
+      document.getElementById('impound-vehicle-field').hidden = type !== 'Impound';
+      document.getElementById('impound-plate-field').hidden = type !== 'Impound';
+      document.getElementById('impound-location-field').hidden = type !== 'Impound';
+      document.getElementById('impound-vehicle').required = type === 'Impound';
       document.getElementById('property-description').value = '';
       document.getElementById('property-markings').value = '';
       document.getElementById('property-additional').value = '';
       document.getElementById('move-on-direction').value = '';
+      document.getElementById('impound-vehicle').value = '';
+      document.getElementById('impound-plate').value = '';
+      document.getElementById('impound-location').value = '';
       document.getElementById('record-reason').value = '';
       document.getElementById('record-reason').placeholder = type === 'Property Receipt'
         ? 'Explain why the property was received or recorded'
         : type === 'Move-on Direction'
           ? 'Record the reason for issuing the move-on direction'
-        : 'Enter the reason for this record';
+          : type === 'Impound'
+            ? 'Explain why the vehicle was impounded'
+            : type === 'Arrest'
+              ? 'Enter the arrest reason'
+              : 'Enter the reason for this record';
       dialog.showModal();
       document.getElementById('record-reason').focus();
     }
-
-    document.querySelectorAll('[data-action]').forEach((button) => {
-      button.addEventListener('click', () => openRecordDialog(button.dataset.action));
-    });
 
     searchForm.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -2232,10 +2954,12 @@
       const amount = Number(document.getElementById('fine-amount').value);
       const propertyDescription = document.getElementById('property-description').value.trim();
       const direction = document.getElementById('move-on-direction').value.trim();
+      const vehicleDescription = document.getElementById('impound-vehicle').value.trim();
       if (!reason ||
         (pendingRecordType === 'Fine' && (!Number.isInteger(amount) || amount < 1 || amount > 1000000)) ||
         (pendingRecordType === 'Property Receipt' && !propertyDescription) ||
-        (pendingRecordType === 'Move-on Direction' && !direction)) return;
+        (pendingRecordType === 'Move-on Direction' && !direction) ||
+        (pendingRecordType === 'Impound' && !vehicleDescription)) return;
 
       const saveButton = document.getElementById('save-record');
       saveButton.disabled = true;
@@ -2250,6 +2974,11 @@
             type: pendingRecordType,
             reason,
             ...(pendingRecordType === 'Move-on Direction' ? { direction } : {}),
+            ...(pendingRecordType === 'Impound' ? {
+              vehicleDescription,
+              registration: document.getElementById('impound-plate').value.trim(),
+              impoundLocation: document.getElementById('impound-location').value.trim()
+            } : {}),
             ...(pendingRecordType === 'Property Receipt' ? {
               propertyDescription,
               markings: document.getElementById('property-markings').value.trim(),
@@ -2275,20 +3004,56 @@
       pendingRecordType = null;
     });
 
-    document.querySelectorAll('.overview-categories [data-action]').forEach((button) => {
-      button.addEventListener('click', () => {
-        document.querySelectorAll('.overview-categories .nav-chip').forEach((chip) => {
-          chip.setAttribute('aria-pressed', String(chip === button));
-        });
-        openRecordDialog(button.dataset.action);
-      });
+    document.getElementById('add-record').addEventListener('click', () => {
+      const recordType = document.getElementById('record-category').value;
+      if (!recordType) {
+        setSearchStatus('Choose a record category first.', true);
+        return;
+      }
+      openRecordDialog(recordType);
     });
 
-    document.getElementById('admin-tab').addEventListener('click', () => {
-      if (isAdmin) showAdminPanel(true);
+    document.querySelectorAll('.quick-nav [data-view]').forEach((button) => {
+      button.addEventListener('click', () => showView(button.dataset.view));
     });
 
-    document.getElementById('admin-back').addEventListener('click', () => showAdminPanel(false));
+    document.getElementById('global-search-open').addEventListener('click', () => {
+      globalSearchDialog.showModal();
+      globalSearchInput.focus();
+    });
+
+    document.getElementById('global-search-close').addEventListener('click', () => globalSearchDialog.close());
+
+    globalSearchDialog.addEventListener('close', () => {
+      globalSearchSequence += 1;
+    });
+
+    globalSearchForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const query = globalSearchInput.value.trim();
+      if (!query) {
+        showGlobalSearchMessage(globalSearchResults, 'Enter a search term to search QLiTE.');
+        globalSearchInput.focus();
+        return;
+      }
+      globalSearchInput.value = query;
+      runGlobalSearch(query);
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey || globalSearchDialog.open) return;
+      if (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"]')) return;
+      event.preventDefault();
+      globalSearchDialog.showModal();
+      globalSearchInput.focus();
+    });
+
+    document.getElementById('home-search').addEventListener('click', () => {
+      showView('players');
+      searchInput.focus();
+    });
+
+    document.getElementById('admin-back').addEventListener('click', () => showView('home'));
 
     document.getElementById('refresh-logs').addEventListener('click', loadAdminLogs);
 
@@ -2322,7 +3087,7 @@
       }
       isAdmin = session.isAdmin === true;
       document.getElementById('admin-tab').hidden = !isAdmin;
-      document.querySelector('.quick-nav').hidden = !isAdmin;
+      showView('home');
       try {
         await syncRecords();
       } catch (error) {
