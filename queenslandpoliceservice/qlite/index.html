@@ -270,6 +270,147 @@
         left: 8px;
       }
     }
+
+    body {
+      background:
+        radial-gradient(ellipse at 50% 0, rgba(42, 84, 159, .3), transparent 55%),
+        #080d17;
+    }
+
+    .screen {
+      width: 82%;
+      height: 85%;
+      padding: 18px;
+      background: #f7f9fc;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .8);
+    }
+
+    .login-card {
+      width: min(100%, 380px);
+      padding: 9px 18px;
+      border: 1px solid #e3e8f0;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 12px 35px rgba(29, 49, 79, .09);
+    }
+
+    .logo {
+      width: 48px;
+      height: 48px;
+      margin: 0 0 5px;
+      padding: 4px;
+      border: 1px solid #e7ebf2;
+      border-radius: 14px;
+      background: #fff;
+    }
+
+    h1 {
+      margin-bottom: 3px;
+      color: #17243a;
+      font-size: 24px;
+      font-weight: 750;
+      letter-spacing: .01em;
+    }
+
+    .intro {
+      margin-bottom: 9px;
+      color: #627087;
+      font-size: 11px;
+    }
+
+    .account-status {
+      margin-bottom: 10px;
+      padding: 7px 9px;
+      border: 1px solid #e5eaf2;
+      border-radius: 7px;
+      background: #f7f9fc;
+      color: #55647a;
+      font-size: 11px;
+    }
+
+    .form {
+      gap: 6px;
+    }
+
+    .form label {
+      gap: 3px;
+      color: #35445c;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .form input {
+      min-height: 35px;
+      padding: 7px 10px;
+      border-color: #d7dfeb;
+      border-radius: 7px;
+      background: #fff;
+      font-size: 13px;
+    }
+
+    .form input:focus {
+      border-color: #5086e8;
+      box-shadow: 0 0 0 3px rgba(80, 134, 232, .13);
+    }
+
+    .primary-button,
+    .discord-button {
+      min-height: 36px;
+      border-radius: 7px;
+      font-size: 13px;
+    }
+
+    .primary-button {
+      margin-top: 2px;
+      background: #3978e3;
+    }
+
+    .discord-button {
+      background: #5865f2;
+    }
+
+    .separator {
+      margin: 8px 0;
+      font-size: 9px;
+    }
+
+    .password-help {
+      font-size: 9px;
+    }
+
+    .footer {
+      margin-top: 8px;
+      font-size: 8px;
+      line-height: 1.35;
+    }
+
+    .footer p {
+      margin: 1px 0;
+    }
+
+    .footer .warning {
+      color: #8b5360;
+    }
+
+    .close-link {
+      border-color: rgba(255, 255, 255, .2);
+      border-radius: 7px;
+      background: #1d2b45;
+    }
+
+    @media (max-width: 680px) {
+      .screen {
+        width: 100%;
+        min-height: 100%;
+        height: auto;
+        padding: 18px;
+        background: #f1f4f8;
+      }
+
+      .login-card {
+        padding: 15px 18px;
+      }
+    }
   </style>
 </head>
 <body>

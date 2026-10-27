@@ -166,7 +166,6 @@
     .nav-chip:nth-child(4) { background: #b78a22; }
     .nav-chip:nth-child(5) { background: #398795; }
     .nav-chip:nth-child(6) { background: #3f639e; }
-    .nav-chip[data-category="Admin"] { background: #66518d; }
 
     .workspace {
       display: grid;
@@ -394,17 +393,6 @@
       background: linear-gradient(115deg, #243858, #1c2a43);
     }
 
-    .warrant-warning {
-      padding: 9px 10px;
-      border: 1px solid #d34b5b;
-      border-radius: 5px;
-      background: #571f2a;
-      color: #ffe1e4;
-      font-size: 10px;
-      font-weight: 700;
-      line-height: 1.5;
-    }
-
     .profile-card .avatar {
       width: 54px;
       height: 54px;
@@ -531,89 +519,6 @@
     .records {
       display: grid;
       gap: 5px;
-    }
-
-    .admin-panel {
-      display: flex;
-      flex: 1;
-      min-height: 0;
-      flex-direction: column;
-      gap: 10px;
-      margin: 12px;
-      padding: 12px;
-    }
-
-    .admin-panel[hidden] {
-      display: none;
-    }
-
-    .admin-heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .admin-heading h2 {
-      margin: 0;
-      font-size: 14px;
-    }
-
-    .admin-status {
-      color: #aebbd0;
-      font-size: 9px;
-    }
-
-    .admin-status[data-error="true"] {
-      color: #ff9999;
-    }
-
-    .admin-logs {
-      min-height: 0;
-      overflow: auto;
-      display: grid;
-      align-content: start;
-      gap: 6px;
-    }
-
-    .admin-log {
-      padding: 8px 9px;
-      border: 1px solid #334563;
-      border-radius: 5px;
-      background: #151f34;
-      color: #dce5f4;
-      font-size: 9px;
-    }
-
-    .admin-log summary {
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .admin-log[data-action="revoked"] {
-      border-left: 3px solid #e66c79;
-    }
-
-    .admin-log[data-action="added"] {
-      border-left: 3px solid #3bd298;
-    }
-
-    .admin-log p {
-      margin: 7px 0 0;
-      color: #aebbd0;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    .revoke-button {
-      margin-top: 8px;
-      padding: 5px 8px;
-      border: 1px solid #b94a58;
-      border-radius: 4px;
-      background: #571f2a;
-      color: #ffe1e4;
-      font-size: 9px;
-      font-weight: 700;
     }
 
     .record {
@@ -801,6 +706,706 @@
       }
     }
 
+    :root {
+      color-scheme: dark;
+      --surface: #111827;
+      --surface-raised: #1c2435;
+      --surface-soft: #252e42;
+      --line: #313b50;
+      --muted: #a4afc2;
+      --blue: #629bff;
+    }
+
+    body {
+      overflow: auto;
+      background:
+        radial-gradient(ellipse at 18% 0, rgba(42, 84, 159, .28), transparent 44%),
+        radial-gradient(ellipse at 100% 100%, rgba(39, 68, 120, .18), transparent 45%),
+        #080d17;
+    }
+
+    .ipad-container {
+      width: min(1120px, 100vw, calc(100dvh * 10 / 7));
+    }
+
+    .screen {
+      left: 50%;
+      width: 83%;
+      height: 85%;
+      background: var(--surface);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .035), 0 20px 60px rgba(0, 0, 0, .28);
+    }
+
+    .topbar {
+      flex-basis: 55px;
+      padding: 0 19px;
+      background: #101725;
+      border-color: #2b3548;
+    }
+
+    .brand img {
+      border-radius: 9px;
+    }
+
+    .brand-title {
+      font-size: 15px;
+      letter-spacing: .045em;
+    }
+
+    .brand-caption {
+      color: #a0abc0;
+      font-size: 9px;
+      letter-spacing: .045em;
+    }
+
+    .demo-label {
+      border: 1px solid rgba(83, 208, 155, .28);
+      border-radius: 999px;
+      background: rgba(37, 132, 97, .15);
+      color: #82e0b7;
+      letter-spacing: .045em;
+    }
+
+    .signout {
+      padding: 8px 11px;
+      border-color: #3b465b;
+      border-radius: 6px;
+      font-size: 10px;
+    }
+
+    .signout:hover {
+      background: #202a3a;
+    }
+
+    .quick-nav {
+      flex-basis: 43px;
+      gap: 7px;
+      padding: 0 17px;
+      background: #171f2e;
+      border-color: #2c3548;
+    }
+
+    .nav-chip {
+      padding: 7px 10px;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      background: transparent !important;
+      color: #aeb9ca;
+      font-size: 9px;
+      letter-spacing: .055em;
+      transition: background .15s ease, border-color .15s ease, color .15s ease;
+    }
+
+    .nav-chip:hover,
+    .nav-chip[aria-pressed="true"] {
+      border-color: #35445e;
+      background: #28354b !important;
+      color: #f5f8ff;
+    }
+
+    .workspace {
+      grid-template-columns: minmax(250px, .82fr) minmax(0, 1.35fr);
+      gap: 11px;
+      padding: 11px;
+      background: #111827;
+    }
+
+    .panel {
+      border-color: #313b50;
+      border-radius: 8px;
+      background: var(--surface-raised);
+    }
+
+    .search-panel {
+      background: #171f2e;
+    }
+
+    .panel-heading {
+      padding: 14px 14px 11px;
+    }
+
+    .eyebrow {
+      margin-bottom: 5px;
+      color: #91a6c8;
+      font-size: 8px;
+      letter-spacing: .11em;
+    }
+
+    .panel-heading h2,
+    .profile-heading h2 {
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    .search-form {
+      gap: 7px;
+      padding: 0 12px 9px;
+    }
+
+    .search-form input {
+      height: 36px;
+      padding: 0 11px;
+      border-color: #39465d;
+      border-radius: 6px;
+      background: #222c3e;
+      font-size: 10px;
+    }
+
+    .search-form input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(98, 155, 255, .18);
+    }
+
+    .primary-button {
+      border-color: #639aff;
+      border-radius: 6px;
+      background: #5086e8;
+    }
+
+    .primary-button:hover {
+      background: #6398f5;
+    }
+
+    .search-form button {
+      padding: 0 12px;
+      font-size: 10px;
+    }
+
+    .hint {
+      padding: 0 13px 10px;
+      color: #9da9bc;
+      font-size: 9px;
+    }
+
+    .search-status {
+      min-height: 28px;
+      padding: 7px 13px;
+      border-color: #2b3548;
+      background: #131b29;
+      color: #b6c0d0;
+      font-size: 9px;
+    }
+
+    .results {
+      padding: 8px;
+    }
+
+    .result {
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+      padding: 10px;
+      border: 1px solid #303a4f;
+      border-radius: 7px;
+      background: #222a3b;
+      transition: border-color .15s ease, background .15s ease, transform .15s ease;
+    }
+
+    .result:hover,
+    .result[aria-current="true"] {
+      border-color: #6288c7;
+      background: #29364d;
+      transform: translateY(-1px);
+    }
+
+    .avatar {
+      width: 36px;
+      height: 36px;
+      flex-basis: 36px;
+      border: 1px solid #46536b;
+      border-radius: 6px;
+      background: linear-gradient(145deg, #34425b, #252f43);
+      color: #e5edfc;
+      font-size: 14px;
+    }
+
+    .result-copy {
+      flex: 1;
+    }
+
+    .result-name {
+      font-size: 10px;
+      letter-spacing: .015em;
+    }
+
+    .result-username {
+      margin-top: 4px;
+      color: #a3afc3;
+      font-size: 9px;
+    }
+
+    .result-alerts {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 7px;
+    }
+
+    .alert-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 17px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: #33425a;
+      color: #e7eefb;
+      font-size: 8px;
+      font-weight: 750;
+      line-height: 1.2;
+    }
+
+    .alert-badge[data-type="Fine"] {
+      background: #9a6b1f;
+      color: #fff1ca;
+    }
+
+    .alert-badge[data-type="Warrant"] {
+      background: #a93849;
+      color: #fff0f2;
+    }
+
+    .empty-state {
+      padding: 22px 13px;
+      color: #a4afc2;
+      font-size: 10px;
+    }
+
+    .profile-panel {
+      gap: 10px;
+      padding: 13px;
+      background: #1a2232;
+    }
+
+    .profile-heading {
+      padding-bottom: 3px;
+    }
+
+    .connection-status {
+      padding: 5px 8px;
+      border: 1px solid #34445b;
+      border-radius: 999px;
+      background: #222e41;
+      color: #b9c9e2;
+      font-size: 8px;
+    }
+
+    .profile-card {
+      gap: 12px;
+      padding: 12px;
+      border-color: #35425a;
+      border-radius: 7px;
+      background: #242d40;
+    }
+
+    .profile-card .avatar {
+      width: 52px;
+      height: 52px;
+      flex-basis: 52px;
+      border-radius: 7px;
+      background: linear-gradient(145deg, #394a68, #29354b);
+      font-size: 18px;
+    }
+
+    .profile-name {
+      font-size: 15px;
+    }
+
+    .profile-username {
+      margin: 4px 0 5px;
+      color: #c1ccdc;
+      font-size: 10px;
+    }
+
+    .profile-id {
+      color: #9baac0;
+      font-size: 9px;
+    }
+
+    .stats {
+      gap: 7px;
+    }
+
+    .stat {
+      padding: 9px;
+      border-color: #303b50;
+      border-radius: 6px;
+      background: #20293a;
+    }
+
+    .stat-label {
+      color: #a7b3c6;
+      font-size: 8px;
+      letter-spacing: .06em;
+    }
+
+    .stat-value {
+      font-size: 10px;
+    }
+
+    .actions {
+      gap: 7px;
+    }
+
+    .action-button {
+      min-height: 34px;
+      border-color: #43536e;
+      border-radius: 6px;
+      background: #2a3850;
+      font-size: 9px;
+    }
+
+    .action-button:hover {
+      background: #344563;
+    }
+
+    .action-button.fine {
+      border-color: #886626;
+      background: #46371f;
+      color: #ffdf97;
+    }
+
+    .action-button.warrant {
+      border-color: #a34351;
+      background: #4a2730;
+      color: #ffc0c7;
+    }
+
+    .records-heading {
+      align-items: center;
+      padding-top: 3px;
+    }
+
+    .records-heading h3 {
+      font-size: 10px;
+      letter-spacing: .035em;
+    }
+
+    .local-note {
+      color: #9da9bc;
+      font-size: 8px;
+    }
+
+    .records {
+      gap: 6px;
+    }
+
+    .record {
+      gap: 10px;
+      padding: 9px 10px;
+      border: 1px solid #303a4f;
+      border-left: 3px solid #c99435;
+      border-radius: 6px;
+      background: #20293a;
+    }
+
+    .record[data-type="Warrant"] {
+      border-left-color: #e05b6a;
+      background: #2b232f;
+    }
+
+    .record-title {
+      font-size: 9px;
+    }
+
+    .record-detail {
+      margin-top: 5px;
+      color: #b2bdcf;
+      font-size: 9px;
+      line-height: 1.4;
+      white-space: normal;
+    }
+
+    .record-date {
+      color: #a1aec2;
+      font-size: 8px;
+    }
+
+    .footer {
+      flex-basis: 25px;
+      padding: 0 15px;
+      background: #101725;
+      color: #96a2b7;
+      font-size: 8px;
+    }
+
+    .warrant-warning {
+      padding: 10px 12px;
+      border: 1px solid #cf5665;
+      border-radius: 6px;
+      background: #532832;
+      color: #fff0f2;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+
+    .admin-panel {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      flex-direction: column;
+      gap: 10px;
+      margin: 11px;
+      padding: 14px;
+      border: 1px solid #313b50;
+      border-radius: 8px;
+      background: #1a2232;
+    }
+
+    .admin-panel[hidden] {
+      display: none;
+    }
+
+    .admin-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .admin-heading h2 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .admin-status {
+      color: #aebbd0;
+      font-size: 9px;
+    }
+
+    .admin-status[data-error="true"] {
+      color: #ff9999;
+    }
+
+    .admin-logs {
+      min-height: 0;
+      overflow: auto;
+      display: grid;
+      align-content: start;
+      gap: 7px;
+    }
+
+    .admin-log {
+      padding: 9px 10px;
+      border: 1px solid #334563;
+      border-radius: 6px;
+      background: #20293a;
+      color: #dce5f4;
+      font-size: 9px;
+    }
+
+    .admin-log summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .admin-log[data-action="revoked"] {
+      border-left: 3px solid #e66c79;
+    }
+
+    .admin-log[data-action="added"] {
+      border-left: 3px solid #3bd298;
+    }
+
+    .admin-log p {
+      margin: 7px 0 0;
+      color: #aebbd0;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .revoke-button {
+      margin-top: 8px;
+      padding: 6px 9px;
+      border: 1px solid #b94a58;
+      border-radius: 5px;
+      background: #571f2a;
+      color: #ffe1e4;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .record-form input,
+    .record-form select,
+    .record-form textarea {
+      border-color: #3b4962;
+      border-radius: 6px;
+      background: #222c3e;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    @media (max-width: 820px) {
+      body {
+        display: block;
+        min-height: 100svh;
+        overflow: auto;
+      }
+
+      .ipad-container {
+        width: 100%;
+        min-height: 100svh;
+        height: auto;
+        aspect-ratio: auto;
+      }
+
+      .background-image {
+        display: none;
+      }
+
+      .screen {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        min-height: 100svh;
+        height: auto;
+        overflow: visible;
+        transform: none;
+      }
+
+      .topbar {
+        position: sticky;
+        z-index: 3;
+        top: 0;
+        flex: 0 0 56px;
+        padding: 0 14px;
+      }
+
+      .quick-nav {
+        position: sticky;
+        z-index: 2;
+        top: 56px;
+        flex: 0 0 43px;
+        padding: 0 12px;
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        flex: none;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .search-panel {
+        min-height: 290px;
+      }
+
+      .results {
+        flex: 1;
+        max-height: 36vh;
+      }
+
+      .profile-panel {
+        min-height: 280px;
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .brand-caption,
+      .demo-label,
+      .local-note {
+        display: none;
+      }
+
+      .eyebrow {
+        font-size: 9px;
+      }
+
+      .panel-heading h2,
+      .profile-heading h2 {
+        font-size: 15px;
+      }
+
+      .search-form input {
+        height: 42px;
+        font-size: 13px;
+      }
+
+      .search-form button {
+        font-size: 12px;
+      }
+
+      .hint,
+      .search-status {
+        font-size: 10px;
+      }
+
+      .result {
+        padding: 11px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        flex-basis: 40px;
+        font-size: 15px;
+      }
+
+      .result-name {
+        font-size: 12px;
+      }
+
+      .result-username {
+        font-size: 10px;
+      }
+
+      .profile-name {
+        font-size: 16px;
+      }
+
+      .profile-username {
+        font-size: 11px;
+      }
+
+      .profile-id {
+        font-size: 10px;
+      }
+
+      .stat-label {
+        font-size: 9px;
+      }
+
+      .stat-value,
+      .action-button,
+      .record-title,
+      .record-detail {
+        font-size: 11px;
+      }
+
+      .record-date {
+        font-size: 9px;
+      }
+
+      .footer {
+        min-height: 30px;
+        flex: 0 0 auto;
+      }
+    }
+
+    @media (max-width: 390px) {
+      .brand-title {
+        font-size: 13px;
+      }
+
+      .topbar-right {
+        gap: 6px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .stat:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -812,11 +1417,11 @@
           <img src="../../assets/images/qps.png" alt="">
           <div>
             <p class="brand-title">QLiTE <span style="color:#65a9ff">/ ROBLOX</span></p>
-            <p class="brand-caption">Queensland Police Service · Mobile data terminal</p>
+            <p class="brand-caption">Queensland Interactive · Westlands, Queensland</p>
           </div>
         </div>
         <div class="topbar-right">
-          <span class="demo-label">QLiTE Westlands Police</span>
+          <span class="demo-label">WESTLANDS · SECURE</span>
           <button class="signout" type="button" onclick="signOut()">Sign out</button>
         </div>
       </header>
@@ -835,8 +1440,8 @@
         <section class="panel search-panel" aria-labelledby="search-title">
           <div class="panel-heading">
             <div>
-              <p class="eyebrow">Roblox public directory</p>
-              <h2 id="search-title">Player search</h2>
+              <p class="eyebrow">Roblox directory</p>
+              <h2 id="search-title">Search players</h2>
             </div>
             <span class="online-dot" title="Search service available"></span>
           </div>
@@ -844,7 +1449,7 @@
             <input id="search-input" type="search" maxlength="50" autocomplete="off" placeholder="Username or display name" aria-label="Roblox username or display name">
             <button class="primary-button" type="submit">Search</button>
           </form>
-          <p class="hint">Search public Roblox profiles by username or display name. Select a player to view their profile.</p>
+          <p class="hint">Find a player by Roblox username or display name.</p>
           <div class="search-status" id="search-status" role="status" aria-live="polite">Enter a Roblox name to begin.</div>
           <div class="results" id="results" aria-label="Search results">
             <div class="empty-state">Player matches will appear here.</div>
@@ -854,8 +1459,8 @@
         <section class="panel profile-panel" aria-labelledby="overview-title">
           <div class="profile-heading">
             <div>
-              <p class="eyebrow">Roblox player record</p>
-              <h2 id="overview-title">Person overview</h2>
+              <p class="eyebrow">Westlands player record</p>
+              <h2 id="overview-title">Player overview</h2>
             </div>
             <span class="connection-status">PUBLIC PROFILE</span>
           </div>
@@ -888,20 +1493,20 @@
           </div>
           <div class="records-heading">
             <h3>Officer notes & records</h3>
-            <span class="local-note">Shared live with signed-in QLiTE officers</span>
+            <span class="local-note">Synced with QLiTE officers</span>
           </div>
           <div class="records" id="records">
-            <div class="empty-state">Select a player to view or add shared records.</div>
+            <div class="empty-state">Select a player to view shared records.</div>
           </div>
         </section>
       </div>
-      <section class="panel admin-panel" id="admin-panel" aria-labelledby="admin-title" hidden>
+      <section class="admin-panel" id="admin-panel" aria-labelledby="admin-title" hidden>
         <div class="admin-heading">
           <div>
             <p class="eyebrow">QLiTE audit trail</p>
             <h2 id="admin-title">Record activity</h2>
           </div>
-          <button class="action-button" type="button" id="refresh-logs">Refresh logs</button>
+          <button class="action-button" type="button" id="refresh-logs">Refresh</button>
         </div>
         <div class="admin-status" id="admin-status" role="status" aria-live="polite"></div>
         <div class="admin-logs" id="admin-logs">
@@ -910,7 +1515,7 @@
       </section>
 
       <footer class="footer">
-        <span>QLiTE · Westlands, Queensland · In-game records only</span>
+        <span>QLiTE · Westlands, Queensland · Player records are for in-game use</span>
         <span id="clock"></span>
       </footer>
     </section>
@@ -933,9 +1538,9 @@
       </label>
       <label>
         Reason
-        <textarea id="record-reason" maxlength="240" required placeholder="Enter the reason for this training record"></textarea>
+        <textarea id="record-reason" maxlength="240" required placeholder="Enter the reason for this record"></textarea>
       </label>
-      <p class="dialog-warning">Training record only. This does not contact Roblox or restrict an account.</p>
+      <p class="dialog-warning">Record Log</p>
       <div class="dialog-actions">
         <button class="cancel-button" type="button" id="cancel-record">Cancel</button>
         <button class="primary-button" type="submit" id="save-record">Save record</button>
@@ -1039,6 +1644,22 @@
       return avatar;
     }
 
+    function renderResultAlerts(player, copy) {
+      copy.querySelector('.result-alerts')?.remove();
+      const alerts = sharedRecords.filter((record) => record.playerId === String(player.id));
+      if (!alerts.length) return;
+      const alertList = document.createElement('span');
+      alertList.className = 'result-alerts';
+      alerts.slice(0, 3).forEach((record) => {
+        const badge = document.createElement('span');
+        badge.className = 'alert-badge';
+        badge.dataset.type = record.type;
+        badge.textContent = record.type === 'Warrant' ? 'WARRANT' : 'FINE';
+        alertList.append(badge);
+      });
+      copy.append(alertList);
+    }
+
     async function searchPlayers(keyword, cursor = null) {
       const sequence = cursor ? searchSequence : ++searchSequence;
       if (!cursor) {
@@ -1084,6 +1705,8 @@
           button.type = 'button';
           button.className = 'result';
           button.dataset.playerId = String(player.id);
+          button.dataset.playerName = String(player.displayName || player.name || '');
+          button.dataset.username = String(player.name || '');
           button.setAttribute('aria-current', 'false');
           button.append(makeAvatar(player));
 
@@ -1096,6 +1719,7 @@
           username.className = 'result-username';
           username.textContent = `@${player.name} · ID ${player.id}`;
           copy.append(name, username);
+          renderResultAlerts(player, copy);
           button.append(copy);
           button.addEventListener('click', () => selectPlayer(player, button));
           resultsContainer.append(button);
@@ -1181,14 +1805,14 @@
       const warrantWarning = document.getElementById('warrant-warning');
       const warrants = playerRecords.filter((record) => record.type === 'Warrant');
       warrantWarning.hidden = warrants.length === 0;
-      if (warrants.length > 0) {
-        const latestWarrant = warrants[0];
-        warrantWarning.textContent = `ACTIVE WARRANT${warrants.length > 1 ? `S (${warrants.length})` : ''} · ${latestWarrant.priority} · ${latestWarrant.reason}`;
+      if (warrants.length) {
+        const warrant = warrants[0];
+        warrantWarning.textContent = `ACTIVE WARRANT${warrants.length > 1 ? `S (${warrants.length})` : ''} · ${warrant.priority} · ${warrant.reason}`;
       }
-      if (playerRecords.length === 0) {
+      if (!playerRecords.length) {
         const empty = document.createElement('div');
         empty.className = 'empty-state';
-        empty.textContent = selectedPlayer ? 'No shared records for this player.' : 'Select a player to view or add shared records.';
+        empty.textContent = selectedPlayer ? 'No shared records for this player.' : 'Select a player to view shared records.';
         container.append(empty);
         return;
       }
@@ -1223,6 +1847,16 @@
         throw new Error('QLiTE server returned an invalid records list.');
       }
       sharedRecords = payload.records;
+      resultsContainer.querySelectorAll('.result').forEach((button) => {
+        const copy = button.querySelector('.result-copy');
+        if (copy) {
+          renderResultAlerts({
+            id: button.dataset.playerId,
+            displayName: button.dataset.playerName,
+            name: button.dataset.username
+          }, copy);
+        }
+      });
       renderRecords();
       if (isAdmin && !adminPanel.hidden) await loadAdminLogs();
     }
@@ -1235,40 +1869,36 @@
         if (!Array.isArray(payload.logs)) {
           throw new Error('QLiTE server returned an invalid audit log.');
         }
-
         adminLogs.replaceChildren();
-        if (payload.logs.length === 0) {
+        if (!payload.logs.length) {
           const empty = document.createElement('div');
           empty.className = 'empty-state';
           empty.textContent = 'No record activity has been logged yet.';
           adminLogs.append(empty);
         }
-        const activeRecordIds = new Set(sharedRecords.map((record) => record.id));
+        const activeIds = new Set(sharedRecords.map((record) => record.id));
         payload.logs.forEach((log) => {
           const record = log.record || {};
           const actor = log.actor || {};
-          const details = document.createElement('details');
-          details.className = 'admin-log';
-          details.dataset.action = log.action;
+          const entry = document.createElement('details');
+          entry.className = 'admin-log';
+          entry.dataset.action = log.action;
           const summary = document.createElement('summary');
           summary.textContent = `${String(log.action || 'updated').toUpperCase()} · ${record.playerName || 'Unknown player'} (@${record.username || 'unknown'}) · ${actor.username || 'Unknown officer'} · ${new Date(log.createdAt).toLocaleString()}`;
-          details.append(summary);
-
-          const fields = [
+          entry.append(summary);
+          [
             `Officer: ${actor.username || 'Unknown'} (Discord ID ${actor.id || 'unavailable'})`,
             `Player: ${record.playerName || 'Unknown'} (@${record.username || 'unknown'}) · Roblox ID ${record.playerId || 'unavailable'}`,
             `Record: ${record.type || 'Unknown'}${record.type === 'Fine' ? ` · ${Number(record.amount).toLocaleString()} credits` : record.priority ? ` · ${record.priority} priority` : ''}`,
             `Reason: ${record.reason || 'No reason recorded'}`,
             `Original record time: ${new Date(record.createdAt).toLocaleString()}`,
             `Log time: ${new Date(log.createdAt).toLocaleString()}`
-          ];
-          fields.forEach((text) => {
-            const line = document.createElement('p');
-            line.textContent = text;
-            details.append(line);
+          ].forEach((text) => {
+            const detail = document.createElement('p');
+            detail.textContent = text;
+            entry.append(detail);
           });
-
-          if (isAdmin && log.action === 'added' && activeRecordIds.has(record.id)) {
+          if (isAdmin && log.action === 'added' && activeIds.has(record.id)) {
             const revoke = document.createElement('button');
             revoke.type = 'button';
             revoke.className = 'revoke-button';
@@ -1285,9 +1915,9 @@
                 revoke.disabled = false;
               }
             });
-            details.append(revoke);
+            entry.append(revoke);
           }
-          adminLogs.append(details);
+          adminLogs.append(entry);
         });
         adminStatus.textContent = `${payload.logs.length} recent audit event${payload.logs.length === 1 ? '' : 's'}.`;
       } catch (error) {
@@ -1381,6 +2011,9 @@
           return;
         }
         showAdminPanel(false);
+        document.querySelectorAll('.nav-chip').forEach((chip) => {
+          chip.setAttribute('aria-pressed', String(chip === button));
+        });
         if (category === 'Fines') {
           openRecordDialog('Fine');
         } else if (category === 'Warrants') {
@@ -1450,17 +2083,15 @@
     renderRecords();
     initialize();
     window.setInterval(async () => {
-      if (!await checkAuth()) {
-        window.location.href = 'index.html';
-      }
-    }, 60000);
-    window.setInterval(async () => {
       try {
         await syncRecords();
       } catch (error) {
         setSearchStatus(error instanceof Error ? error.message : 'QLiTE record sync failed.', true);
       }
     }, 15000);
+    window.setInterval(async () => {
+      if (!await checkAuth()) window.location.href = 'index.html';
+    }, 60000);
     window.addEventListener('focus', () => {
       syncRecords().catch((error) => {
         setSearchStatus(error instanceof Error ? error.message : 'QLiTE record sync failed.', true);
