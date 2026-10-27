@@ -440,7 +440,7 @@
         <img class="logo" src="../../assets/images/qps.png" alt="Queensland Police Service">
         <h1>QLiTE</h1>
         <p class="intro">Roblox officer access</p>
-        <p class="account-status" id="account-status">Each person needs their own QLiTE account. Being listed in Railway's QLITE_LOGINS only allows access; it does not create an account. New users: choose Verify with Discord, then create a password. Returning users can sign in below.</p>
+        <p class="account-status" id="account-status">Each person needs their own QLiTE account. Access approval lets you use QLiTE but does not create an account. New users: choose Verify with Discord, then create a password. Returning users can sign in below.</p>
 
         <form class="form" id="login-form">
           <label for="username">Discord username or ID</label>
@@ -468,7 +468,7 @@
           <button class="primary-button" id="setup-button" type="submit">Create QLiTE account</button>
           <button class="secondary-button" id="cancel-password-change" type="button" hidden>Cancel password change</button>
         </form>
-        <button class="secondary-button" id="change-password-button" type="button" hidden>Forgot your password? Change it with Discord</button>
+        <button class="secondary-button" id="change-password-button" type="button" hidden>Verify with Discord to change password</button>
 
         <p class="error" id="error" role="alert" aria-live="polite"></p>
         <p class="notice" id="notice" role="status" aria-live="polite"></p>
@@ -497,6 +497,7 @@
     const noticeMessage = document.getElementById('notice');
     const accountStatus = document.getElementById('account-status');
     const discordVerificationPendingKey = 'qlite-discord-verification-pending';
+    const passwordResetPendingKey = 'qlite-password-reset-pending';
     let hasExistingQliteAccount = false;
 
     function showError(message) {
@@ -541,6 +542,19 @@
         sessionStorage.removeItem(discordVerificationPendingKey);
         if (status.accountConfigured && status.accessActive) {
           hasExistingQliteAccount = true;
+          if (status.canChangePassword) {
+            sessionStorage.removeItem(passwordResetPendingKey);
+            accountStatus.textContent = `Discord verified for ${status.username}. Set a new QLiTE password to continue.`;
+            document.getElementById('username').value = status.username;
+            document.getElementById('discord-username').value = status.username;
+            document.getElementById('login-form').hidden = true;
+            document.getElementById('discord-button').hidden = true;
+            setupButton.textContent = 'Save new password';
+            cancelPasswordChangeButton.hidden = false;
+            setupForm.hidden = false;
+            changePasswordButton.hidden = true;
+            return;
+          }
           accountStatus.textContent = `Your QLiTE account is active. Sign in with ${status.username} or Discord ID ${status.discordId} and your existing password.`;
           document.getElementById('username').value = status.username;
           setupForm.hidden = true;
@@ -563,7 +577,10 @@
         if (error.message.includes('401')) {
           if (sessionStorage.getItem(discordVerificationPendingKey) === 'true') {
             sessionStorage.removeItem(discordVerificationPendingKey);
-            showError('Discord verification returned, but the QLiTE server did not retain your sign-in. Ask an administrator to check that Railway is running a single API replica, then try Verify with Discord again.');
+            showError('Discord verification returned, but QLiTE could not confirm your sign-in. Please try again or contact the Service Desk.');
+          } else if (sessionStorage.getItem(passwordResetPendingKey) === 'true') {
+            sessionStorage.removeItem(passwordResetPendingKey);
+            showError('Discord verification was not completed. Your password has not been changed. Please try again.');
           }
           return;
         }
@@ -590,12 +607,12 @@
         try {
           await apiRequest('/api/qlite/session');
         } catch (error) {
-          throw new Error(`Your password was accepted, but the dashboard session was not retained. Do not change your password again. Check that the Railway API is running one replica and that its account data is persistent. Details: ${error.message}`);
+          throw new Error(`Your password was accepted, but QLiTE could not verify your session. Please try again or contact the Service Desk. Details: ${error.message}`);
         }
         window.location.href = 'qlitedashboard.html';
       } catch (error) {
         showError(error.message === 'Incorrect username or password.'
-          ? 'That username/password combination was not accepted. If this Discord account has not created a QLiTE password yet, choose Verify with Discord first, then create its account. QLITE_LOGINS only allows access; it does not create accounts. Otherwise use the Discord username shown when the account was created (or its Discord ID). Passwords are case-sensitive.'
+          ? 'That username/password combination was not accepted. Use the Discord username shown when the account was created (or its Discord ID); passwords are case-sensitive. If you just created your account, verify the same Discord account and create a QLiTE password first.'
           : error.message);
       } finally {
         loginButton.disabled = false;
@@ -624,6 +641,11 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ password })
         });
+        try {
+          await apiRequest('/api/qlite/session');
+        } catch (error) {
+          throw new Error(`Your account was saved, but QLiTE could not verify your session. Please sign in again or contact the Service Desk. Details: ${error.message}`);
+        }
         window.location.href = 'qlitedashboard.html';
       } catch (error) {
         showError(error.message);
@@ -634,17 +656,15 @@
     });
 
     changePasswordButton.addEventListener('click', () => {
-      document.getElementById('discord-username').value = document.getElementById('username').value;
-      setupButton.textContent = 'Save new password';
-      cancelPasswordChangeButton.hidden = false;
-      setupForm.hidden = false;
-      changePasswordButton.hidden = true;
-      document.getElementById('new-password').focus();
+      const returnTo = new URL('index.html', window.location.href).href;
+      sessionStorage.setItem(passwordResetPendingKey, 'true');
+      window.location.href = `${apiBase}/auth/discord/start?returnTo=${encodeURIComponent(returnTo)}&purpose=password-reset`;
     });
 
     cancelPasswordChangeButton.addEventListener('click', () => {
       setupForm.reset();
       setupForm.hidden = true;
+      document.getElementById('login-form').hidden = false;
       cancelPasswordChangeButton.hidden = true;
       changePasswordButton.hidden = false;
     });

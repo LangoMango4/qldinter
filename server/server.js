@@ -802,6 +802,8 @@ const getDiscordSession = (req) => {
       token: signedSession.sessionToken,
       user: signedSession.user,
       authMethod: signedSession.authMethod,
+      authPurpose: signedSession.authPurpose,
+      passwordResetAuthorizedAt: signedSession.passwordResetAuthorizedAt,
       trelloCardId: signedSession.trelloCardId,
       createdAt: signedSession.createdAt,
       expiresAt: signedSession.expiresAt
@@ -839,8 +841,16 @@ const requireAdmin = (req, res, next) => {
 
 const isQliteLoginAllowed = (discordId) => QLITE_LOGINS.includes(String(discordId));
 const qliteLoginDeniedMessage = (discordId) => QLITE_LOGINS.length
-  ? `Discord user ID ${String(discordId)} is not listed in QLITE_LOGINS. Add this numeric ID to the Railway variable, separated from other IDs by a comma, then redeploy the server.`
-  : "QLiTE sign-in is disabled because QLITE_LOGINS is empty. Add the permitted Discord user IDs to the Railway variable, then redeploy the server.";
+  ? `Discord user ID ${String(discordId)} is not approved for QLiTE. Ask an administrator to add this numeric ID to the access list.`
+  : "QLiTE sign-in is disabled because no Discord IDs are approved. Ask an administrator to configure the access list.";
+const hasRecentQlitePasswordResetAuthorization = (session) => {
+  const age = Date.now() - session.passwordResetAuthorizedAt;
+  return session.authMethod === "discord-oauth" &&
+    session.authPurpose === "password-reset" &&
+    Number.isFinite(session.passwordResetAuthorizedAt) &&
+    age >= 0 &&
+    age <= 5 * 60 * 1000;
+};
 
 const requireQliteSession = async (req, res, next) => {
   const session = getDiscordSession(req);
@@ -1540,6 +1550,7 @@ app.get("/auth/discord/start", (req, res) => {
   }
 
   const returnTo = String((req.query && req.query.returnTo) || "").trim();
+  const authPurpose = req.query?.purpose === "password-reset" ? "password-reset" : "";
   let safeReturnTo = "/";
 
   if (returnTo) {
@@ -1562,7 +1573,8 @@ app.get("/auth/discord/start", (req, res) => {
     createdAt: Date.now(),
     expiresAt: Date.now() + 10 * 60 * 1000,
     returnTo: safeReturnTo,
-    redirectUri
+    redirectUri,
+    authPurpose
   }, "oauth-state");
 
   const params = new URLSearchParams({
@@ -1572,6 +1584,7 @@ app.get("/auth/discord/start", (req, res) => {
     scope: DISCORD_OAUTH_SCOPES,
     state
   });
+  if (authPurpose === "password-reset") params.set("prompt", "consent");
 
   return res.redirect(`https://discord.com/oauth2/authorize?${params.toString()}`);
 });
@@ -1658,6 +1671,9 @@ app.get("/auth/discord/callback", async (req, res) => {
     const sessionToken = randomUUID();
     const expiresAt = Date.now() + 24 * 60 * 60 * 1000;
     const session = {
+      authMethod: "discord-oauth",
+      authPurpose: stateEntry.authPurpose === "password-reset" ? "password-reset" : "",
+      passwordResetAuthorizedAt: stateEntry.authPurpose === "password-reset" ? Date.now() : 0,
       user: {
         id: me.id,
         username: me.username,
@@ -1714,7 +1730,8 @@ app.get("/api/qlite/account/status", async (req, res) => {
       authenticated: true,
       username: session.user.username,
       discordId: String(session.user.id),
-      accountConfigured: false
+      accountConfigured: false,
+      canChangePassword: false
     });
   }
 
@@ -1725,7 +1742,8 @@ app.get("/api/qlite/account/status", async (req, res) => {
       username: account.username,
       discordId: account.discordId || String(session.user.id),
       accountConfigured: true,
-      accessActive: active
+      accessActive: active,
+      canChangePassword: hasRecentQlitePasswordResetAuthorization(session)
     });
   } catch (error) {
     console.error("Unable to check QLiTE account status in Trello:", error);
@@ -1753,6 +1771,14 @@ app.post("/api/qlite/account/setup", async (req, res) => {
   const discordUsername = String(session.user.username || "").trim();
   if (!discordUsername) return res.status(400).json({ error: "Discord did not provide a username for this account." });
   const existingAccount = qliteAccounts[discordId];
+  if (session.authMethod === "qlite-password") {
+    return res.status(403).json({ error: "Verify your Discord account before creating or changing a QLiTE password." });
+  }
+  if (existingAccount && (
+    !hasRecentQlitePasswordResetAuthorization(session)
+  )) {
+    return res.status(403).json({ error: "Verify your Discord account again before changing your QLiTE password." });
+  }
   if (existingAccount) {
     try {
       if (!await isQliteTrelloAccountActive(existingAccount.trelloCardId, existingAccount.trelloListId)) {
