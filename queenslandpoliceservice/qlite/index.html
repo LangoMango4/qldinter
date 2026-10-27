@@ -141,6 +141,24 @@
       transition: filter .15s ease;
     }
 
+    .secondary-button {
+      width: 100%;
+      min-height: 36px;
+      padding: 7px 10px;
+      border: 1px solid #cbd4e0;
+      border-radius: 6px;
+      background: #f7f9fc;
+      color: #43516a;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .secondary-button:hover {
+      border-color: #9aa9bd;
+      background: #eef2f7;
+    }
+
     .primary-button {
       margin-top: 3px;
       background: #147efb;
@@ -422,7 +440,7 @@
         <img class="logo" src="../../assets/images/qps.png" alt="Queensland Police Service">
         <h1>QLiTE</h1>
         <p class="intro">Roblox officer access</p>
-        <p class="account-status" id="account-status">Sign in with your QLiTE account, or verify your Discord account to get started.</p>
+        <p class="account-status" id="account-status">New users: verify an allowlisted Discord account and create a QLiTE password. Returning users can sign in below.</p>
 
         <form class="form" id="login-form">
           <label for="username">Discord username or ID</label>
@@ -448,7 +466,9 @@
           <input id="confirm-password" type="password" minlength="12" maxlength="128" autocomplete="new-password" required placeholder="Enter the password again">
           <p class="password-help">Your password is stored as a secure hash on the QLiTE server. Trello records your Discord account and access status only.</p>
           <button class="primary-button" id="setup-button" type="submit">Create QLiTE account</button>
+          <button class="secondary-button" id="cancel-password-change" type="button" hidden>Cancel password change</button>
         </form>
+        <button class="secondary-button" id="change-password-button" type="button" hidden>Forgot your password? Change it with Discord</button>
 
         <p class="error" id="error" role="alert" aria-live="polite"></p>
         <p class="notice" id="notice" role="status" aria-live="polite"></p>
@@ -471,9 +491,12 @@
     const loginButton = document.getElementById('login-button');
     const setupButton = document.getElementById('setup-button');
     const discordButton = document.getElementById('discord-button');
+    const changePasswordButton = document.getElementById('change-password-button');
+    const cancelPasswordChangeButton = document.getElementById('cancel-password-change');
     const errorMessage = document.getElementById('error');
     const noticeMessage = document.getElementById('notice');
     const accountStatus = document.getElementById('account-status');
+    let hasExistingQliteAccount = false;
 
     function showError(message) {
       errorMessage.textContent = message;
@@ -489,14 +512,22 @@
 
     async function apiRequest(path, options = {}) {
       let response;
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), 15000);
       try {
         response = await fetch(`${apiBase}${path}`, {
           credentials: 'include',
           cache: 'no-store',
-          ...options
+          ...options,
+          signal: controller.signal
         });
       } catch (error) {
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          throw new Error(`The QLiTE server at ${new URL(apiBase).host} did not respond in time. Please try again.`);
+        }
         throw new Error(`Could not reach the QLiTE server at ${new URL(apiBase).host}. Please try again later.`, { cause: error });
+      } finally {
+        window.clearTimeout(timeoutId);
       }
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(payload.error || `QLiTE server returned HTTP ${response.status}.`);
@@ -507,11 +538,11 @@
       try {
         const status = await apiRequest('/api/qlite/account/status');
         if (status.accountConfigured && status.accessActive) {
-          accountStatus.textContent = `Discord verified as ${status.username} (ID ${status.discordId}). Use your username or ID and your case-sensitive password to sign in.`;
+          hasExistingQliteAccount = true;
+          accountStatus.textContent = `Your QLiTE account is active. Sign in with ${status.username} or Discord ID ${status.discordId} and your existing password.`;
           document.getElementById('username').value = status.username;
-          document.getElementById('setup-button').textContent = 'Change QLiTE password';
-          document.getElementById('setup-form').hidden = false;
-          document.getElementById('discord-username').value = status.username;
+          setupForm.hidden = true;
+          changePasswordButton.hidden = false;
           document.getElementById('discord-button').hidden = true;
           return;
         }
@@ -522,18 +553,20 @@
         }
         accountStatus.textContent = `Discord verified as ${status.username} (ID ${status.discordId}). Set a QLiTE password to finish creating your account.`;
         document.getElementById('discord-username').value = status.username;
-        document.getElementById('setup-form').hidden = false;
+        setupButton.textContent = 'Create QLiTE account';
+        cancelPasswordChangeButton.hidden = true;
+        setupForm.hidden = false;
         document.getElementById('discord-button').hidden = true;
       } catch (error) {
         if (error.message.includes('401')) return;
-        accountStatus.textContent = 'Account status is temporarily unavailable.';
+        accountStatus.textContent = error.message;
         showError(error.message);
       }
     }
 
     loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
-      errorMessage.style.display = 'none';
+      showNotice('Checking your username and password…');
       loginButton.disabled = true;
       loginButton.textContent = 'Signing in…';
       try {
@@ -545,10 +578,16 @@
             password: document.getElementById('login-password').value
           })
         });
+        showNotice('Credentials accepted. Verifying your dashboard session…');
+        try {
+          await apiRequest('/api/qlite/session');
+        } catch (error) {
+          throw new Error(`Your password was accepted, but the dashboard session was not retained. Do not change your password again. Check that the Railway API is running one replica and that its account data is persistent. Details: ${error.message}`);
+        }
         window.location.href = 'qlitedashboard.html';
       } catch (error) {
         showError(error.message === 'Incorrect username or password.'
-          ? 'Incorrect username or password. Try your Discord username without @, your Discord display name, or your Discord ID. Passwords are case-sensitive.'
+          ? 'That username/password combination was not accepted. Use the Discord username shown when you created your account (or your Discord ID). Passwords are case-sensitive.'
           : error.message);
       } finally {
         loginButton.disabled = false;
@@ -582,10 +621,24 @@
         showError(error.message);
       } finally {
         setupButton.disabled = false;
-        setupButton.textContent = document.getElementById('account-status').textContent.includes('already has a password')
-          ? 'Change QLiTE password'
-          : 'Create QLiTE account';
+        setupButton.textContent = hasExistingQliteAccount ? 'Save new password' : 'Create QLiTE account';
       }
+    });
+
+    changePasswordButton.addEventListener('click', () => {
+      document.getElementById('discord-username').value = document.getElementById('username').value;
+      setupButton.textContent = 'Save new password';
+      cancelPasswordChangeButton.hidden = false;
+      setupForm.hidden = false;
+      changePasswordButton.hidden = true;
+      document.getElementById('new-password').focus();
+    });
+
+    cancelPasswordChangeButton.addEventListener('click', () => {
+      setupForm.reset();
+      setupForm.hidden = true;
+      cancelPasswordChangeButton.hidden = true;
+      changePasswordButton.hidden = false;
     });
 
     discordButton.addEventListener('click', () => {

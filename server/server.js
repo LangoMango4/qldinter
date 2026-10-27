@@ -56,10 +56,11 @@ const TRELLO_API_TOKEN = process.env.TRELLO_API_TOKEN || "";
 const TRELLO_BANS_LIST_ID = process.env.TRELLO_BANS_LIST_ID || "";
 const TRELLO_QLITE_ACCOUNTS_BOARD_ID = process.env.TRELLO_QLITE_ACCOUNTS_BOARD_ID || "68d53ce4beaece9f9828096d";
 const TRELLO_QLITE_ACCOUNTS_LIST_ID = process.env.TRELLO_QLITE_ACCOUNTS_LIST_ID || "";
-const QLITE_LOGINS = String(process.env.QLITE_LOGINS || "")
-  .split(",")
-  .map((value) => value.trim())
-  .filter((value) => /^\d{1,25}$/.test(value));
+const QLITE_LOGINS = [...new Set(String(process.env.QLITE_LOGINS || "")
+  .replace(/["']/g, "")
+  .split(/[,\s;]+/)
+  .map((value) => value.replace(/^<@!?(\d+)>$/, "$1").trim())
+  .filter((value) => /^\d{1,25}$/.test(value)))];
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || "";
 const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || "";
@@ -258,7 +259,8 @@ const hashQlitePassword = (password, salt = randomBytes(16).toString("hex")) => 
 });
 
 const verifyQlitePassword = (password, account) => {
-  if (!isPasswordValid(password) || typeof account?.salt !== "string" || typeof account?.passwordHash !== "string") {
+  if (typeof password !== "string" || password.length === 0 || password.length > 128 ||
+    typeof account?.salt !== "string" || typeof account?.passwordHash !== "string") {
     return false;
   }
   const storedHash = Buffer.from(account.passwordHash, "hex");
@@ -782,6 +784,9 @@ const requireAdmin = (req, res, next) => {
 };
 
 const isQliteLoginAllowed = (discordId) => QLITE_LOGINS.includes(String(discordId));
+const qliteLoginDeniedMessage = (discordId) => QLITE_LOGINS.length
+  ? `Discord user ID ${String(discordId)} is not listed in QLITE_LOGINS. Add this numeric ID to the Railway variable, separated from other IDs by a comma, then redeploy the server.`
+  : "QLiTE sign-in is disabled because QLITE_LOGINS is empty. Add the permitted Discord user IDs to the Railway variable, then redeploy the server.";
 
 const requireQliteSession = (req, res, next) => {
   const session = getDiscordSession(req);
@@ -791,7 +796,7 @@ const requireQliteSession = (req, res, next) => {
   if (!isQliteLoginAllowed(session.user.id)) {
     discordSessions.delete(session.token);
     clearSessionCookie(res);
-    return res.status(403).json({ error: "This Discord account is not on the QLiTE_LOGINS allowlist." });
+    return res.status(403).json({ error: qliteLoginDeniedMessage(session.user.id) });
   }
 
   const account = qliteAccounts[String(session.user.id)];
@@ -956,8 +961,8 @@ const isTrustedQliteRequest = (req) => {
 };
 
 const qliteLoginFailures = new Map();
-const QLITE_LOGIN_MAX_ATTEMPTS = 5;
-const QLITE_LOGIN_LOCKOUT_MS = 15 * 60 * 1000;
+const QLITE_LOGIN_MAX_ATTEMPTS = 8;
+const QLITE_LOGIN_LOCKOUT_MS = 60 * 1000;
 
 const normalizeQliteLogin = (value) => String(value || "").trim().replace(/^@/, "").toLowerCase();
 const getQliteLoginKey = (req, username) => `${req.ip}:${normalizeQliteLogin(username)}`;
@@ -1621,9 +1626,7 @@ app.get("/api/qlite/account/status", async (req, res) => {
   if (!session) return res.status(401).json({ authenticated: false });
   if (!isQliteLoginAllowed(session.user.id)) {
     return res.status(403).json({
-      error: QLITE_LOGINS.length
-        ? "This Discord account is not on the QLiTE_LOGINS allowlist."
-        : "QLiTE sign-in is disabled until QLITE_LOGINS is configured."
+      error: qliteLoginDeniedMessage(session.user.id)
     });
   }
 
@@ -1659,7 +1662,7 @@ app.post("/api/qlite/account/setup", async (req, res) => {
   const session = getDiscordSession(req);
   if (!session) return res.status(401).json({ error: "Sign in with Discord before setting a QLiTE password." });
   if (!isQliteLoginAllowed(session.user.id)) {
-    return res.status(403).json({ error: "This Discord account is not on the QLiTE_LOGINS allowlist." });
+    return res.status(403).json({ error: qliteLoginDeniedMessage(session.user.id) });
   }
   if (!isPasswordValid(req.body?.password)) {
     return res.status(400).json({ error: "Choose a password between 12 and 128 characters." });
@@ -1796,7 +1799,7 @@ app.post("/api/qlite/auth/login", async (req, res) => {
   }
 
   if (!isQliteLoginAllowed(account.discordId)) {
-    return res.status(403).json({ error: "This Discord account is not on the QLiTE_LOGINS allowlist." });
+    return res.status(403).json({ error: qliteLoginDeniedMessage(account.discordId) });
   }
 
   try {
@@ -1827,7 +1830,7 @@ app.get("/api/qlite/session", async (req, res) => {
   if (!isQliteLoginAllowed(session.user.id)) {
     discordSessions.delete(session.token);
     clearSessionCookie(res);
-    return res.status(403).json({ authenticated: false, error: "This Discord account is not on the QLiTE_LOGINS allowlist." });
+    return res.status(403).json({ authenticated: false, error: qliteLoginDeniedMessage(session.user.id) });
   }
   const account = qliteAccounts[String(session.user.id)];
   if (!account || account.trelloCardId !== session.trelloCardId) {

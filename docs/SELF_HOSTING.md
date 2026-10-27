@@ -39,7 +39,7 @@ npm install
 
 Replace `C:\path\to\qldinter` with the actual folder where you copied the project. `Copy-Item` only works in PowerShell; Command Prompt uses `copy`.
 
-Edit `server/.env` and add the secrets you actually use. Set `WEBSITE_ORIGIN` to the exact public website origin, such as `https://queenslandinteractive-rblx.com`, without a trailing slash. At minimum, set `DISCORD_WEBHOOK_URL` if the feedback form should work. Set `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_REDIRECT_URI`, and `ADMIN_USER_IDS` for Discord admin login. For QLiTE, set `QLITE_LOGINS` to the comma-separated Discord user IDs allowed to create or use QLiTE accounts; any QLiTE admins must also be listed in `ADMIN_USER_IDS`.
+Edit `server/.env` and add the secrets you actually use. Set `WEBSITE_ORIGIN` to the exact public website origin, such as `https://queenslandinteractive-rblx.com`, without a trailing slash. At minimum, set `DISCORD_WEBHOOK_URL` if the feedback form should work. Set `DISCORD_CLIENT_ID`, `DISCORD_CLIENT_SECRET`, `DISCORD_REDIRECT_URI`, and `ADMIN_USER_IDS` for Discord admin login. For QLiTE, set `QLITE_LOGINS` to the Discord user IDs allowed to create or use QLiTE accounts (not usernames); separate IDs with commas, spaces, or newlines. Discord mention forms such as `<@123456789012345678>` are accepted. Any QLiTE admins must also be listed in `ADMIN_USER_IDS`.
 
 ## 2. Run the server
 
@@ -76,7 +76,7 @@ The API can run on Railway while the static site remains on GitHub Pages behind 
 
 1. Create a Railway service from this repository and set its root directory to `server`.
 2. Use `npm start` as the start command. Railway supplies `PORT`; do not hard-code it in Railway settings.
-3. Copy the variables from `server/.env.example` into Railway Variables. Set `WEBSITE_ORIGIN` to the exact Cloudflare site origin, `QLITE_LOGINS` to the allowed Discord user IDs, and `ADMIN_USER_IDS` to the admin Discord user IDs.
+3. Copy the variables from `server/.env.example` into Railway Variables. Set `WEBSITE_ORIGIN` to the exact Cloudflare site origin, `QLITE_LOGINS` to the allowed Discord user IDs (not usernames), and `ADMIN_USER_IDS` to the admin Discord user IDs. After editing variables, redeploy/restart the API service. If an allowlisted user is rejected, the sign-in page displays their Discord ID to compare against `QLITE_LOGINS`.
 4. Copy the Railway public domain into `scripts/config.js` as `API_SERVER_URL`, without a trailing slash.
 5. Add the API domain and callback URL to the Discord Developer Portal. The callback is `/auth/discord/callback` on the Railway domain.
 
