@@ -166,6 +166,7 @@
     .nav-chip:nth-child(4) { background: #b78a22; }
     .nav-chip:nth-child(5) { background: #398795; }
     .nav-chip:nth-child(6) { background: #3f639e; }
+    .nav-chip[data-category="Admin"] { background: #66518d; }
 
     .workspace {
       display: grid;
@@ -331,12 +332,6 @@
       font-weight: 800;
     }
 
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
     .result-copy {
       min-width: 0;
     }
@@ -397,6 +392,17 @@
       border: 1px solid #334563;
       border-radius: 6px;
       background: linear-gradient(115deg, #243858, #1c2a43);
+    }
+
+    .warrant-warning {
+      padding: 9px 10px;
+      border: 1px solid #d34b5b;
+      border-radius: 5px;
+      background: #571f2a;
+      color: #ffe1e4;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1.5;
     }
 
     .profile-card .avatar {
@@ -525,6 +531,89 @@
     .records {
       display: grid;
       gap: 5px;
+    }
+
+    .admin-panel {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      flex-direction: column;
+      gap: 10px;
+      margin: 12px;
+      padding: 12px;
+    }
+
+    .admin-panel[hidden] {
+      display: none;
+    }
+
+    .admin-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .admin-heading h2 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .admin-status {
+      color: #aebbd0;
+      font-size: 9px;
+    }
+
+    .admin-status[data-error="true"] {
+      color: #ff9999;
+    }
+
+    .admin-logs {
+      min-height: 0;
+      overflow: auto;
+      display: grid;
+      align-content: start;
+      gap: 6px;
+    }
+
+    .admin-log {
+      padding: 8px 9px;
+      border: 1px solid #334563;
+      border-radius: 5px;
+      background: #151f34;
+      color: #dce5f4;
+      font-size: 9px;
+    }
+
+    .admin-log summary {
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .admin-log[data-action="revoked"] {
+      border-left: 3px solid #e66c79;
+    }
+
+    .admin-log[data-action="added"] {
+      border-left: 3px solid #3bd298;
+    }
+
+    .admin-log p {
+      margin: 7px 0 0;
+      color: #aebbd0;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .revoke-button {
+      margin-top: 8px;
+      padding: 5px 8px;
+      border: 1px solid #b94a58;
+      border-radius: 4px;
+      background: #571f2a;
+      color: #ffe1e4;
+      font-size: 9px;
+      font-weight: 700;
     }
 
     .record {
@@ -739,6 +828,7 @@
         <button class="nav-chip" type="button" data-category="Fines">FINES</button>
         <button class="nav-chip" type="button" data-category="Warrants">WARRANTS</button>
         <button class="nav-chip" type="button" data-category="Traffic">TRAFFIC</button>
+        <button class="nav-chip" type="button" data-category="Admin" id="admin-tab" hidden>ADMIN</button>
       </nav>
 
       <div class="workspace">
@@ -770,13 +860,14 @@
             <span class="connection-status">PUBLIC PROFILE</span>
           </div>
           <div class="profile-card">
-            <div class="avatar" id="profile-avatar" aria-label="Player avatar">?</div>
+            <div class="avatar" id="profile-avatar" aria-label="Player initials">?</div>
             <div class="profile-copy">
               <p class="profile-name" id="profile-name">No player selected</p>
               <p class="profile-username" id="profile-username">Search to open a public Roblox profile</p>
               <span class="profile-id" id="profile-id">PLAYER ID —</span>
             </div>
           </div>
+          <div class="warrant-warning" id="warrant-warning" role="alert" hidden></div>
           <div class="stats">
             <div class="stat">
               <span class="stat-label">Account created</span>
@@ -787,7 +878,7 @@
               <span class="stat-value" id="profile-verified">—</span>
             </div>
             <div class="stat">
-              <span class="stat-label">Local records</span>
+              <span class="stat-label">Shared records</span>
               <span class="stat-value" id="record-count">0</span>
             </div>
           </div>
@@ -797,16 +888,29 @@
           </div>
           <div class="records-heading">
             <h3>Officer notes & records</h3>
-            <span class="local-note">Saved on this device only</span>
+            <span class="local-note">Shared live with signed-in QLiTE officers</span>
           </div>
           <div class="records" id="records">
-            <div class="empty-state">Select a player to view or add local training records.</div>
+            <div class="empty-state">Select a player to view or add shared records.</div>
           </div>
         </section>
       </div>
+      <section class="panel admin-panel" id="admin-panel" aria-labelledby="admin-title" hidden>
+        <div class="admin-heading">
+          <div>
+            <p class="eyebrow">QLiTE audit trail</p>
+            <h2 id="admin-title">Record activity</h2>
+          </div>
+          <button class="action-button" type="button" id="refresh-logs">Refresh logs</button>
+        </div>
+        <div class="admin-status" id="admin-status" role="status" aria-live="polite"></div>
+        <div class="admin-logs" id="admin-logs">
+          <div class="empty-state">Audit events will appear here.</div>
+        </div>
+      </section>
 
       <footer class="footer">
-        <span>QLiTE Roblox · Player records are not Roblox moderation actions</span>
+        <span>QLiTE · Westlands, Queensland · In-game records only</span>
         <span id="clock"></span>
       </footer>
     </section>
@@ -848,7 +952,12 @@
     const dialog = document.getElementById('record-dialog');
     const recordForm = document.getElementById('record-form');
     const selectedActions = document.querySelectorAll('[data-action]');
-    const storageKey = 'qliteRobloxOfficerRecords';
+    const workspace = document.querySelector('.workspace');
+    const adminPanel = document.getElementById('admin-panel');
+    const adminLogs = document.getElementById('admin-logs');
+    const adminStatus = document.getElementById('admin-status');
+    let sharedRecords = [];
+    let isAdmin = false;
     let selectedPlayer = null;
     let pendingRecordType = null;
     let searchSequence = 0;
@@ -867,6 +976,31 @@
         throw new Error('QLiTE API is not configured. Open the dashboard from the QLiTE website.');
       }
       return apiBaseUrl;
+    }
+
+    async function qliteApi(path, options = {}) {
+      let response;
+      try {
+        response = await fetch(`${getApiBaseUrl()}${path}`, {
+          credentials: 'include',
+          cache: 'no-store',
+          ...options,
+          headers: { Accept: 'application/json', ...options.headers }
+        });
+      } catch (error) {
+        throw new Error('Could not reach the QLiTE server. Check that the API is online.', { cause: error });
+      }
+
+      let payload;
+      try {
+        payload = await response.json();
+      } catch (error) {
+        throw new Error(`QLiTE server returned an invalid response (HTTP ${response.status}).`, { cause: error });
+      }
+      if (!response.ok) {
+        throw new Error(payload.error || `QLiTE server returned HTTP ${response.status}.`);
+      }
+      return payload;
     }
 
     async function fetchRobloxApi(path) {
@@ -897,34 +1031,11 @@
       return payload;
     }
 
-    async function loadAvatarImage(player, avatar) {
-      try {
-        const payload = await fetchRobloxApi(`users/${encodeURIComponent(player.id)}/avatar`);
-        const imageUrl = payload.data?.[0]?.imageUrl;
-        if (typeof imageUrl !== 'string') {
-          throw new Error('Roblox did not return an avatar image URL.');
-        }
-
-        const image = document.createElement('img');
-        image.alt = '';
-        image.loading = 'lazy';
-        image.addEventListener('load', () => avatar.replaceChildren(image), { once: true });
-        image.addEventListener('error', () => {
-          avatar.title = 'Avatar preview unavailable.';
-        }, { once: true });
-        image.src = imageUrl;
-      } catch (error) {
-        avatar.title = 'Avatar preview unavailable.';
-        console.warn('Unable to load a Roblox avatar preview.', error);
-      }
-    }
-
     function makeAvatar(player, sizeClass = '') {
       const avatar = document.createElement('div');
       avatar.className = `avatar ${sizeClass}`.trim();
       avatar.textContent = (player.displayName || player.name || '?').slice(0, 1).toUpperCase();
-      avatar.setAttribute('aria-label', `${player.displayName || player.name} avatar`);
-      loadAvatarImage(player, avatar);
+      avatar.setAttribute('aria-label', `${player.displayName || player.name} initials`);
       return avatar;
     }
 
@@ -1060,59 +1171,135 @@
       }
     }
 
-    function readRecords() {
-      try {
-        const stored = JSON.parse(localStorage.getItem(storageKey) || '{}');
-        if (stored && typeof stored === 'object' && !Array.isArray(stored)) return stored;
-        throw new Error('Stored records have an invalid format.');
-      } catch (error) {
-        throw new Error('Could not read local officer records. Clear this site’s stored data and try again.', { cause: error });
-      }
-    }
-
     function renderRecords() {
       const container = document.getElementById('records');
       container.replaceChildren();
+      const playerRecords = selectedPlayer
+        ? sharedRecords.filter((record) => record.playerId === String(selectedPlayer.id))
+        : [];
+      document.getElementById('record-count').textContent = String(playerRecords.length);
+      const warrantWarning = document.getElementById('warrant-warning');
+      const warrants = playerRecords.filter((record) => record.type === 'Warrant');
+      warrantWarning.hidden = warrants.length === 0;
+      if (warrants.length > 0) {
+        const latestWarrant = warrants[0];
+        warrantWarning.textContent = `ACTIVE WARRANT${warrants.length > 1 ? `S (${warrants.length})` : ''} · ${latestWarrant.priority} · ${latestWarrant.reason}`;
+      }
+      if (playerRecords.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty-state';
+        empty.textContent = selectedPlayer ? 'No shared records for this player.' : 'Select a player to view or add shared records.';
+        container.append(empty);
+        return;
+      }
+
+      playerRecords.forEach((record) => {
+        const item = document.createElement('article');
+        item.className = 'record';
+        item.dataset.type = record.type;
+        const copy = document.createElement('div');
+        copy.className = 'record-copy';
+        const title = document.createElement('p');
+        title.className = 'record-title';
+        title.textContent = record.type === 'Fine'
+          ? `Fine · ${Number(record.amount).toLocaleString()} credits`
+          : `Warrant · ${record.priority}`;
+        const detail = document.createElement('p');
+        detail.className = 'record-detail';
+        detail.textContent = record.reason;
+        const date = document.createElement('time');
+        date.className = 'record-date';
+        date.dateTime = record.createdAt;
+        date.textContent = new Date(record.createdAt).toLocaleDateString();
+        copy.append(title, detail);
+        item.append(copy, date);
+        container.append(item);
+      });
+    }
+
+    async function syncRecords() {
+      const payload = await qliteApi('/api/qlite/records');
+      if (!Array.isArray(payload.records)) {
+        throw new Error('QLiTE server returned an invalid records list.');
+      }
+      sharedRecords = payload.records;
+      renderRecords();
+      if (isAdmin && !adminPanel.hidden) await loadAdminLogs();
+    }
+
+    async function loadAdminLogs() {
+      adminStatus.textContent = 'Loading audit log…';
+      adminStatus.dataset.error = 'false';
       try {
-        const playerRecords = selectedPlayer ? readRecords()[String(selectedPlayer.id)] || [] : [];
-        document.getElementById('record-count').textContent = String(playerRecords.length);
-        if (playerRecords.length === 0) {
-          const empty = document.createElement('div');
-          empty.className = 'empty-state';
-          empty.textContent = 'No local training records for this player.';
-          container.append(empty);
-          return;
+        const payload = await qliteApi('/api/admin/qlite-logs');
+        if (!Array.isArray(payload.logs)) {
+          throw new Error('QLiTE server returned an invalid audit log.');
         }
 
-        playerRecords.slice().reverse().forEach((record) => {
-          const item = document.createElement('article');
-          item.className = 'record';
-          item.dataset.type = record.type;
-          const copy = document.createElement('div');
-          copy.className = 'record-copy';
-          const title = document.createElement('p');
-          title.className = 'record-title';
-          title.textContent = record.type === 'Fine'
-            ? `Fine · ${Number(record.amount).toLocaleString()} credits`
-            : `Warrant · ${record.priority}`;
-          const detail = document.createElement('p');
-          detail.className = 'record-detail';
-          detail.textContent = record.reason;
-          const date = document.createElement('time');
-          date.className = 'record-date';
-          date.dateTime = record.createdAt;
-          date.textContent = new Date(record.createdAt).toLocaleDateString();
-          copy.append(title, detail);
-          item.append(copy, date);
-          container.append(item);
+        adminLogs.replaceChildren();
+        if (payload.logs.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = 'No record activity has been logged yet.';
+          adminLogs.append(empty);
+        }
+        const activeRecordIds = new Set(sharedRecords.map((record) => record.id));
+        payload.logs.forEach((log) => {
+          const record = log.record || {};
+          const actor = log.actor || {};
+          const details = document.createElement('details');
+          details.className = 'admin-log';
+          details.dataset.action = log.action;
+          const summary = document.createElement('summary');
+          summary.textContent = `${String(log.action || 'updated').toUpperCase()} · ${record.playerName || 'Unknown player'} (@${record.username || 'unknown'}) · ${actor.username || 'Unknown officer'} · ${new Date(log.createdAt).toLocaleString()}`;
+          details.append(summary);
+
+          const fields = [
+            `Officer: ${actor.username || 'Unknown'} (Discord ID ${actor.id || 'unavailable'})`,
+            `Player: ${record.playerName || 'Unknown'} (@${record.username || 'unknown'}) · Roblox ID ${record.playerId || 'unavailable'}`,
+            `Record: ${record.type || 'Unknown'}${record.type === 'Fine' ? ` · ${Number(record.amount).toLocaleString()} credits` : record.priority ? ` · ${record.priority} priority` : ''}`,
+            `Reason: ${record.reason || 'No reason recorded'}`,
+            `Original record time: ${new Date(record.createdAt).toLocaleString()}`,
+            `Log time: ${new Date(log.createdAt).toLocaleString()}`
+          ];
+          fields.forEach((text) => {
+            const line = document.createElement('p');
+            line.textContent = text;
+            details.append(line);
+          });
+
+          if (isAdmin && log.action === 'added' && activeRecordIds.has(record.id)) {
+            const revoke = document.createElement('button');
+            revoke.type = 'button';
+            revoke.className = 'revoke-button';
+            revoke.textContent = 'Revoke record';
+            revoke.addEventListener('click', async () => {
+              if (!window.confirm(`Revoke this ${record.type || 'player'} record?`)) return;
+              revoke.disabled = true;
+              try {
+                await qliteApi(`/api/admin/qlite-records/${encodeURIComponent(record.id)}`, { method: 'DELETE' });
+                await syncRecords();
+              } catch (error) {
+                adminStatus.textContent = error instanceof Error ? error.message : 'Could not revoke the record.';
+                adminStatus.dataset.error = 'true';
+                revoke.disabled = false;
+              }
+            });
+            details.append(revoke);
+          }
+          adminLogs.append(details);
         });
+        adminStatus.textContent = `${payload.logs.length} recent audit event${payload.logs.length === 1 ? '' : 's'}.`;
       } catch (error) {
-        document.getElementById('record-count').textContent = '—';
-        const failure = document.createElement('div');
-        failure.className = 'empty-state';
-        failure.textContent = error instanceof Error ? error.message : 'Unable to load local records.';
-        container.append(failure);
+        adminStatus.textContent = error instanceof Error ? error.message : 'Could not load the audit log.';
+        adminStatus.dataset.error = 'true';
       }
+    }
+
+    function showAdminPanel(show) {
+      workspace.hidden = show;
+      adminPanel.hidden = !show;
+      if (show) loadAdminLogs();
     }
 
     function openRecordDialog(type) {
@@ -1146,7 +1333,7 @@
       searchPlayers(keyword);
     });
 
-    recordForm.addEventListener('submit', (event) => {
+    recordForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!selectedPlayer || !pendingRecordType) return;
 
@@ -1154,26 +1341,30 @@
       const amount = Number(document.getElementById('fine-amount').value);
       if (!reason || (pendingRecordType === 'Fine' && (!Number.isInteger(amount) || amount < 1 || amount > 1000000))) return;
 
+      const saveButton = document.getElementById('save-record');
+      saveButton.disabled = true;
       try {
-        const records = readRecords();
-        const playerId = String(selectedPlayer.id);
-        const playerRecords = records[playerId] || [];
-        playerRecords.push({
-          id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-          type: pendingRecordType,
-          reason,
-          createdAt: new Date().toISOString(),
-          ...(pendingRecordType === 'Fine' ? { amount } : {
-            priority: document.getElementById('warrant-priority').value
+        await qliteApi('/api/qlite/records', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            playerId: String(selectedPlayer.id),
+            playerName: String(selectedPlayer.displayName || selectedPlayer.name),
+            username: String(selectedPlayer.name),
+            type: pendingRecordType,
+            reason,
+            ...(pendingRecordType === 'Fine' ? { amount } : {
+              priority: document.getElementById('warrant-priority').value
+            })
           })
         });
-        records[playerId] = playerRecords;
-        localStorage.setItem(storageKey, JSON.stringify(records));
+        await syncRecords();
         dialog.close();
         pendingRecordType = null;
-        renderRecords();
       } catch (error) {
-        window.alert(error instanceof Error ? error.message : 'Could not save the local training record.');
+        window.alert(error instanceof Error ? error.message : 'Could not save the shared QLiTE record.');
+      } finally {
+        saveButton.disabled = false;
       }
     });
 
@@ -1185,6 +1376,11 @@
     document.querySelectorAll('.nav-chip').forEach((button) => {
       button.addEventListener('click', () => {
         const category = button.dataset.category;
+        if (category === 'Admin') {
+          if (isAdmin) showAdminPanel(true);
+          return;
+        }
+        showAdminPanel(false);
         if (category === 'Fines') {
           openRecordDialog('Fine');
         } else if (category === 'Warrants') {
@@ -1195,6 +1391,8 @@
         }
       });
     });
+
+    document.getElementById('refresh-logs').addEventListener('click', loadAdminLogs);
 
     function updateClock() {
       document.getElementById('clock').textContent = new Date().toLocaleTimeString([], {
@@ -1210,16 +1408,26 @@
           credentials: 'include',
           cache: 'no-store'
         });
-        return response.ok;
+        if (!response.ok) return null;
+        return await response.json();
       } catch (error) {
         console.error('Unable to verify the QLiTE session.', error);
-        return false;
+        return null;
       }
     }
 
     async function initialize() {
-      if (!await checkAuth()) {
+      const session = await checkAuth();
+      if (!session) {
         window.location.href = 'index.html';
+        return;
+      }
+      isAdmin = session.isAdmin === true;
+      document.getElementById('admin-tab').hidden = !isAdmin;
+      try {
+        await syncRecords();
+      } catch (error) {
+        setSearchStatus(error instanceof Error ? error.message : 'Could not load shared QLiTE records.', true);
       }
     }
 
@@ -1246,6 +1454,18 @@
         window.location.href = 'index.html';
       }
     }, 60000);
+    window.setInterval(async () => {
+      try {
+        await syncRecords();
+      } catch (error) {
+        setSearchStatus(error instanceof Error ? error.message : 'QLiTE record sync failed.', true);
+      }
+    }, 15000);
+    window.addEventListener('focus', () => {
+      syncRecords().catch((error) => {
+        setSearchStatus(error instanceof Error ? error.message : 'QLiTE record sync failed.', true);
+      });
+    });
   </script>
 </body>
 </html>

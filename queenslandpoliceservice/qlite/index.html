@@ -385,10 +385,8 @@
         document.getElementById('discord-button').hidden = true;
       } catch (error) {
         if (error.message.includes('401')) return;
-        if (error.message.includes('Trello')) {
-          accountStatus.textContent = 'Account status is temporarily unavailable.';
-          showError(error.message);
-        }
+        accountStatus.textContent = 'Account status is temporarily unavailable.';
+        showError(error.message);
       }
     }
 

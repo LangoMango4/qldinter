@@ -56,6 +56,10 @@ const TRELLO_API_TOKEN = process.env.TRELLO_API_TOKEN || "";
 const TRELLO_BANS_LIST_ID = process.env.TRELLO_BANS_LIST_ID || "";
 const TRELLO_QLITE_ACCOUNTS_BOARD_ID = process.env.TRELLO_QLITE_ACCOUNTS_BOARD_ID || "68d53ce4beaece9f9828096d";
 const TRELLO_QLITE_ACCOUNTS_LIST_ID = process.env.TRELLO_QLITE_ACCOUNTS_LIST_ID || "";
+const QLITE_LOGINS = String(process.env.QLITE_LOGINS || "")
+  .split(",")
+  .map((value) => value.trim())
+  .filter((value) => /^\d{1,25}$/.test(value));
 const DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID || "";
 const DISCORD_CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET || "";
 const DISCORD_REDIRECT_URI = process.env.DISCORD_REDIRECT_URI || "";
@@ -85,6 +89,7 @@ const WEBSITE_ROOT = path.resolve(__dirname, "..");
 const DATA_DIR = path.join(__dirname, "data");
 const MODERATION_DATA_FILE = path.join(DATA_DIR, "moderation-state.json");
 const QLITE_ACCOUNTS_FILE = path.join(DATA_DIR, "qlite-accounts.json");
+const QLITE_RECORDS_FILE = path.join(DATA_DIR, "qlite-records.json");
 const SERVER_STARTED_AT = Date.now();
 const metrics = {
   requests: 0,
@@ -115,6 +120,10 @@ let moderationState = {
   reviews: []
 };
 let qliteAccounts = {};
+let qliteRecords = {
+  records: [],
+  logs: []
+};
 
 const ensureDataDirectory = () => {
   if (!fs.existsSync(DATA_DIR)) {
@@ -208,6 +217,28 @@ const saveQliteAccounts = () => {
   const temporaryFile = `${QLITE_ACCOUNTS_FILE}.${randomUUID()}.tmp`;
   fs.writeFileSync(temporaryFile, JSON.stringify(qliteAccounts, null, 2), { encoding: "utf8", mode: 0o600 });
   fs.renameSync(temporaryFile, QLITE_ACCOUNTS_FILE);
+};
+
+const loadQliteRecords = () => {
+  ensureDataDirectory();
+  if (!fs.existsSync(QLITE_RECORDS_FILE)) {
+    qliteRecords = { records: [], logs: [] };
+    saveQliteRecords();
+    return;
+  }
+
+  const parsed = JSON.parse(fs.readFileSync(QLITE_RECORDS_FILE, "utf8"));
+  if (!parsed || typeof parsed !== "object" || !Array.isArray(parsed.records) || !Array.isArray(parsed.logs)) {
+    throw new Error("QLiTE records database has an invalid format.");
+  }
+  qliteRecords = parsed;
+};
+
+const saveQliteRecords = () => {
+  ensureDataDirectory();
+  const temporaryFile = `${QLITE_RECORDS_FILE}.${randomUUID()}.tmp`;
+  fs.writeFileSync(temporaryFile, JSON.stringify(qliteRecords, null, 2), { encoding: "utf8", mode: 0o600 });
+  fs.renameSync(temporaryFile, QLITE_RECORDS_FILE);
 };
 
 const isPasswordValid = (password) => typeof password === "string" && password.length >= 12 && password.length <= 128;
@@ -738,6 +769,29 @@ const requireAdmin = (req, res, next) => {
   }
 
   req.adminUser = session.user;
+  return next();
+};
+
+const isQliteLoginAllowed = (discordId) => QLITE_LOGINS.includes(String(discordId));
+
+const requireQliteSession = (req, res, next) => {
+  const session = getDiscordSession(req);
+  if (!session || session.authMethod !== "qlite-password") {
+    return res.status(401).json({ authenticated: false, error: "QLiTE sign-in is required." });
+  }
+  if (!isQliteLoginAllowed(session.user.id)) {
+    discordSessions.delete(session.token);
+    clearSessionCookie(res);
+    return res.status(403).json({ error: "This Discord account is not on the QLiTE_LOGINS allowlist." });
+  }
+
+  const account = qliteAccounts[String(session.user.id)];
+  if (!account || account.trelloCardId !== session.trelloCardId) {
+    discordSessions.delete(session.token);
+    clearSessionCookie(res);
+    return res.status(401).json({ authenticated: false, error: "QLiTE access is no longer active." });
+  }
+  req.qliteUser = session.user;
   return next();
 };
 
@@ -1553,6 +1607,13 @@ app.get("/api/auth/me", (req, res) => {
 app.get("/api/qlite/account/status", async (req, res) => {
   const session = getDiscordSession(req);
   if (!session) return res.status(401).json({ authenticated: false });
+  if (!isQliteLoginAllowed(session.user.id)) {
+    return res.status(403).json({
+      error: QLITE_LOGINS.length
+        ? "This Discord account is not on the QLiTE_LOGINS allowlist."
+        : "QLiTE sign-in is disabled until QLITE_LOGINS is configured."
+    });
+  }
 
   const account = qliteAccounts[String(session.user.id)];
   if (!account) {
@@ -1583,6 +1644,9 @@ app.post("/api/qlite/account/setup", async (req, res) => {
   }
   const session = getDiscordSession(req);
   if (!session) return res.status(401).json({ error: "Sign in with Discord before setting a QLiTE password." });
+  if (!isQliteLoginAllowed(session.user.id)) {
+    return res.status(403).json({ error: "This Discord account is not on the QLiTE_LOGINS allowlist." });
+  }
   if (!isPasswordValid(req.body?.password)) {
     return res.status(400).json({ error: "Choose a password between 12 and 128 characters." });
   }
@@ -1703,6 +1767,10 @@ app.post("/api/qlite/auth/login", async (req, res) => {
     return res.status(401).json({ error: "Incorrect username or password." });
   }
 
+  if (!isQliteLoginAllowed(account.discordId)) {
+    return res.status(403).json({ error: "This Discord account is not on the QLiTE_LOGINS allowlist." });
+  }
+
   try {
     if (!await isQliteTrelloAccountActive(account.trelloCardId, account.trelloListId)) {
       return res.status(403).json({ error: "QLiTE access has been revoked. Contact an administrator." });
@@ -1728,6 +1796,11 @@ app.get("/api/qlite/session", async (req, res) => {
   if (!session || session.authMethod !== "qlite-password") {
     return res.status(401).json({ authenticated: false });
   }
+  if (!isQliteLoginAllowed(session.user.id)) {
+    discordSessions.delete(session.token);
+    clearSessionCookie(res);
+    return res.status(403).json({ authenticated: false, error: "This Discord account is not on the QLiTE_LOGINS allowlist." });
+  }
   const account = qliteAccounts[String(session.user.id)];
   if (!account || account.trelloCardId !== session.trelloCardId) {
     discordSessions.delete(session.token);
@@ -1747,8 +1820,116 @@ app.get("/api/qlite/session", async (req, res) => {
   }
   return res.json({
     authenticated: true,
-    user: { id: account.discordId, username: account.username }
+    user: { id: account.discordId, username: account.username },
+    isAdmin: ADMIN_USER_IDS.includes(String(account.discordId))
   });
+});
+
+app.get("/api/qlite/records", requireQliteSession, (req, res) => {
+  const records = qliteRecords.records
+    .slice()
+    .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime());
+  return res.json({ records });
+});
+
+app.post("/api/qlite/records", requireQliteSession, (req, res) => {
+  if (!isTrustedQliteRequest(req)) {
+    return res.status(403).json({ error: "Requests from this website are not allowed." });
+  }
+
+  const playerId = String(req.body?.playerId || "").trim();
+  const playerName = String(req.body?.playerName || "").trim();
+  const username = String(req.body?.username || "").trim();
+  const type = String(req.body?.type || "").trim();
+  const reason = String(req.body?.reason || "").trim();
+  const amount = Number(req.body?.amount);
+  const priority = String(req.body?.priority || "").trim();
+  if (!/^\d{1,25}$/.test(playerId) || !playerName || playerName.length > 64 ||
+    !username || username.length > 64 || !reason || reason.length > 240 ||
+    !["Fine", "Warrant"].includes(type)) {
+    return res.status(400).json({ error: "A valid player, record type and reason are required." });
+  }
+  if (type === "Fine" && (!Number.isInteger(amount) || amount < 1 || amount > 1000000)) {
+    return res.status(400).json({ error: "Fine amount must be a whole number from 1 to 1,000,000." });
+  }
+  if (type === "Warrant" && !["Standard", "Urgent"].includes(priority)) {
+    return res.status(400).json({ error: "Choose a valid warrant priority." });
+  }
+
+  const createdAt = new Date().toISOString();
+  const record = {
+    id: randomUUID(),
+    playerId,
+    playerName,
+    username,
+    type,
+    reason,
+    createdAt,
+    actor: {
+      id: String(req.qliteUser.id),
+      username: String(req.qliteUser.username || "QLiTE Officer")
+    },
+    ...(type === "Fine" ? { amount } : { priority })
+  };
+  const log = {
+    id: randomUUID(),
+    action: "added",
+    record: { ...record },
+    actor: { ...record.actor },
+    createdAt
+  };
+  const previousRecords = qliteRecords.records;
+  const previousLogs = qliteRecords.logs;
+  qliteRecords.records = [record, ...previousRecords];
+  qliteRecords.logs = [log, ...previousLogs];
+  try {
+    saveQliteRecords();
+  } catch (error) {
+    qliteRecords.records = previousRecords;
+    qliteRecords.logs = previousLogs;
+    console.error("Unable to persist a QLiTE record:", error);
+    return res.status(500).json({ error: "The QLiTE record could not be saved." });
+  }
+  return res.status(201).json({ success: true, record });
+});
+
+app.get("/api/admin/qlite-logs", requireAdmin, (req, res) => {
+  return res.json({ logs: qliteRecords.logs.slice(0, 1000) });
+});
+
+app.delete("/api/admin/qlite-records/:recordId", requireAdmin, (req, res) => {
+  if (!isTrustedQliteRequest(req)) {
+    return res.status(403).json({ error: "Requests from this website are not allowed." });
+  }
+
+  const recordId = String(req.params.recordId || "").trim();
+  const recordIndex = qliteRecords.records.findIndex((record) => record.id === recordId);
+  if (recordIndex < 0) {
+    return res.status(404).json({ error: "QLiTE record not found or already revoked." });
+  }
+
+  const [record] = qliteRecords.records.splice(recordIndex, 1);
+  const createdAt = new Date().toISOString();
+  const actor = {
+    id: String(req.adminUser.id),
+    username: String(req.adminUser.username || "Admin")
+  };
+  qliteRecords.logs.unshift({
+    id: randomUUID(),
+    action: "revoked",
+    record: { ...record },
+    actor,
+    createdAt
+  });
+  try {
+    saveQliteRecords();
+  } catch (error) {
+    qliteRecords.records.splice(recordIndex, 0, record);
+    qliteRecords.logs.shift();
+    console.error("Unable to persist a QLiTE record revocation:", error);
+    return res.status(500).json({ error: "The QLiTE record could not be revoked." });
+  }
+  return res.json({ success: true, removedId: recordId });
 });
 
 app.get("/api/bans", (req, res) => {
@@ -2323,6 +2504,7 @@ app.post("/api/feedback", async (req, res) => {
 
 loadModerationState();
 loadQliteAccounts();
+loadQliteRecords();
 
 // Service status notification endpoint
 app.post("/api/notify-security", async (req, res) => {
