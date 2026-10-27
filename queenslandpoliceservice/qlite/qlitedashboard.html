@@ -160,13 +160,6 @@
       letter-spacing: .03em;
     }
 
-    .nav-chip:nth-child(1) { background: #b93b48; }
-    .nav-chip:nth-child(2) { background: #6350a3; }
-    .nav-chip:nth-child(3) { background: #bd6832; }
-    .nav-chip:nth-child(4) { background: #b78a22; }
-    .nav-chip:nth-child(5) { background: #398795; }
-    .nav-chip:nth-child(6) { background: #3f639e; }
-
     .workspace {
       display: grid;
       flex: 1;
@@ -331,6 +324,12 @@
       font-weight: 800;
     }
 
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .result-copy {
       min-width: 0;
     }
@@ -367,6 +366,67 @@
       gap: 9px;
       padding: 11px;
       overflow-y: auto;
+    }
+
+    .profile-content {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .profile-empty {
+      display: grid;
+      flex: 1;
+      min-height: 180px;
+      place-content: center;
+      gap: 7px;
+      color: rgba(215, 225, 241, .14);
+      text-align: center;
+      user-select: none;
+    }
+
+    .profile-empty img {
+      display: block;
+      width: clamp(86px, 15vw, 142px);
+      max-height: 142px;
+      margin: 0 auto;
+      object-fit: contain;
+      filter: brightness(0) invert(1);
+      opacity: .14;
+    }
+
+    .profile-empty span {
+      color: rgba(215, 225, 241, .14);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .2em;
+    }
+
+    .profile-empty p {
+      max-width: 260px;
+      margin: 8px auto 0;
+      color: rgba(215, 225, 241, .24);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .overview-categories {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .overview-categories .nav-chip {
+      border: 1px solid #35445e;
+      background: #202b40 !important;
+      color: #c4d1e5;
+    }
+
+    .overview-categories .nav-chip:hover,
+    .overview-categories .nav-chip[aria-pressed="true"] {
+      border-color: #6288c7;
+      background: #293a55 !important;
+      color: #f5f8ff;
     }
 
     .profile-heading {
@@ -495,6 +555,35 @@
       color: #ffb4bc;
     }
 
+    .action-button.caution {
+      border-color: #5a4b86;
+      background: #302846;
+      color: #d7c8ff;
+    }
+
+    .action-button.property {
+      border-color: #376e70;
+      background: #203b40;
+      color: #a9e3df;
+    }
+
+    .profile-link {
+      flex: 0 0 auto;
+      align-self: center;
+      padding: 7px 9px;
+      border: 1px solid #43536e;
+      border-radius: 6px;
+      background: #2a3850;
+      color: #ecf3ff;
+      font-size: 9px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .profile-link:hover {
+      background: #344563;
+    }
+
     .records-heading {
       display: flex;
       align-items: baseline;
@@ -536,6 +625,18 @@
       border-left-color: #e66c79;
     }
 
+    .record[data-type="Youth Caution"] {
+      border-left-color: #a88cf0;
+    }
+
+    .record[data-type="Property Receipt"] {
+      border-left-color: #58b6ad;
+    }
+
+    .record[data-type="Move-on Direction"] {
+      border-left-color: #6ea7ef;
+    }
+
     .record-copy {
       min-width: 0;
     }
@@ -575,6 +676,8 @@
 
     dialog {
       width: min(370px, calc(100% - 30px));
+      max-height: calc(100% - 24px);
+      overflow-y: auto;
       padding: 0;
       border: 1px solid #405273;
       border-radius: 8px;
@@ -964,6 +1067,16 @@
       color: #fff0f2;
     }
 
+    .alert-badge[data-type="Youth Caution"] {
+      background: #69559c;
+      color: #f0e9ff;
+    }
+
+    .alert-badge[data-type="Property Receipt"] {
+      background: #286d68;
+      color: #e0fffb;
+    }
+
     .empty-state {
       padding: 22px 13px;
       color: #a4afc2;
@@ -1160,6 +1273,12 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+    }
+
+    .admin-actions {
+      display: flex;
+      align-items: center;
+      gap: 7px;
     }
 
     .admin-heading h2 {
@@ -1426,14 +1545,8 @@
         </div>
       </header>
 
-      <nav class="quick-nav" aria-label="Record categories">
-        <button class="nav-chip" type="button" data-category="Safety">SAFETY</button>
-        <button class="nav-chip" type="button" data-category="DV">DV</button>
-        <button class="nav-chip" type="button" data-category="Directions">DIRECTIONS</button>
-        <button class="nav-chip" type="button" data-category="Fines">FINES</button>
-        <button class="nav-chip" type="button" data-category="Warrants">WARRANTS</button>
-        <button class="nav-chip" type="button" data-category="Traffic">TRAFFIC</button>
-        <button class="nav-chip" type="button" data-category="Admin" id="admin-tab" hidden>ADMIN</button>
+      <nav class="quick-nav" aria-label="Administration">
+        <button class="nav-chip" type="button" data-category="Admin" id="admin-tab" hidden>ADMIN LOGS</button>
       </nav>
 
       <div class="workspace">
@@ -1456,47 +1569,61 @@
           </div>
         </section>
 
-        <section class="panel profile-panel" aria-labelledby="overview-title">
-          <div class="profile-heading">
-            <div>
-              <p class="eyebrow">Westlands player record</p>
-              <h2 id="overview-title">Player overview</h2>
-            </div>
-            <span class="connection-status">PUBLIC PROFILE</span>
+        <section class="panel profile-panel" aria-label="Player overview">
+          <div class="profile-empty" id="profile-empty" aria-label="No player selected">
+            <img src="../../assets/images/qps.png" alt="Queensland Police Service logo">
+            <span>QUEENSLAND POLICE SERVICE</span>
+            <p>Search for a Roblox user on the left and select them to view their profile and shared records.</p>
           </div>
-          <div class="profile-card">
-            <div class="avatar" id="profile-avatar" aria-label="Player initials">?</div>
-            <div class="profile-copy">
-              <p class="profile-name" id="profile-name">No player selected</p>
-              <p class="profile-username" id="profile-username">Search to open a public Roblox profile</p>
-              <span class="profile-id" id="profile-id">PLAYER ID —</span>
+          <div class="profile-content" id="profile-content" hidden>
+            <div class="profile-heading">
+              <div>
+                <p class="eyebrow">Westlands player record</p>
+                <h2 id="overview-title">Player overview</h2>
+              </div>
+              <span class="connection-status">PUBLIC PROFILE</span>
             </div>
-          </div>
-          <div class="warrant-warning" id="warrant-warning" role="alert" hidden></div>
-          <div class="stats">
-            <div class="stat">
-              <span class="stat-label">Account created</span>
-              <span class="stat-value" id="profile-created">—</span>
+            <div class="profile-card">
+              <div class="avatar" id="profile-avatar" aria-label="Player initials">?</div>
+              <div class="profile-copy">
+                <p class="profile-name" id="profile-name">No player selected</p>
+                <p class="profile-username" id="profile-username">Search to open a public Roblox profile</p>
+                <span class="profile-id" id="profile-id">PLAYER ID —</span>
+              </div>
+              <a class="profile-link" id="roblox-profile-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Open Roblox profile</a>
             </div>
-            <div class="stat">
-              <span class="stat-label">Verification</span>
-              <span class="stat-value" id="profile-verified">—</span>
+            <div class="warrant-warning" id="warrant-warning" role="alert" hidden></div>
+            <div class="stats">
+              <div class="stat">
+                <span class="stat-label">Account created</span>
+                <span class="stat-value" id="profile-created">—</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Verification</span>
+                <span class="stat-value" id="profile-verified">—</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Shared records</span>
+                <span class="stat-value" id="record-count">0</span>
+              </div>
             </div>
-            <div class="stat">
-              <span class="stat-label">Shared records</span>
-              <span class="stat-value" id="record-count">0</span>
+            <div class="overview-categories" aria-label="Player record categories">
+              <button class="nav-chip" type="button" data-action="Safety">SAFETY</button>
+              <button class="nav-chip" type="button" data-action="DV">DV</button>
+              <button class="nav-chip" type="button" data-action="Move-on Direction">MOVE-ON</button>
+              <button class="nav-chip" type="button" data-action="Fine">FINES</button>
+              <button class="nav-chip" type="button" data-action="Warrant">WARRANTS</button>
+              <button class="nav-chip" type="button" data-action="Traffic">TRAFFIC</button>
+              <button class="nav-chip" type="button" data-action="Youth Caution">YOUTH CAUTIONS</button>
+              <button class="nav-chip" type="button" data-action="Property Receipt">PROPERTY RECEIPTS</button>
             </div>
-          </div>
-          <div class="actions" aria-label="Player record actions">
-            <button class="action-button fine" type="button" data-action="Fine" disabled>＋ Issue fine</button>
-            <button class="action-button warrant" type="button" data-action="Warrant" disabled>＋ Add warrant</button>
-          </div>
-          <div class="records-heading">
-            <h3>Officer notes & records</h3>
-            <span class="local-note">Synced with QLiTE officers</span>
-          </div>
-          <div class="records" id="records">
-            <div class="empty-state">Select a player to view shared records.</div>
+            <div class="records-heading">
+              <h3>Officer notes & records</h3>
+              <span class="local-note">Synced with QLiTE officers</span>
+            </div>
+            <div class="records" id="records">
+              <div class="empty-state">Select a player to view shared records.</div>
+            </div>
           </div>
         </section>
       </div>
@@ -1506,7 +1633,10 @@
             <p class="eyebrow">QLiTE audit trail</p>
             <h2 id="admin-title">Record activity</h2>
           </div>
-          <button class="action-button" type="button" id="refresh-logs">Refresh</button>
+          <div class="admin-actions">
+            <button class="action-button" type="button" id="admin-back">Back to players</button>
+            <button class="action-button" type="button" id="refresh-logs">Refresh</button>
+          </div>
         </div>
         <div class="admin-status" id="admin-status" role="status" aria-live="polite"></div>
         <div class="admin-logs" id="admin-logs">
@@ -1535,6 +1665,22 @@
           <option value="Standard">Standard</option>
           <option value="Urgent">Urgent</option>
         </select>
+      </label>
+      <label id="property-description-field" hidden>
+        Property description
+        <input id="property-description" type="text" maxlength="160" placeholder="Item, make, colour, or other identifier">
+      </label>
+      <label id="property-markings-field" hidden>
+        Markings / serial number
+        <input id="property-markings" type="text" maxlength="160" placeholder="Serial number, scratches, labels, or other markings">
+      </label>
+      <label id="property-additional-field" hidden>
+        Additional information
+        <textarea id="property-additional" maxlength="500" placeholder="Condition, location, or other receipt details"></textarea>
+      </label>
+      <label id="direction-field" hidden>
+        Move-on direction
+        <textarea id="move-on-direction" maxlength="240" placeholder="Enter the direction given to the player"></textarea>
       </label>
       <label>
         Reason
@@ -1565,6 +1711,7 @@
     let isAdmin = false;
     let selectedPlayer = null;
     let pendingRecordType = null;
+    let activeRecordFilter = null;
     let searchSequence = 0;
     let activeSearchKeyword = '';
     let nextPageCursor = null;
@@ -1639,9 +1786,40 @@
     function makeAvatar(player, sizeClass = '') {
       const avatar = document.createElement('div');
       avatar.className = `avatar ${sizeClass}`.trim();
-      avatar.textContent = (player.displayName || player.name || '?').slice(0, 1).toUpperCase();
-      avatar.setAttribute('aria-label', `${player.displayName || player.name} initials`);
+      const initials = document.createElement('span');
+      initials.textContent = (player.displayName || player.name || '?').slice(0, 1).toUpperCase();
+      const image = document.createElement('img');
+      image.alt = `${player.displayName || player.name || 'Roblox player'} profile picture`;
+      image.hidden = true;
+      image.addEventListener('load', () => {
+        image.hidden = false;
+        initials.hidden = true;
+      });
+      image.addEventListener('error', () => {
+        image.hidden = true;
+        initials.hidden = false;
+      });
+      avatar.append(initials, image);
+      avatar.setAttribute('aria-label', `${player.displayName || player.name || 'Player'} profile picture`);
+      loadAvatar(image, player);
       return avatar;
+    }
+
+    async function loadAvatar(image, player) {
+      try {
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+          const payload = await fetchRobloxApi(`users/${encodeURIComponent(player.id)}/avatar`);
+          const imageUrl = Array.isArray(payload.data) ? payload.data[0]?.imageUrl : null;
+          if (imageUrl) {
+            image.src = imageUrl;
+            return;
+          }
+          if (attempt < 2) await new Promise((resolve) => window.setTimeout(resolve, 500 * (attempt + 1)));
+        }
+        throw new Error('Roblox did not return a profile picture after three attempts.');
+      } catch (error) {
+        console.warn(`Unable to load the Roblox profile picture for user ${player.id}.`, error);
+      }
     }
 
     function renderResultAlerts(player, copy) {
@@ -1654,7 +1832,17 @@
         const badge = document.createElement('span');
         badge.className = 'alert-badge';
         badge.dataset.type = record.type;
-        badge.textContent = record.type === 'Warrant' ? 'WARRANT' : 'FINE';
+        const badgeLabels = {
+          Warrant: 'WARRANT',
+          Fine: 'FINE',
+          Safety: 'SAFETY',
+          DV: 'DV',
+          'Move-on Direction': 'MOVE-ON',
+          Traffic: 'TRAFFIC',
+          'Youth Caution': 'YOUTH CAUTION',
+          'Property Receipt': 'PROPERTY'
+        };
+        badge.textContent = badgeLabels[record.type] || 'RECORD';
         alertList.append(badge);
       });
       copy.append(alertList);
@@ -1755,6 +1943,9 @@
 
     async function selectPlayer(player, selectedButton) {
       selectedPlayer = player;
+      activeRecordFilter = null;
+      document.getElementById('profile-empty').hidden = true;
+      document.getElementById('profile-content').hidden = false;
       document.querySelectorAll('.result').forEach((button) => {
         button.setAttribute('aria-current', String(button === selectedButton));
       });
@@ -1774,6 +1965,9 @@
       document.getElementById('profile-username').textContent = `@${player.name}`;
       document.getElementById('profile-id').textContent = `PLAYER ID ${player.id}`;
       document.getElementById('profile-verified').textContent = player.hasVerifiedBadge ? 'Verified' : 'Not verified';
+      const profileLink = document.getElementById('roblox-profile-link');
+      profileLink.href = `https://www.roblox.com/users/${encodeURIComponent(player.id)}/profile`;
+      profileLink.hidden = false;
 
       const avatar = makeAvatar(player);
       avatar.id = 'profile-avatar';
@@ -1802,6 +1996,14 @@
         ? sharedRecords.filter((record) => record.playerId === String(selectedPlayer.id))
         : [];
       document.getElementById('record-count').textContent = String(playerRecords.length);
+      const recordHeadings = {
+        'Property Receipt': 'Field property receipts',
+        'Youth Caution': 'Youth cautions',
+        'Move-on Direction': 'Move-on directions'
+      };
+      document.querySelector('.records-heading h3').textContent = activeRecordFilter
+        ? recordHeadings[activeRecordFilter] || `${activeRecordFilter} records`
+        : 'Officer notes & records';
       const warrantWarning = document.getElementById('warrant-warning');
       const warrants = playerRecords.filter((record) => record.type === 'Warrant');
       warrantWarning.hidden = warrants.length === 0;
@@ -1809,15 +2011,28 @@
         const warrant = warrants[0];
         warrantWarning.textContent = `ACTIVE WARRANT${warrants.length > 1 ? `S (${warrants.length})` : ''} · ${warrant.priority} · ${warrant.reason}`;
       }
-      if (!playerRecords.length) {
+      const visibleRecords = activeRecordFilter
+        ? playerRecords.filter((record) => record.type === activeRecordFilter)
+        : playerRecords;
+      if (!visibleRecords.length) {
         const empty = document.createElement('div');
         empty.className = 'empty-state';
-        empty.textContent = selectedPlayer ? 'No shared records for this player.' : 'Select a player to view shared records.';
+        empty.textContent = !selectedPlayer
+          ? 'Select a player to view shared records.'
+          : activeRecordFilter === 'Property Receipt'
+            ? 'No field property receipts for this player.'
+            : activeRecordFilter === 'Youth Caution'
+              ? 'No youth cautions for this player.'
+              : activeRecordFilter === 'Move-on Direction'
+                ? 'No move-on directions for this player.'
+                : activeRecordFilter
+                  ? `No ${activeRecordFilter} records for this player.`
+                  : 'No shared records for this player.';
         container.append(empty);
         return;
       }
 
-      playerRecords.forEach((record) => {
+      visibleRecords.forEach((record) => {
         const item = document.createElement('article');
         item.className = 'record';
         item.dataset.type = record.type;
@@ -1827,7 +2042,15 @@
         title.className = 'record-title';
         title.textContent = record.type === 'Fine'
           ? `Fine · ${Number(record.amount).toLocaleString()} credits`
-          : `Warrant · ${record.priority}`;
+          : record.type === 'Warrant'
+            ? `Warrant · ${record.priority}`
+            : record.type;
+        if (record.type === 'Move-on Direction' && record.direction) {
+          const direction = document.createElement('p');
+          direction.className = 'record-detail';
+          direction.textContent = `Direction: ${record.direction}`;
+          copy.append(title, direction);
+        }
         const detail = document.createElement('p');
         detail.className = 'record-detail';
         detail.textContent = record.reason;
@@ -1835,7 +2058,20 @@
         date.className = 'record-date';
         date.dateTime = record.createdAt;
         date.textContent = new Date(record.createdAt).toLocaleDateString();
-        copy.append(title, detail);
+        if (record.type !== 'Move-on Direction' || !record.direction) copy.append(title);
+        copy.append(detail);
+        if (record.type === 'Property Receipt') {
+          [
+            record.propertyDescription ? `Property: ${record.propertyDescription}` : '',
+            record.markings ? `Markings / serial: ${record.markings}` : '',
+            record.additionalInfo ? `Additional information: ${record.additionalInfo}` : ''
+          ].filter(Boolean).forEach((text) => {
+            const propertyDetail = document.createElement('p');
+            propertyDetail.className = 'record-detail';
+            propertyDetail.textContent = text;
+            copy.append(propertyDetail);
+          });
+        }
         item.append(copy, date);
         container.append(item);
       });
@@ -1890,7 +2126,13 @@
             `Officer: ${actor.username || 'Unknown'} (Discord ID ${actor.id || 'unavailable'})`,
             `Player: ${record.playerName || 'Unknown'} (@${record.username || 'unknown'}) · Roblox ID ${record.playerId || 'unavailable'}`,
             `Record: ${record.type || 'Unknown'}${record.type === 'Fine' ? ` · ${Number(record.amount).toLocaleString()} credits` : record.priority ? ` · ${record.priority} priority` : ''}`,
+            ...(record.direction ? [`Move-on direction: ${record.direction}`] : []),
             `Reason: ${record.reason || 'No reason recorded'}`,
+            ...(record.type === 'Property Receipt' ? [
+              `Property: ${record.propertyDescription || 'Not recorded'}`,
+              `Markings / serial: ${record.markings || 'Not recorded'}`,
+              `Additional information: ${record.additionalInfo || 'Not recorded'}`
+            ] : []),
             `Original record time: ${new Date(record.createdAt).toLocaleString()}`,
             `Log time: ${new Date(log.createdAt).toLocaleString()}`
           ].forEach((text) => {
@@ -1933,17 +2175,36 @@
     }
 
     function openRecordDialog(type) {
+      activeRecordFilter = type;
       if (!selectedPlayer) {
+        renderRecords();
         setSearchStatus('Search for and select a player before adding a record.', true);
         searchInput.focus();
         return;
       }
       pendingRecordType = type;
+      activeRecordFilter = type;
+      renderRecords();
       document.getElementById('dialog-title').textContent = `Add ${type.toLowerCase()}`;
       document.getElementById('dialog-player').textContent = `${selectedPlayer.displayName || selectedPlayer.name} (@${selectedPlayer.name})`;
       document.getElementById('amount-field').hidden = type !== 'Fine';
       document.getElementById('priority-field').hidden = type !== 'Warrant';
+      document.getElementById('property-description-field').hidden = type !== 'Property Receipt';
+      document.getElementById('property-markings-field').hidden = type !== 'Property Receipt';
+      document.getElementById('property-additional-field').hidden = type !== 'Property Receipt';
+      document.getElementById('property-description').required = type === 'Property Receipt';
+      document.getElementById('direction-field').hidden = type !== 'Move-on Direction';
+      document.getElementById('move-on-direction').required = type === 'Move-on Direction';
+      document.getElementById('property-description').value = '';
+      document.getElementById('property-markings').value = '';
+      document.getElementById('property-additional').value = '';
+      document.getElementById('move-on-direction').value = '';
       document.getElementById('record-reason').value = '';
+      document.getElementById('record-reason').placeholder = type === 'Property Receipt'
+        ? 'Explain why the property was received or recorded'
+        : type === 'Move-on Direction'
+          ? 'Record the reason for issuing the move-on direction'
+        : 'Enter the reason for this record';
       dialog.showModal();
       document.getElementById('record-reason').focus();
     }
@@ -1969,7 +2230,12 @@
 
       const reason = document.getElementById('record-reason').value.trim();
       const amount = Number(document.getElementById('fine-amount').value);
-      if (!reason || (pendingRecordType === 'Fine' && (!Number.isInteger(amount) || amount < 1 || amount > 1000000))) return;
+      const propertyDescription = document.getElementById('property-description').value.trim();
+      const direction = document.getElementById('move-on-direction').value.trim();
+      if (!reason ||
+        (pendingRecordType === 'Fine' && (!Number.isInteger(amount) || amount < 1 || amount > 1000000)) ||
+        (pendingRecordType === 'Property Receipt' && !propertyDescription) ||
+        (pendingRecordType === 'Move-on Direction' && !direction)) return;
 
       const saveButton = document.getElementById('save-record');
       saveButton.disabled = true;
@@ -1983,8 +2249,14 @@
             username: String(selectedPlayer.name),
             type: pendingRecordType,
             reason,
+            ...(pendingRecordType === 'Move-on Direction' ? { direction } : {}),
+            ...(pendingRecordType === 'Property Receipt' ? {
+              propertyDescription,
+              markings: document.getElementById('property-markings').value.trim(),
+              additionalInfo: document.getElementById('property-additional').value.trim()
+            } : {}),
             ...(pendingRecordType === 'Fine' ? { amount } : {
-              priority: document.getElementById('warrant-priority').value
+              ...(pendingRecordType === 'Warrant' ? { priority: document.getElementById('warrant-priority').value } : {})
             })
           })
         });
@@ -2003,27 +2275,20 @@
       pendingRecordType = null;
     });
 
-    document.querySelectorAll('.nav-chip').forEach((button) => {
+    document.querySelectorAll('.overview-categories [data-action]').forEach((button) => {
       button.addEventListener('click', () => {
-        const category = button.dataset.category;
-        if (category === 'Admin') {
-          if (isAdmin) showAdminPanel(true);
-          return;
-        }
-        showAdminPanel(false);
-        document.querySelectorAll('.nav-chip').forEach((chip) => {
+        document.querySelectorAll('.overview-categories .nav-chip').forEach((chip) => {
           chip.setAttribute('aria-pressed', String(chip === button));
         });
-        if (category === 'Fines') {
-          openRecordDialog('Fine');
-        } else if (category === 'Warrants') {
-          openRecordDialog('Warrant');
-        } else {
-          setSearchStatus(`${category} records are available after selecting a player.`);
-          searchInput.focus();
-        }
+        openRecordDialog(button.dataset.action);
       });
     });
+
+    document.getElementById('admin-tab').addEventListener('click', () => {
+      if (isAdmin) showAdminPanel(true);
+    });
+
+    document.getElementById('admin-back').addEventListener('click', () => showAdminPanel(false));
 
     document.getElementById('refresh-logs').addEventListener('click', loadAdminLogs);
 
@@ -2057,6 +2322,7 @@
       }
       isAdmin = session.isAdmin === true;
       document.getElementById('admin-tab').hidden = !isAdmin;
+      document.querySelector('.quick-nav').hidden = !isAdmin;
       try {
         await syncRecords();
       } catch (error) {

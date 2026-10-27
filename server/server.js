@@ -1137,7 +1137,9 @@ app.get("/api/roblox/users/:userId/avatar", async (req, res) => {
 
   try {
     const data = await fetchRobloxJson(`https://thumbnails.roblox.com/v1/users/avatar-headshot?${params.toString()}`);
-    cacheRobloxResponse(cacheKey, data, 5 * 60 * 1000);
+    if (Array.isArray(data.data) && data.data.some((thumbnail) => thumbnail?.imageUrl)) {
+      cacheRobloxResponse(cacheKey, data, 5 * 60 * 1000);
+    }
     return res.json(data);
   } catch (error) {
     return sendRobloxProxyError(res, error);
@@ -1844,9 +1846,13 @@ app.post("/api/qlite/records", requireQliteSession, (req, res) => {
   const reason = String(req.body?.reason || "").trim();
   const amount = Number(req.body?.amount);
   const priority = String(req.body?.priority || "").trim();
+  const propertyDescription = String(req.body?.propertyDescription || "").trim();
+  const markings = String(req.body?.markings || "").trim();
+  const additionalInfo = String(req.body?.additionalInfo || "").trim();
+  const direction = String(req.body?.direction || "").trim();
   if (!/^\d{1,25}$/.test(playerId) || !playerName || playerName.length > 64 ||
     !username || username.length > 64 || !reason || reason.length > 240 ||
-    !["Fine", "Warrant"].includes(type)) {
+    !["Safety", "DV", "Move-on Direction", "Fine", "Warrant", "Traffic", "Youth Caution", "Property Receipt"].includes(type)) {
     return res.status(400).json({ error: "A valid player, record type and reason are required." });
   }
   if (type === "Fine" && (!Number.isInteger(amount) || amount < 1 || amount > 1000000)) {
@@ -1854,6 +1860,13 @@ app.post("/api/qlite/records", requireQliteSession, (req, res) => {
   }
   if (type === "Warrant" && !["Standard", "Urgent"].includes(priority)) {
     return res.status(400).json({ error: "Choose a valid warrant priority." });
+  }
+  if (type === "Property Receipt" &&
+    (!propertyDescription || propertyDescription.length > 160 || markings.length > 160 || additionalInfo.length > 500)) {
+    return res.status(400).json({ error: "A property description is required; markings must be 160 characters or fewer and additional information 500 characters or fewer." });
+  }
+  if (type === "Move-on Direction" && (!direction || direction.length > 240)) {
+    return res.status(400).json({ error: "A move-on direction of 240 characters or fewer is required." });
   }
 
   const createdAt = new Date().toISOString();
@@ -1869,8 +1882,13 @@ app.post("/api/qlite/records", requireQliteSession, (req, res) => {
       id: String(req.qliteUser.id),
       username: String(req.qliteUser.username || "QLiTE Officer")
     },
-    ...(type === "Fine" ? { amount } : { priority })
+    ...(type === "Fine" ? { amount } : type === "Warrant" ? { priority } : type === "Move-on Direction" ? { direction } : {})
   };
+  if (type === "Property Receipt") {
+    record.propertyDescription = propertyDescription;
+    if (markings) record.markings = markings;
+    if (additionalInfo) record.additionalInfo = additionalInfo;
+  }
   const log = {
     id: randomUUID(),
     action: "added",
